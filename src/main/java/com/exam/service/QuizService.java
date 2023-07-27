@@ -52,7 +52,7 @@ public class QuizService {
     }
 
     //Get Acvtive And Categories
-    public List<Quiz> gerActiveQuizzesofCategory(Category c){
+    public List<Quiz> getActiveQuizzesofCategory(Category c){
         return this.quizRepository.findByCategoryAndActive(c, true);
     }
 }
