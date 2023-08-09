@@ -30,14 +30,21 @@ public class QuestionsController {
     // get questions of any quiz
 
 
+    //GET RANDOM QUESTIONS AND LIMITED
+    @GetMapping("/random-records")
+    public ResponseEntity<List<Questions>> getRandomRecords() {
+
+        return this.questionsService.getRandomRecords();
+    }
+
 //GET LIMITED QUESTIONS
-@GetMapping("/limited-records")
-public Page<Questions> getLimitedRecords(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
-) {
-    return questionsService.getLimitedRecords(page, size);
-}
+//@GetMapping("/limited-records")
+//public Page<Questions> getLimitedRecords(
+//        @RequestParam(defaultValue = "0") int page,
+//        @RequestParam(defaultValue = "10") int size
+//) {
+//    return questionsService.getLimitedRecords(page, size);
+//}
 
 
 

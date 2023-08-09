@@ -65,4 +65,37 @@ public Page<Questions> getLimitedRecords(int page, int size) {
     public  Questions get (Long questionId){
         return this.questionsRepository.getOne(questionId);
     }
+
+
+
+
+
+
+    // Get specified questions
+    public ResponseEntity<List<Questions>> getRandomRecords() {
+        List<Questions> allRecords = questionsRepository.findAll();
+        // Shuffle the records randomly
+        Collections.shuffle(allRecords);
+        // Get the first 15 records
+        List<Questions> randomRecords = allRecords.subList(0, Math.min(2, allRecords.size()));
+        return ResponseEntity.ok(randomRecords);
+    }
+
+
+
+
+
+
+    // Get specified questions
+//    public ResponseEntity<List<Questions>> getRandomRecords() {
+//        List<Questions> allRecords = questionsRepository.findAll();
+//
+//        // Shuffle the records randomly
+//        Collections.shuffle(allRecords);
+//
+//        // Get the first 15 records
+//        List<Questions> randomRecords = allRecords.subList(0, Math.min(2, allRecords.size()));
+//
+//        return ResponseEntity.ok(randomRecords);
+//    }
 }
