@@ -4,7 +4,6 @@ import com.exam.model.exam.Category;
 import com.exam.model.exam.Quiz;
 import com.exam.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -34,6 +33,13 @@ public class QuizService {
         return this.quizRepository.findById(qid).get();
 
     }
+
+//    public String getQuizPass(Long qid){
+//        return this.quizRepository.getQuizPassword(qid);
+//
+//    }
+
+
     public void deleteQuiz(Long quizId){
 //        Quiz quiz = new Quiz();
 //        quiz.setqId(quizId);
@@ -55,4 +61,5 @@ public class QuizService {
     public List<Quiz> getActiveQuizzesofCategory(Category c){
         return this.quizRepository.findByCategoryAndActive(c, true);
     }
+
 }

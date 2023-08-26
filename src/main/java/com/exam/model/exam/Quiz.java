@@ -21,6 +21,7 @@ public class Quiz {
     private String maxMarks;
     private String numberOfQuestions;
     private  boolean active = false;
+    private String quizpassword;
     //add ...
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -37,13 +38,14 @@ public class Quiz {
     public Quiz() {
     }
 
-    public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active) {
+    public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, String quizpassword) {
         this.qId = qId;
         this.title = title;
         this.description = description;
         this.maxMarks = maxMarks;
         this.numberOfQuestions = numberOfQuestions;
         this.active = active;
+        this.quizpassword = quizpassword;
     }
 
     public Long getqId() {
@@ -76,6 +78,14 @@ public class Quiz {
 
     public void setMaxMarks(String maxMarks) {
         this.maxMarks = maxMarks;
+    }
+
+    public String getQuizpassword() {
+        return quizpassword;
+    }
+
+    public void setQuizpassword(String quizpassword) {
+        this.quizpassword = quizpassword;
     }
 
     public String getNumberOfQuestions() {

@@ -71,7 +71,6 @@ public class QuizController {
 
 
 
-
     //get specific question
     @GetMapping("/quiz/category/{cid}")
     public List<Quiz> getQuizzesOfCategory(@PathVariable("cid")  Long cid){
@@ -108,8 +107,6 @@ public class QuizController {
 
 
     ///UNCOMMENT
-
-
 
 //    //add quiz service
 ////    @PostMapping("/addQuiz")
@@ -164,12 +161,6 @@ public class QuizController {
 //        category.setCid(cid);
 //         return this.quizService.getQuizzesOfCategory(category);
 //     }
-
-
-
-
-
-
 
 
 }

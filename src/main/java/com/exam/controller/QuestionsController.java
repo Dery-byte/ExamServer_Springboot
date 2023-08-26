@@ -4,11 +4,12 @@ import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.service.QuestionsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 @RestController
 //@RequestMapping("/questions")
 @CrossOrigin("*")
@@ -215,6 +216,8 @@ public class QuestionsController {
 //        return ResponseEntity.ok("Got questions with answers!");
 //
 //    }
+
+
 
 
 }
