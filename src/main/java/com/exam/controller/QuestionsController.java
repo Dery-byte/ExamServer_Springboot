@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -109,19 +110,16 @@ public class QuestionsController {
         int correctAnswers = 0;
         int attempted = 0;
 //        double maxMarks =0;
-        double maxMarks = 0.0;
+        double maxMarks = 0;
         for (Questions q : questions) {
 //            System.out.println(questions1.getGivenAnswer());
-//             maxMarks =  Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
-             maxMarks = questions.get(0).getQuiz().getMaxMarks();
+             maxMarks =  Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
             //Single question
             Questions question = this.questionsService.get(q.getQuesId());
             if (question.getAnswer().equals(q.getGivenAnswer())) {
                 //correct
                 correctAnswers++;
                 double marksSingle =  (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) /  questions.size());
-//                double marksSingle =  questions.get(0).getQuiz().getMaxMarks() /  (double) questions.size();
-
                 //this.questions[0].quiz.maxMarks/this.questions.length;
                 marksGot += marksSingle;
             }
@@ -134,9 +132,10 @@ public class QuestionsController {
 Report report = new Report();
         report.setQuiz(quiz);
         report.setUser(user);
-        report.setMarks(marksGot);
+        report.setMarks(BigDecimal.valueOf(marksGot));
         questionsService.AddReport(report);
 
+//        Report reports = new Report();
 //        report.setMarks((long) marksGot);
 //reportService.AddReport(report);
         Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);

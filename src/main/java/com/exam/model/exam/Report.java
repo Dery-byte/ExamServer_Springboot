@@ -3,6 +3,8 @@ package com.exam.model.exam;
 import com.exam.model.User;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity(name="report")
 public class Report {
 
@@ -11,7 +13,7 @@ public class Report {
     private Long id;
 
     @Column(name = "marks", precision = 3, scale = 2)
-    private double marks;
+    private BigDecimal marks;
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
@@ -21,7 +23,7 @@ public class Report {
     private User user;
 
 
-    public Report(Long id, double marks, Quiz quiz, User user) {
+    public Report(Long id, BigDecimal marks, Quiz quiz, User user) {
         this.id = id;
         this.marks = marks;
         this.quiz = quiz;
@@ -53,11 +55,11 @@ public class Report {
     public void setId(Long id) {
         this.id = id;
     }
-    public double getMarks() {
+    public BigDecimal getMarks() {
         return marks;
     }
 
-    public void setMarks(double marks) {
+    public void setMarks(BigDecimal marks) {
         this.marks = marks;
     }
 }

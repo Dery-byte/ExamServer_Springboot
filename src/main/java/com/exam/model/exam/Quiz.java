@@ -19,7 +19,7 @@ public class Quiz {
 
     @Column(length =  5000)
     private String description;
-    private double maxMarks;
+    private String maxMarks;
     private String numberOfQuestions;
     private  boolean active = false;
     private boolean attempted=false;
@@ -52,7 +52,7 @@ public class Quiz {
     public Quiz() {
     }
 
-    public Quiz(Long qId, String title, String description, double maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions) {
+    public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions) {
         this.qId = qId;
         this.title = title;
         this.description = description;
@@ -100,11 +100,11 @@ public class Quiz {
         this.description = description;
     }
 
-    public double getMaxMarks() {
+    public String getMaxMarks() {
         return maxMarks;
     }
 
-    public void setMaxMarks(double maxMarks) {
+    public void setMaxMarks(String maxMarks) {
         this.maxMarks = maxMarks;
     }
 
