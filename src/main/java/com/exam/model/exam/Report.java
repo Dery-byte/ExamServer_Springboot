@@ -11,8 +11,7 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-    @Column(name = "marks", precision = 3, scale = 2)
+    @Column(precision = 10, scale = 1)
     private BigDecimal marks;
     @ManyToOne
     @JoinColumn(name = "quiz_id")
@@ -55,6 +54,7 @@ public class Report {
     public void setId(Long id) {
         this.id = id;
     }
+
     public BigDecimal getMarks() {
         return marks;
     }
@@ -62,4 +62,13 @@ public class Report {
     public void setMarks(BigDecimal marks) {
         this.marks = marks;
     }
+
+
+//    public double getMarks() {
+//        return marks;
+//    }
+//
+//    public void setMarks(double marks) {
+//        this.marks = marks;
+//    }
 }

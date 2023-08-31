@@ -90,7 +90,6 @@ public class QuestionsController {
     }
 
 
-
     //update Questions
     @PutMapping("/question/updateQuestions")
     public Questions updateQuestion(@RequestBody Questions questions){
@@ -101,11 +100,9 @@ public class QuestionsController {
 //    //evaluate Quiz
     @PostMapping("question/eval-quiz/{qid}")
     public  ResponseEntity<?> evalQuiz(@RequestBody List<Questions> questions, Principal principal, @PathVariable("qid") Long qid) {
-        System.out.println(questions);
-                User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+//        System.out.println(questions);
+        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
         Quiz quiz = this.quizService.getQuiz(qid);
-
-
         double marksGot = 0.0;
         int correctAnswers = 0;
         int attempted = 0;
@@ -119,25 +116,24 @@ public class QuestionsController {
             if (question.getAnswer().equals(q.getGivenAnswer())) {
                 //correct
                 correctAnswers++;
-                double marksSingle =  (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) /  questions.size());
+                double marksSingle =  (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) / (double) questions.size());
                 //this.questions[0].quiz.maxMarks/this.questions.length;
                 marksGot += marksSingle;
             }
             if (q.getGivenAnswer() != "") {
                 attempted++;
-
             }
-        }
-        ;
+        };
 Report report = new Report();
         report.setQuiz(quiz);
         report.setUser(user);
-        report.setMarks(BigDecimal.valueOf(marksGot));
+        report.setMarks(BigDecimal.valueOf(Double.parseDouble(String.valueOf(((marksGot))))));
+
+
+//        report.setMarks(Double.parseDouble(String.valueOf(marksGot)));
+
         questionsService.AddReport(report);
 
-//        Report reports = new Report();
-//        report.setMarks((long) marksGot);
-//reportService.AddReport(report);
         Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
         return ResponseEntity.ok(map);
     }
@@ -149,7 +145,6 @@ Report report = new Report();
 //        //        report.setMarks(90);
 //        report.setQuiz(quiz);
 //        report.setUser(user);
-//
 ////         report.setMarks(user.getId());
 //        return ResponseEntity.ok(this.reportService.AddReport(report));
 //    }
