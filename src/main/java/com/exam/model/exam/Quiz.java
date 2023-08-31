@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -18,11 +19,24 @@ public class Quiz {
 
     @Column(length =  5000)
     private String description;
-    private String maxMarks;
+    private double maxMarks;
     private String numberOfQuestions;
     private  boolean active = false;
+    private boolean attempted=false;
     private String quizpassword;
     //add ...
+
+
+
+    //Trying to check for one quiz attempts
+
+    @OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Report> reports = new LinkedHashSet<>();
+
+
+
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
@@ -38,14 +52,28 @@ public class Quiz {
     public Quiz() {
     }
 
-    public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, String quizpassword) {
+    public Quiz(Long qId, String title, String description, double maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions) {
         this.qId = qId;
         this.title = title;
         this.description = description;
         this.maxMarks = maxMarks;
         this.numberOfQuestions = numberOfQuestions;
         this.active = active;
+        this.attempted = attempted;
         this.quizpassword = quizpassword;
+        this.reports = reports;
+        this.category = category;
+        this.questions = questions;
+    }
+
+
+
+    public boolean isAttempted() {
+        return attempted;
+    }
+
+    public void setAttempted(boolean attempted) {
+        this.attempted = attempted;
     }
 
     public Long getqId() {
@@ -72,11 +100,11 @@ public class Quiz {
         this.description = description;
     }
 
-    public String getMaxMarks() {
+    public double getMaxMarks() {
         return maxMarks;
     }
 
-    public void setMaxMarks(String maxMarks) {
+    public void setMaxMarks(double maxMarks) {
         this.maxMarks = maxMarks;
     }
 

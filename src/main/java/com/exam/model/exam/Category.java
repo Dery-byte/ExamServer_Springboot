@@ -1,6 +1,5 @@
 package com.exam.model.exam;
 
-import com.exam.model.exam.Quiz;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -21,7 +20,6 @@ public class Category {
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
     @JsonIgnore
-
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
     @JsonCreator

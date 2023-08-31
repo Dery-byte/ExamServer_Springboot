@@ -1,11 +1,9 @@
 package com.exam.model;
 
+import com.exam.model.exam.Report;
 import com.exam.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
-import java.util.Collection;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +11,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -40,6 +43,14 @@ public class User implements UserDetails {
 
   @Enumerated(EnumType.STRING)
   private Role role;
+
+
+//Trying to check for one quiz attempts
+
+  @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+  @JsonIgnore
+  private Set<Report> reports = new LinkedHashSet<>();
+
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")

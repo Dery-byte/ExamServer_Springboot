@@ -1,12 +1,19 @@
 package com.exam.controller;
 
+import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
+import com.exam.model.exam.Report;
+import com.exam.repository.ReportRepository;
 import com.exam.service.QuestionsService;
+import com.exam.service.QuizService;
+import com.exam.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,6 +24,20 @@ import java.util.Set;
 public class QuestionsController {
     @Autowired
     private QuestionsService questionsService;
+    @Autowired
+    private ReportRepository reportRepository;
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private QuizService quizService;
+
+    @Autowired
+    private final UserDetailsService userDetailsService;
+
+    public QuestionsController(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     // get questions of any quiz
     @GetMapping("question/quiz/all/{qid}")
@@ -77,28 +98,32 @@ public class QuestionsController {
     }
 
 //    //evaluate Quiz
-    @PostMapping("question/eval-quiz")
-    public  ResponseEntity<?> evalQuiz(@RequestBody List<Questions> questions) {
+    @PostMapping("question/eval-quiz/{qid}")
+    public  ResponseEntity<?> evalQuiz(@RequestBody List<Questions> questions, Principal principal, @PathVariable("qid") Long qid) {
         System.out.println(questions);
-        double marksGot = 0;
+                User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+        Quiz quiz = this.quizService.getQuiz(qid);
+
+
+        double marksGot = 0.0;
         int correctAnswers = 0;
         int attempted = 0;
 //        double maxMarks =0;
-        double maxMarks = 0;
+        double maxMarks = 0.0;
         for (Questions q : questions) {
 //            System.out.println(questions1.getGivenAnswer());
-            maxMarks = Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
-
+//             maxMarks =  Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
+             maxMarks = questions.get(0).getQuiz().getMaxMarks();
             //Single question
             Questions question = this.questionsService.get(q.getQuesId());
-
             if (question.getAnswer().equals(q.getGivenAnswer())) {
                 //correct
                 correctAnswers++;
-                double marksSingle = Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) / questions.size();
+                double marksSingle =  (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) /  questions.size());
+//                double marksSingle =  questions.get(0).getQuiz().getMaxMarks() /  (double) questions.size();
+
                 //this.questions[0].quiz.maxMarks/this.questions.length;
                 marksGot += marksSingle;
-
             }
             if (q.getGivenAnswer() != "") {
                 attempted++;
@@ -106,10 +131,29 @@ public class QuestionsController {
             }
         }
         ;
+Report report = new Report();
+        report.setQuiz(quiz);
+        report.setUser(user);
+        report.setMarks(marksGot);
+        questionsService.AddReport(report);
+
+//        report.setMarks((long) marksGot);
+//reportService.AddReport(report);
         Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
         return ResponseEntity.ok(map);
-
     }
+//    @PostMapping("/addReports/{qid}")
+//    public ResponseEntity<Report> addReports(@RequestBody Report report, Principal principal, @PathVariable("qid") Long qid, @PathVariable("ques_id") Long ques_id){
+//        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+////        List<Questions> questions = (List<Questions>) this.questionsService.getQuestions(ques_id);
+//        Quiz quiz = this.quizService.getQuiz(qid);
+//        //        report.setMarks(90);
+//        report.setQuiz(quiz);
+//        report.setUser(user);
+//
+////         report.setMarks(user.getId());
+//        return ResponseEntity.ok(this.reportService.AddReport(report));
+//    }
 
 
 

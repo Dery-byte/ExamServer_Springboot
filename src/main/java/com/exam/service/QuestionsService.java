@@ -2,7 +2,9 @@ package com.exam.service;
 
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
+import com.exam.model.exam.Report;
 import com.exam.repository.QuestionsRepository;
+import com.exam.repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +21,8 @@ public class QuestionsService {
 
     @Autowired
     private QuestionsRepository questionsRepository;
+    @Autowired
+    private ReportRepository reportRepository;
 
     public Questions addQuestions(Questions questions){
         return this.questionsRepository.save(questions);
@@ -83,9 +87,10 @@ public Page<Questions> getLimitedRecords(int page, int size) {
         List<Questions> randomRecords = allRecords.subList(0, Math.min(2, allRecords.size()));
         return ResponseEntity.ok(randomRecords);
     }
+    public Report AddReport(Report report){
 
-
-
+        return reportRepository.save(report);
+    }
 
 
 
