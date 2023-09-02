@@ -13,6 +13,10 @@ public class Report {
     private Long id;
     @Column(precision = 10, scale = 1)
     private BigDecimal marks;
+
+
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT 'Completed'")
+    private String progress;
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
@@ -22,7 +26,8 @@ public class Report {
     private User user;
 
 
-    public Report(Long id, BigDecimal marks, Quiz quiz, User user) {
+    public Report(Long id, BigDecimal marks, Quiz quiz, User user, String progress) {
+        this.progress = progress;
         this.id = id;
         this.marks = marks;
         this.quiz = quiz;
@@ -45,6 +50,14 @@ public class Report {
     }
 
     public Report() {
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
     }
 
     public Long getId() {

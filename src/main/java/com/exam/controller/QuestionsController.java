@@ -127,16 +127,60 @@ public class QuestionsController {
 Report report = new Report();
         report.setQuiz(quiz);
         report.setUser(user);
+        report.setProgress("Completed");
         report.setMarks(BigDecimal.valueOf(Double.parseDouble(String.valueOf(((marksGot))))));
-
-
 //        report.setMarks(Double.parseDouble(String.valueOf(marksGot)));
-
         questionsService.AddReport(report);
-
         Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
         return ResponseEntity.ok(map);
     }
+
+
+    @PostMapping("question/add-quizUserId/{qid}")
+    public  String addUserIdAndQuizId(Principal principal, @PathVariable("qid") Long qid) {
+//        System.out.println(questions);
+        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+        Quiz quiz = this.quizService.getQuiz(qid);
+//        double marksGot = 0.0;
+//        int correctAnswers = 0;
+//        int attempted = 0;
+////        double maxMarks =0;
+//        double maxMarks = 0;
+//        for (Questions q : questions) {
+////            System.out.println(questions1.getGivenAnswer());
+//            maxMarks =  Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
+//            //Single question
+//            Questions question = this.questionsService.get(q.getQuesId());
+//            if (question.getAnswer().equals(q.getGivenAnswer())) {
+//                //correct
+//                correctAnswers++;
+//                double marksSingle =  (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) / (double) questions.size());
+//                //this.questions[0].quiz.maxMarks/this.questions.length;
+//                marksGot += marksSingle;
+//            }
+//            if (q.getGivenAnswer() != "") {
+//                attempted++;
+//            }
+//        };
+        Report report = new Report();
+        report.setQuiz(quiz);
+        report.setUser(user);
+        report.setProgress("Unfinished");
+//        report.setMarks(BigDecimal.valueOf(Double.parseDouble(String.valueOf(((marksGot))))));
+//        report.setMarks(Double.parseDouble(String.valueOf(marksGot)));
+        questionsService.AddReport(report);
+//        Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
+        return "User ID and Quiz ID saved";
+    }
+
+
+
+
+
+
+
+
+
 //    @PostMapping("/addReports/{qid}")
 //    public ResponseEntity<Report> addReports(@RequestBody Report report, Principal principal, @PathVariable("qid") Long qid, @PathVariable("ques_id") Long ques_id){
 //        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
@@ -148,8 +192,6 @@ Report report = new Report();
 ////         report.setMarks(user.getId());
 //        return ResponseEntity.ok(this.reportService.AddReport(report));
 //    }
-
-
 
 
 
