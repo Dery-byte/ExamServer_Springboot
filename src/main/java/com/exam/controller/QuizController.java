@@ -4,12 +4,17 @@ package com.exam.controller;
 import com.exam.model.exam.Category;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
+import com.exam.repository.QuizRepository;
+import com.exam.repository.ReportRepository;
 import com.exam.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @CrossOrigin("*")
@@ -18,6 +23,12 @@ import java.util.*;
 public class QuizController {
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @Autowired
+    ReportRepository reportRepository;
     @GetMapping("/getQuizzes")
     public ResponseEntity<?> quizzes(){
         return ResponseEntity.ok(this.quizService.getQuizzes());
@@ -78,6 +89,8 @@ public class QuizController {
         category.setCid(cid);
         return (List<Quiz>) this.quizService.getQuizzesOfCategory(category);
     }
+
+
     //get Active quizzes
     @GetMapping("/active/quizzes")
     public List<Quiz> activeQuizzes(){
@@ -100,6 +113,12 @@ public class QuizController {
 //        category.setCid(cid);
 //        return this.quizService.getQuizzesOfCategory(category);
 //    }
+
+
+
+
+
+
 
 
 

@@ -6,21 +6,16 @@ import com.exam.auth.RegisterRequest;
 import com.exam.helper.UserFoundException;
 import com.exam.helper.UserNotFoundException;
 import com.exam.model.User;
-import com.exam.model.exam.Category;
-import com.exam.model.exam.Questions;
-import com.exam.model.exam.Quiz;
+import com.exam.repository.UserRepository;
 import com.exam.service.AuthenticationService;
-import com.exam.service.CategoryService;
-import com.exam.service.QuestionsService;
-import com.exam.service.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.*;
 
 @RestController
 @CrossOrigin("*")
@@ -35,9 +30,13 @@ public class AuthenticationController {
 //    private CategoryService categoryService;
 //    @Autowired
 //    private QuizService quizService;
-
     @Autowired
-    private QuestionsService questionsService;
+    private UserRepository userRepository;
+
+//    @Autowired
+//    private QuestionsService questionsService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
 
@@ -273,6 +272,18 @@ public class AuthenticationController {
     @GetMapping("/current-user")
     public User getCurrentUser(Principal principal){ 
         return (User) this.userDetailsService.loadUserByUsername(principal.getName());
+
+    }
+
+    //Change Password
+    @PutMapping("/changePassword")
+    String changePassword(Principal principal, @RequestBody User users){
+
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+//        user.setPassword(users.getPassword());
+        user.setPassword(passwordEncoder.encode(users.getPassword()));
+        userRepository.save(user);
+return "Password changed " + user.getPassword();
 
     }
 

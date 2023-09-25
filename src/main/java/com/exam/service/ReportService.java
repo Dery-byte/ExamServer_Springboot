@@ -19,12 +19,26 @@ public class ReportService {
     public List<Report> getUserIdAndQuizId(){
         return this.reportRepository.findAll();
     }
-//private QuestionsService questionsService;
-//    @Autowired
-//    private QuestionsController questionsController;
-//    @Autowired
-//    private QuestionsService questionsService;
-//public Report AddReport(Report report){
-//        return reportRepository.save(report);
+    public Report addReport(Report report){
+        return reportRepository.save(report);
+    }
+//    public  Report QuizIds(Long qid){
+//        return this.reportRepository.findByqId(qid);
+//    }
+
+
+    //custome formular to get report by quiz id
+//    public List<Report> getReportsByQuizId(Long quizId) {
+//        return reportRepository.findByQuizId(quizId);
+//    }
+
+
+
+    //get Report by userId and QuizId
+//    public List<Report> getReports(Quiz quiz, User user){
+//
+//      return reportRepository.findByquiz(quiz, user);
+//
+//
 //    }
 }
