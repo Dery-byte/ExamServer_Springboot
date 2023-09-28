@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/auth")
 public class DemoController {
 
   @Autowired
@@ -30,6 +30,10 @@ public class DemoController {
     return  userRepository.findAll();
   }
 
+//  @GetMapping("/all_user")
+//  public Optional<User> getAllUserds(String username) {
+//    return  userRepository.findByUsername(username);
+//  }
 
 @GetMapping("/{username}")
 public Optional<User> fetch(@PathVariable("username") String username){

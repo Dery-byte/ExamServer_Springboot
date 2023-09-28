@@ -18,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -101,4 +103,16 @@ public class AuthenticationService {
         return this.userRepository.findByUsername(email);
     }
 
+//    public Optional<User> getUserByUserName(String username){
+//        return this.userRepository.findByUsername(username);
+//    }
+
+    public List<User> getUserByUserName(User user){
+        return Collections.singletonList(this.userRepository.save(user));
+    }
+
+
+    public List<User> getAllUsers() {
+        return  userRepository.findAll();
+    }
 }

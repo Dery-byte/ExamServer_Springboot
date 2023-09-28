@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -275,8 +276,8 @@ public class AuthenticationController {
 
     }
 
-    //Change Password
-    @PutMapping("/changePassword")
+    //Change Password if logged In
+    @PutMapping("/updatepassword")
     String changePassword(Principal principal, @RequestBody User users){
 
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
@@ -285,6 +286,26 @@ public class AuthenticationController {
         userRepository.save(user);
 return "Password changed " + user.getPassword();
 
+    }
+
+
+    //Change Password if not logged in
+    @PutMapping("/changePassword")
+    public String changePasswordNoLoggedIn(@RequestBody User users){
+       List<User> user = service.getAllUsers();
+         for(User u : user){
+             System.out.println(" Email :" + u.getUsername());
+             if(u.getUsername().equals(users.getUsername())){
+                 u.setPassword(passwordEncoder.encode(users.getPassword()));
+                 userRepository.save(u);
+             }
+         }
+         return "Successful";
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return  service.getAllUsers();
     }
 
 }

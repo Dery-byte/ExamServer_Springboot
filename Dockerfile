@@ -1,8 +1,11 @@
 # Build Stage
 FROM openjdk:20-jdk-slim
 EXPOSE 8080
-ADD target/security-0.0.1-SNAPSHOT.jar security-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java","-jar","/security-0.0.1-SNAPSHOT.jar"]
+ADD target/exam-docker.jar exam-docker.jar
+ENTRYPOINT ["java","-jar","/exam-docker.jar"]
+
+
+
 #WORKDIR /app
 #COPY . /app/
 #COPY . .
