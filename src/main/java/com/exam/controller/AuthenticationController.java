@@ -300,7 +300,7 @@ return "Password changed " + user.getPassword();
                  userRepository.save(u);
              }
          }
-         return "Successful";
+         return "Successful password " + users.getUsername();
     }
 
     @GetMapping("/users")

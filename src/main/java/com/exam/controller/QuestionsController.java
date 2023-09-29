@@ -1,5 +1,4 @@
 package com.exam.controller;
-
 import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
@@ -29,17 +27,13 @@ public class QuestionsController {
     private ReportRepository reportRepository;
     @Autowired
     private ReportService reportService;
-
     @Autowired
     private QuizService quizService;
-
     @Autowired
     private final UserDetailsService userDetailsService;
-
     public QuestionsController(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
-
     // get questions of any quiz
     @GetMapping("question/quiz/all/{qid}")
     public  ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid){
@@ -52,11 +46,9 @@ public class QuestionsController {
     //Get the specific questions from any quiz
     // get questions of any quiz
 
-
     //GET RANDOM QUESTIONS AND LIMITED
     @GetMapping("/random-records")
     public ResponseEntity<List<Questions>> getRandomRecords() {
-
         return this.questionsService.getRandomRecords();
     }
 
@@ -68,9 +60,6 @@ public class QuestionsController {
 //) {
 //    return questionsService.getLimitedRecords(page, size);
 //}
-
-
-
     @GetMapping("question/{quesId}")
     public  Questions getSpecificQuestionsOfQuizAdmin(@PathVariable("quesId") Long quesId ){
        return this.questionsService.getQuestions(quesId);
@@ -89,12 +78,10 @@ public class QuestionsController {
         this.questionsService.deleteQuestion(quesId);
     }
 
-
     //update Questions
     @PutMapping("/question/updateQuestions")
     public Questions updateQuestion(@RequestBody Questions questions){
         return  this.questionsService.updateQuestions(questions);
-
     }
 
 //    //evaluate Quiz
@@ -134,8 +121,6 @@ Report report = new Report();
         Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
         return ResponseEntity.ok(map);
     }
-
-
     @PostMapping("question/add-quizUserId/{qid}")
     public  String addUserIdAndQuizId(Principal principal, @PathVariable("qid") Long qid) {
 //        System.out.println(questions);
@@ -173,7 +158,6 @@ Report report = new Report();
 //        Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
         return "User ID and Quiz ID saved";
     }
-
 
 
 
@@ -297,7 +281,6 @@ Report report = new Report();
 //        return ResponseEntity.ok("Got questions with answers!");
 //
 //    }
-
 
 
 

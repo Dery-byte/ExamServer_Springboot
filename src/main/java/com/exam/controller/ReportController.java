@@ -2,6 +2,7 @@ package com.exam.controller;
 
 import com.exam.model.exam.Report;
 import com.exam.repository.ReportRepository;
+import com.exam.service.QuizService;
 import com.exam.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ public class ReportController {
 private ReportService reportService;
 @Autowired
     ReportRepository reportRepository;
+    @Autowired
+    private QuizService quizService;
 
 
 //get all reports
@@ -33,6 +36,26 @@ private ReportService reportService;
         return this.reportService.userQuizIDs(rid);
     }
 
+    @GetMapping("/getreportById")
+        public String getReport(){
+
+        return " Hello ";
+        }
+
+
+
+        // YOU WERE WORKING ON THIS
+//        @GetMapping("/getmarks")
+//    public String getRep(){
+//            Quiz quiz = (Quiz) quizService.getActiveQuizzes();
+//            Report report = (Report) reportService.getUserIdAndQuizId();
+//
+//
+//
+//
+//
+//            return " Successful " + report.getMarks();
+//        }
 
 //    @GetMapping("/getReport/{qid}")
 //    public Report getByQuizId(@PathVariable("qid") Long qid){
