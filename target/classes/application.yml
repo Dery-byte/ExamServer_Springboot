@@ -1,16 +1,16 @@
 
 server:
-  port: 5432
+  port: 3306
 
 spring:
   datasource:
-    url: postgres://exams_lwae_user:8uwwWUekA7zIzMIl5WBc8Ph2RBtnBM4j@dpg-cj9v0tue546c73ebdr80-a.oregon-postgres.render.com/exams_lwae
-    username: exams_lwae_user
-    password: 8uwwWUekA7zIzMIl5WBc8Ph2RBtnBM4j
+    url: jdbc:mysql://localhost:3306/Exam_portal?serverTimezone=UTC
+    username: root
+    password: EMMARESCUE
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgresSQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect

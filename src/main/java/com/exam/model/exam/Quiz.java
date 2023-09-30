@@ -19,9 +19,14 @@ public class Quiz {
     @Column(length =  5000)
     private String description;
     private String maxMarks;
+    @Column(length =  5000, nullable = false)
+    private String quizTime;
+
+    @Column(length =  5000, nullable = false)
     private String numberOfQuestions;
     private  boolean active = false;
     private boolean attempted=false;
+    @Column(length =  5000, nullable = false)
     private String quizpassword;
     //add ...
 
@@ -45,7 +50,21 @@ public class Quiz {
      private Set<Questions> questions = new HashSet<>();
 
 
+    public String getQuizTime() {
+        return quizTime;
+    }
 
+    public void setQuizTime(String quizTime) {
+        this.quizTime = quizTime;
+    }
+
+    public Set<Report> getReports() {
+        return reports;
+    }
+
+    public void setReports(Set<Report> reports) {
+        this.reports = reports;
+    }
 
     @JsonCreator
     public Quiz() {
