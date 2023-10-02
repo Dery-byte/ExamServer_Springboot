@@ -8,6 +8,7 @@ import com.exam.repository.QuizRepository;
 import com.exam.repository.ReportRepository;
 import com.exam.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class QuizController {
     private QuizRepository quizRepository;
 
     @Autowired
+    @Lazy
     ReportRepository reportRepository;
     @GetMapping("/getQuizzes")
     public ResponseEntity<?> quizzes(){

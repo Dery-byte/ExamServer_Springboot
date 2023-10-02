@@ -5,6 +5,7 @@ import com.exam.repository.ReportRepository;
 import com.exam.service.QuizService;
 import com.exam.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +16,10 @@ import java.util.List;
 public class ReportController {
 
 @Autowired
+@Lazy
 private ReportService reportService;
-@Autowired
+    @Autowired
+    @Lazy
     ReportRepository reportRepository;
     @Autowired
     private QuizService quizService;
@@ -32,59 +35,16 @@ private ReportService reportService;
 //    get report by report id
     @GetMapping("/getReport/{rid}")
     public Report getUserQuizIds(@PathVariable("rid") Long rid){
-
         return this.reportService.userQuizIDs(rid);
     }
 
-    @GetMapping("/getreportById")
-        public String getReport(){
-
-        return " Hello ";
-        }
 
 
 
-        // YOU WERE WORKING ON THIS
-//        @GetMapping("/getmarks")
-//    public String getRep(){
-//            Quiz quiz = (Quiz) quizService.getActiveQuizzes();
-//            Report report = (Report) reportService.getUserIdAndQuizId();
-//
-//
-//
-//
-//
-//            return " Successful " + report.getMarks();
-//        }
-
-//    @GetMapping("/getReport/{qid}")
-//    public Report getByQuizId(@PathVariable("qid") Long qid){
-//        return this.reportService.userQuizIDs(qid);
-//    }
-
-    //get Report by userId and QuizId
-//    @GetMapping("/reports/{userId}/{quizId}")
-//    public List<Report> getReport(@PathVariable("userId") Long userId, @PathVariable("quizId") Long quizId){
-//        User user = new User();
-//        user.setId(Math.toIntExact(userId));
-//        Quiz quiz = new Quiz();
-//        quiz.setqId(quizId);
-//        return  this.reportService.getReports(quiz, user);
-//    }
-
-// By QUIZ ID
-//@GetMapping("/byQuiz/{quizId}")
-//public ResponseEntity<List<Report>> getReportsByQuizId(@PathVariable Long quizId) {
-//    List<Report> reports = reportService.getReportsByQuizId(quizId);
-//    return ResponseEntity.ok(reports);
-//}
 
 
 
-//    @GetMapping("/marks-progress/{qId}")
-//    public List<Object[]> getMarksAndProgressByQId(@PathVariable Long qId) {
-//        return reportRepository.findMarksAndProgressByQId(qId);
-//    }
+
 
 
 

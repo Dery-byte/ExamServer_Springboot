@@ -1,4 +1,5 @@
 package com.exam.controller;
+
 import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
@@ -8,9 +9,11 @@ import com.exam.service.QuestionsService;
 import com.exam.service.QuizService;
 import com.exam.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
@@ -22,12 +25,16 @@ import java.util.Set;
 @RequestMapping("/api/v1/auth")
 public class QuestionsController {
     @Autowired
+    @Lazy
     private QuestionsService questionsService;
     @Autowired
+    @Lazy
     private ReportRepository reportRepository;
     @Autowired
+    @Lazy
     private ReportService reportService;
     @Autowired
+
     private QuizService quizService;
     @Autowired
     private final UserDetailsService userDetailsService;

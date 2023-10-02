@@ -3,6 +3,7 @@ package com.exam.service;
 import com.exam.model.exam.Report;
 import com.exam.repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @Service
 public class ReportService {
     @Autowired
+    @Lazy
     private ReportRepository reportRepository;
 
 
@@ -22,9 +24,17 @@ public class ReportService {
     public Report addReport(Report report){
         return reportRepository.save(report);
     }
-//    public  Report QuizIds(Long qid){
-//        return this.reportRepository.findByqId(qid);
+
+
+
+
+
+
+//    get report by user_Id and Quiz_id
+//    public List<Report> getSpecificUserReport(Quiz quiz, User user){
+//        return reportRepository.findByUserIdAndQuizId(Math.toIntExact(quiz.getqId()), Long.valueOf(user.getId()));
 //    }
+
 
 
     //custome formular to get report by quiz id
@@ -36,7 +46,6 @@ public class ReportService {
 
     //get Report by userId and QuizId
 //    public List<Report> getReports(Quiz quiz, User user){
-//
 //      return reportRepository.findByquiz(quiz, user);
 //
 //

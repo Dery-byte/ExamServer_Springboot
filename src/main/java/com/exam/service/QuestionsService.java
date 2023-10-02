@@ -5,6 +5,7 @@ import com.exam.model.exam.Quiz;
 import com.exam.repository.QuestionsRepository;
 import com.exam.repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class QuestionsService {
     @Autowired
     private QuestionsRepository questionsRepository;
     @Autowired
+    @Lazy
     private ReportRepository reportRepository;
 
     public Questions addQuestions(Questions questions){
