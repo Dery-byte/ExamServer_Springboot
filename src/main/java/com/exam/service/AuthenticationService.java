@@ -115,4 +115,8 @@ public class AuthenticationService {
     public List<User> getAllUsers() {
         return  userRepository.findAll();
     }
+
+    public User getUserById(Integer user_id){
+        return (User) userRepository.findById(user_id).get();
+    }
 }

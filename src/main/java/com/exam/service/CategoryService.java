@@ -34,4 +34,6 @@ private CategoryRepository categoryRepository;
         category.setCid(categoryId);
         this.categoryRepository.delete(category);
     }
+
+
 }

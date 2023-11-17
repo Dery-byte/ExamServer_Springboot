@@ -1,10 +1,15 @@
 package com.exam.controller;
 
 import com.exam.model.exam.Category;
+import com.exam.model.exam.Quiz;
 import com.exam.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 //@RequestMapping("/category")
@@ -44,6 +49,16 @@ public class CategoryController {
     }
 
 
+//Get element by Course Name
+private List<Quiz> itemList = new ArrayList<>();
+    @GetMapping("/byCourse/{cid}")
+    public List<Quiz> getItemsByCourse(@PathVariable Long cid) {
+        List<Quiz> itemsByCourse = itemList.stream()
+                .filter(item -> item.getCategory().getCid()!= null && item.getCategory().getCid().equals(cid))
+                .collect(Collectors.toList());
+        System.out.println(itemsByCourse);
+        return itemsByCourse;
+    }
 
 
 
