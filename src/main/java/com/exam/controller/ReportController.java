@@ -29,10 +29,8 @@ private ReportService reportService;
     ReportRepository reportRepository;
     @Autowired
     private QuizService quizService;
-
     @Autowired
     private AuthenticationService authenticationService;
-
 //get all reports
     @GetMapping("/getReport")
     public List<Report> getSpecificQuestionsOfQuizAdmin(){
@@ -62,31 +60,18 @@ public ResponseEntity<List<Report>>  getQuizIds(@PathVariable("quiz_Id") Long qu
         return ResponseEntity.ok(reports);
     }
 
-
-
-
     @GetMapping("/user/{user_Id}/{quiz_Id}")
     public ResponseEntity<?> getQuizResultsByUserAndType( @PathVariable("user_Id") Integer user_Id, @PathVariable("quiz_Id") Long quiz_Id){
         Optional<Quiz> quiz = Optional.ofNullable(quizService.getQuiz(quiz_Id));
         Optional<User> user = Optional.ofNullable(authenticationService.getUserById(user_Id));
-
         Optional<User> users = Optional.of(Optional.ofNullable(authenticationService.getUserById(user_Id)).orElseThrow());
-
-
         if(quiz.isPresent() && user.isPresent()){
             List<Report> quizResults = reportService.getReportByUserAndType(user,quiz);
             return ResponseEntity.ok(quizResults);
         }
         else{
-
 //            Make sure to handle the error here
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Quiz not Found");
-
         }
-
 }
-
-
-
-
 }

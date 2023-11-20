@@ -285,27 +285,24 @@ public class AuthenticationController {
         user.setPassword(passwordEncoder.encode(users.getPassword()));
         userRepository.save(user);
 return "Password changed " + user.getPassword();
-
     }
-
 
     //Change Password if not logged in
     @PutMapping("/changePassword")
-    public String changePasswordNoLoggedIn(@RequestBody User users){
-       List<User> user = service.getAllUsers();
-         for(User u : user){
-             System.out.println(" Email :" + u.getUsername());
-             if(u.getUsername().equals(users.getUsername())){
-                 u.setPassword(passwordEncoder.encode(users.getPassword()));
-                 userRepository.save(u);
-             }
-         }
-         return "Successful password " + users.getUsername();
+    public String changePasswordNoLoggedIn(@RequestBody User users) {
+        List<User> user = service.getAllUsers();
+        for (User u : user) {
+            if (u.getUsername().equals(users.getUsername())) {
+                System.out.println("True");
+                u.setPassword(passwordEncoder.encode(users.getPassword()));
+                userRepository.save(u);
+                return "Successful password reset " + " for " + users.getUsername();
+            }
+        }
+        return "No username " + users.getUsername() + " found ";
     }
-
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return  service.getAllUsers();
     }
-
 }
