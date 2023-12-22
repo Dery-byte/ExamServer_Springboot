@@ -240,22 +240,6 @@ public class AuthenticationController {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
@@ -299,7 +283,7 @@ return "Password changed " + user.getPassword();
                 return "Successful password reset " + " for " + users.getUsername();
             }
         }
-        return "No username " + users.getUsername() + " found ";
+        return "Username " + users.getUsername() + " not found ";
     }
     @GetMapping("/users")
     public List<User> getAllUsers() {

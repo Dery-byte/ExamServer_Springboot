@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 @RestController
 //@RequestMapping("/questions")
@@ -92,6 +93,10 @@ public class QuestionsController {
     }
 
 //    //evaluate Quiz
+
+//    logout the person automatically if token expires
+
+//    THIS METHOD SHOULD BE PUT NOT POST, NOTE YOU HAVE TO UPDATE THE UNFINISHED STATE IF THE SUBMIT BUTTUN IS CLICKED
     @PostMapping("question/eval-quiz/{qid}")
     public  ResponseEntity<?> evalQuiz(@RequestBody List<Questions> questions, Principal principal, @PathVariable("qid") Long qid) {
 //        System.out.println(questions);
@@ -118,7 +123,26 @@ public class QuestionsController {
                 attempted++;
             }
         };
-Report report = new Report();
+
+//        Report report = (Report) this.reportRepository.findByUserAndQuiz(Optional.ofNullable(user), Optional.ofNullable(quiz));
+//        int userid =report.getUser().getId();
+//        Long quizId = report.getQuiz().getqId();
+//
+//        if(report.getUser().getId().equals(user.getId()) && report.getQuiz().getqId().equals(quiz.getqId())){
+//            report.setQuiz(quiz);
+//            report.setUser(user);
+//            report.setProgress("Completed");
+//            report.setMarks(BigDecimal.valueOf(Double.parseDouble(String.valueOf(((marksGot))))));
+//            reportService.addReport(report);
+//        }
+
+
+
+
+
+
+
+        Report report = new Report();
         report.setQuiz(quiz);
         report.setUser(user);
         report.setProgress("Completed");
@@ -128,43 +152,48 @@ Report report = new Report();
         Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
         return ResponseEntity.ok(map);
     }
-    @PostMapping("question/add-quizUserId/{qid}")
-    public  String addUserIdAndQuizId(Principal principal, @PathVariable("qid") Long qid) {
-//        System.out.println(questions);
-        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
-        Quiz quiz = this.quizService.getQuiz(qid);
-        double marksGot = 0.0;
-//        int correctAnswers = 0;
-//        int attempted = 0;
-////        double maxMarks =0;
-//        double maxMarks = 0;
-//        for (Questions q : questions) {
-////            System.out.println(questions1.getGivenAnswer());
-//            maxMarks =  Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
-//            //Single question
-//            Questions question = this.questionsService.get(q.getQuesId());
-//            if (question.getAnswer().equals(q.getGivenAnswer())) {
-//                //correct
-//                correctAnswers++;
-//                double marksSingle =  (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) / (double) questions.size());
-//                //this.questions[0].quiz.maxMarks/this.questions.length;
-//                marksGot += marksSingle;
-//            }
-//            if (q.getGivenAnswer() != "") {
-//                attempted++;
-//            }
-//        };
-        Report report = new Report();
-        report.setQuiz(quiz);
-        report.setUser(user);
-        report.setProgress("Unfinished");
-        report.setMarks(BigDecimal.valueOf(Double.parseDouble(String.valueOf(((marksGot))))));
-//        report.setMarks(marksGot);
-//        report.setMarks(Double.parseDouble(String.valueOf(marksGot)));
-        reportService.addReport(report);
-//        Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
-        return "User ID and Quiz ID saved";
-    }
+
+
+
+
+// THIS FUNCTION SET THE PROGRESS TO UNFINISHED AFTER CONFIRMING A CORRECT PASSWORD
+//    @PostMapping("question/add-quizUserId/{qid}")
+//    public  String addUserIdAndQuizId(Principal principal, @PathVariable("qid") Long qid) {
+////        System.out.println(questions);
+//        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+//        Quiz quiz = this.quizService.getQuiz(qid);
+//        double marksGot = 0.0;
+////        int correctAnswers = 0;
+////        int attempted = 0;
+//////        double maxMarks =0;
+////        double maxMarks = 0;
+////        for (Questions q : questions) {
+//////            System.out.println(questions1.getGivenAnswer());
+////            maxMarks =  Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
+////            //Single question
+////            Questions question = this.questionsService.get(q.getQuesId());
+////            if (question.getAnswer().equals(q.getGivenAnswer())) {
+////                //correct
+////                correctAnswers++;
+////                double marksSingle =  (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) / (double) questions.size());
+////                //this.questions[0].quiz.maxMarks/this.questions.length;
+////                marksGot += marksSingle;
+////            }
+////            if (q.getGivenAnswer() != "") {
+////                attempted++;
+////            }
+////        };
+//        Report report = new Report();
+//        report.setQuiz(quiz);
+//        report.setUser(user);
+//        report.setProgress("Unfinished");
+//        report.setMarks(BigDecimal.valueOf(Double.parseDouble(String.valueOf(((marksGot))))));
+////        report.setMarks(marksGot);
+////        report.setMarks(Double.parseDouble(String.valueOf(marksGot)));
+//        reportService.addReport(report);
+////        Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
+//        return "User ID and Quiz ID saved";
+//    }
 
 
 
@@ -288,6 +317,9 @@ Report report = new Report();
 //        return ResponseEntity.ok("Got questions with answers!");
 //
 //    }
+
+
+
 
 
 
