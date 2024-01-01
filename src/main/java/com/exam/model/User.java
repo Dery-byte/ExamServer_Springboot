@@ -28,6 +28,7 @@ public class User implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
+  @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
   private Integer id;
 
   @Column( nullable = false)
