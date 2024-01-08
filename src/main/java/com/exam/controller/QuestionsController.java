@@ -4,12 +4,14 @@ import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.Report;
+import com.exam.repository.QuizRepository;
 import com.exam.repository.ReportRepository;
 import com.exam.service.QuestionsService;
 import com.exam.service.QuizService;
 import com.exam.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +36,12 @@ public class QuestionsController {
     @Autowired
     @Lazy
     private ReportService reportService;
-    @Autowired
 
+
+    @Autowired
+    @Lazy
+    private QuizRepository quizRepository;
+    @Autowired
     private QuizService quizService;
     @Autowired
     private final UserDetailsService userDetailsService;
@@ -152,6 +158,55 @@ public class QuestionsController {
         Map<String, Object> map = Map.of("marksGot", marksGot, "correctAnswers", correctAnswers, "attempted", attempted, "maxMarks", maxMarks);
         return ResponseEntity.ok(map);
     }
+
+
+//  UPLOADING QUESTIONS
+@PostMapping("/upload/{quizId}")
+public ResponseEntity<String> uploadQuestions(
+        @PathVariable Long quizId,
+        @RequestBody List<Questions> questions) {
+    // Get the quiz entity from the database using the quizId
+    Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
+    if (optionalQuiz.isPresent()) {
+        Quiz quiz = optionalQuiz.get();
+        int numberOfQuestions = Integer.parseInt(quiz.getNumberOfQuestions());
+        // Set the quiz for each question
+        questions.forEach(question -> question.setQuiz(quiz));
+        if(questions.size()== numberOfQuestions)
+        {
+            // Save questions
+            List<Questions> savedQuestions = questionsService.saveAllQuestions(questions);
+            return new ResponseEntity<>("Uploaded " + savedQuestions.size() + " questions to the quiz with ID: " + quizId, HttpStatus.CREATED);
+        }
+        else{
+            return new ResponseEntity<>("Number of questions should be " + numberOfQuestions+ " but you provided " + questions.size(), HttpStatus.NOT_FOUND);
+        }
+   } else {
+        return new ResponseEntity<>("Quiz with ID " + quizId +  " not found.", HttpStatus.NOT_FOUND);
+    }
+}
+
+//    UPLOADING QUESTIONS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
