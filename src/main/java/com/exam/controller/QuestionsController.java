@@ -172,14 +172,14 @@ public ResponseEntity<String> uploadQuestions(
         int numberOfQuestions = Integer.parseInt(quiz.getNumberOfQuestions());
         // Set the quiz for each question
         questions.forEach(question -> question.setQuiz(quiz));
-        if(questions.size()== numberOfQuestions)
+        if(questions.size()<= numberOfQuestions)
         {
             // Save questions
             List<Questions> savedQuestions = questionsService.saveAllQuestions(questions);
             return new ResponseEntity<>("Uploaded " + savedQuestions.size() + " questions to the quiz with ID: " + quizId, HttpStatus.CREATED);
         }
         else{
-            return new ResponseEntity<>("Number of questions should be " + numberOfQuestions+ " but you provided " + questions.size(), HttpStatus.NOT_FOUND);
+            return ResponseEntity.status( HttpStatus.BAD_REQUEST).body("Number of questions should be " + numberOfQuestions+ " but you provided " + questions.size());
         }
    } else {
         return new ResponseEntity<>("Quiz with ID " + quizId +  " not found.", HttpStatus.NOT_FOUND);

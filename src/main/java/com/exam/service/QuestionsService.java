@@ -79,12 +79,16 @@ public Page<Questions> getLimitedRecords(int page, int size) {
 
 
 
-//    uploading the questions
-public List<Questions> saveAllQuestions(List<Questions> questions) {
-    return questionsRepository.saveAll(questions);
-}
-//    uploading the questions
+////    uploading the questions
+//public List<Questions> saveAllQuestions(List<Questions> questions) {return questionsRepository.saveAll(questions);
+//}
+////    uploading the questions
 
+
+    //    uploading the questions
+    public List<Questions> saveAllQuestions(List<Questions> questions) {return questionsRepository.saveAll(questions);
+    }
+//    uploading the questions
 
 
 

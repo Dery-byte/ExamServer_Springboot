@@ -36,4 +36,6 @@ private CategoryRepository categoryRepository;
     }
 
 
+    public static class QuestionsSBService {
+    }
 }
