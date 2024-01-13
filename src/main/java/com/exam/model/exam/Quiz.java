@@ -8,8 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "quiz")
+@Entity(name = "quiz")
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
