@@ -15,19 +15,23 @@ public class Category {
     private Long cid;
 
     private  String title;
+    private String CourseCode;
 
     private String description;
+    private String level;
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
     @JsonCreator
-    public Category(Long cid, String title, String description, Set<Quiz> quizzes) {
+    public Category(Long cid, String level, String title, String CourseCode, String description, Set<Quiz> quizzes) {
         this.cid = cid;
         this.title = title;
+        this.CourseCode=CourseCode;
         this.description = description;
         this.quizzes = quizzes;
+        this.level = level;
     }
 
     public Category() {
@@ -41,6 +45,23 @@ public class Category {
 
     public Long getCid() {
         return cid;
+    }
+
+    public String getCourseCode() {
+        return CourseCode;
+    }
+
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public void setCourseCode(String courseCode) {
+        CourseCode = courseCode;
     }
 
     public void setCid(Long cid) {

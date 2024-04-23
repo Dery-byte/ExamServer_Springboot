@@ -20,7 +20,6 @@ public class CategoryController {
     //add category
     @Autowired
     private CategoryService categoryService;
-
     @PostMapping("/add")
     public ResponseEntity<Category> addCategory(@RequestBody Category category){
         Category category1 = this.categoryService.addCategory(category);
@@ -40,7 +39,6 @@ public class CategoryController {
     @PutMapping("/category/updateCategory")
     public Category updateCategory(@RequestBody Category category){
         return  this.categoryService.UpdateCategory(category);
-
     }
         //delete category
     @DeleteMapping("/category/{categoryId}")
