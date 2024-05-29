@@ -8,24 +8,24 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Entity(name = "quiz")
+@Entity
+@Table(name = "quiz")
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long qId;
-
     private String title;
-    @Column(length =  5000)
+    @Column(length =  100)
     private String description;
     private String maxMarks;
-    @Column(length =  5000, nullable = false)
+    @Column(length =  50, nullable = false)
     private String quizTime;
 
-    @Column(length =  5000, nullable = false)
+    @Column(length =  50, nullable = false)
     private String numberOfQuestions;
     private  boolean active = false;
     private boolean attempted=false;
-    @Column(length =  5000, nullable = false)
+    @Column(length =  50, nullable = false)
     private String quizpassword;
     //add ...
 
@@ -65,10 +65,6 @@ public class Quiz {
         this.reports = reports;
     }
 
-    @JsonCreator
-    public Quiz() {
-    }
-
     public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions) {
         this.qId = qId;
         this.title = title;
@@ -82,6 +78,10 @@ public class Quiz {
         this.category = category;
         this.questions = questions;
     }
+    @JsonCreator
+    public Quiz() {
+    }
+
 
 
 
