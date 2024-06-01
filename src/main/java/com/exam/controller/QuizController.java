@@ -72,7 +72,9 @@ public class QuizController {
             list = list.subList(0, Integer.parseInt(quiz.getNumberOfQuestions()+1));
         }
         list.forEach((q)->{
-            q.setAnswer("");
+//            q.setAnswer(new String[0]);
+            q.setcorrect_answer(new String[0]);
+//            q.setAnswer("");
         });
         Collections.shuffle(list);
 
