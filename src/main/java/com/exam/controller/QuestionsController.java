@@ -52,11 +52,15 @@ public class QuestionsController {
         Quiz quiz = new Quiz();
         quiz.setqId(qid);
         Set<Questions> questionsOfQuiz =this.questionsService.getQuestionsOfQuiz(quiz);
-        return ResponseEntity.ok(questionsOfQuiz);
-//        return ResponseEntity.ok(list);
+        List<Questions> list = new ArrayList<>(questionsOfQuiz);
+
+Collections.shuffle(list);
+
+
+//        return ResponseEntity.ok(questionsOfQuiz);
+        return ResponseEntity.ok(list);
     }
-    //Get the specific questions from any quiz
-    // get questions of any quiz
+
 
     //GET RANDOM QUESTIONS AND LIMITED
     @GetMapping("/random-records")

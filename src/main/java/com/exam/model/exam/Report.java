@@ -77,11 +77,4 @@ public class Report {
     }
 
 
-//    public double getMarks() {
-//        return marks;
-//    }
-//
-//    public void setMarks(double marks) {
-//        this.marks = marks;
-//    }
 }

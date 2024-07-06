@@ -1,5 +1,6 @@
 package com.exam.model;
 
+import com.exam.model.exam.Providers;
 import com.exam.model.exam.Report;
 import com.exam.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,9 +42,18 @@ public class User implements UserDetails {
   @Column(unique = true, nullable = false)
   private String username;
   private String phone;
-
+  private boolean emailVerified = false;
+  private boolean phoneVerified = false;
+  private boolean enabled = true;
+  @Column(length = 1000)
+  private String profilePic;
   @Enumerated(EnumType.STRING)
   private Role role;
+  @Enumerated(value = EnumType.STRING)
+  private Providers provider = Providers.SELF;
+  private String providerUserId;
+  @Column(length = 1000)
+  private String about;
 
 
 //Trying to check for one quiz attempts
@@ -85,6 +95,58 @@ public class User implements UserDetails {
   @Override
   public boolean isCredentialsNonExpired() {
     return true;
+  }
+
+  public boolean isEmailVerified() {
+    return emailVerified;
+  }
+
+  public void setEmailVerified(boolean emailVerified) {
+    this.emailVerified = emailVerified;
+  }
+
+  public boolean isPhoneVerified() {
+    return phoneVerified;
+  }
+
+  public void setPhoneVerified(boolean phoneVerified) {
+    this.phoneVerified = phoneVerified;
+  }
+
+  public String getProfilePic() {
+    return profilePic;
+  }
+
+  public void setProfilePic(String profilePic) {
+    this.profilePic = profilePic;
+  }
+
+  public Providers getProvider() {
+    return provider;
+  }
+
+  public void setProvider(Providers provider) {
+    this.provider = provider;
+  }
+
+  public String getProviderUserId() {
+    return providerUserId;
+  }
+
+  public void setProviderUserId(String providerUserId) {
+    this.providerUserId = providerUserId;
+  }
+
+  public String getAbout() {
+    return about;
+  }
+
+  public void setAbout(String about) {
+    this.about = about;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   @Override

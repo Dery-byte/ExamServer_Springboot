@@ -14,3 +14,13 @@
 #    properties:
 #      hibernate:
 #        dialect: org.hibernate.dialect.MySQL8Dialect
+
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        opaque-token:
+          introspection-uri: https://www.googleapis.com
+        clientId: "1006167054424-vgf13e2d85q918umpdku10un40613m1v.apps.googleusercontent.com"
+        clientSecret: "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"

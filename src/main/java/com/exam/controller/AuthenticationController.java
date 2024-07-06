@@ -11,8 +11,11 @@ import com.exam.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -38,6 +41,13 @@ public class AuthenticationController {
 //    private QuestionsService questionsService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+//    OAUTH2 GOOGLE CONTROLLER
+
+    @GetMapping("/")
+    public String home(){
+        return "index";
+    }
 
 
 
@@ -188,55 +198,6 @@ public class AuthenticationController {
 //            return ResponseEntity.ok(map);
 //
 //        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
