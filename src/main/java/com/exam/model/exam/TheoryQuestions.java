@@ -14,7 +14,7 @@ public class TheoryQuestions {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long TqId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String  quesNo;
 
 //    # MAKE SURE THE THEORY IS ONLY UPLOADABLE NOTHING ELSE.

@@ -43,9 +43,9 @@ public class TheoryService {
     public Set<TheoryQuestions> getQuestionsForSpecificQuiz(Quiz quiz){
         return this.theoryQuestionsRepository.findByQuiz(quiz);
     }
-    public void deleteQuestion(Long quesId){
+    public void deleteQuestion(Long TqId){
         TheoryQuestions theoryQuestions = new TheoryQuestions();
-        theoryQuestions.setTqId(quesId);
+        theoryQuestions.setTqId(TqId);
         this.theoryQuestionsRepository.delete(theoryQuestions);
     }
 
