@@ -2,6 +2,8 @@ package com.exam.controller;
 
 import com.exam.model.exam.GradeRequest;
 import com.exam.model.exam.GradeResponse;
+import com.exam.model.exam.Questions;
+import com.exam.model.exam.TheoryQuestions;
 import com.exam.service.Impl.OpenAIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,14 +41,23 @@ public void GeminiController(GeminiAIService geminiAIService) {
     this.geminiAIService = geminiAIService;
 }
 
+//    @PostMapping("/gemini-data")
+//    public String getGeminiData() {
+//        return geminiAIService.getSomeDataFromGemini();
+//    }
+
+
     @PostMapping("/gemini-data")
-    public String getGeminiData() {
-        return geminiAIService.getSomeDataFromGemini();
+    public ResponseEntity<String> generateText(@RequestBody TheoryQuestions theoryQuestions) {
+        try {
+            String generatedText = geminiAIService.getSomeDataFromGemini(theoryQuestions.getQuestion());
+            return ResponseEntity.ok(generatedText);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error generating text: " + e.getMessage());
+        }
+
+
     }
-
-
-
-
 
 
 }
