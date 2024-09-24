@@ -11,8 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,9 +32,19 @@ private ReportService reportService;
     ReportRepository reportRepository;
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private final UserDetailsService userDetailsService;
+
+
     @Autowired
     private AuthenticationService authenticationService;
-//get all reports
+
+    public ReportController(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    //get all reports
     @GetMapping("/getReport")
     public List<Report> getSpecificQuestionsOfQuizAdmin(){
        return this.reportService.getUserIdAndQuizId();
@@ -44,11 +57,59 @@ private ReportService reportService;
         return this.reportService.userQuizIDs(rid);
     }
 
+
+    //ADD THE SECTION MARKS METHODS
+    @PutMapping("addtheoryMark")
+    public ResponseEntity<?> addmarks(@RequestBody Report report, Principal principal) {
+        // Validate if the principal is present
+        if (principal == null) {
+            return ResponseEntity.badRequest().body("Principal is null");
+        }
+        // Fetch the user using the principal (currently logged-in user)
+        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+        // Get the quiz ID from the report
+        Long quizId = report.getQuiz().getqId();
+
+        System.out.println("Quiz ID: " + quizId);
+        System.out.println("User ID: " + user.getId());
+        // Validate if quizId is present
+        if (quizId == null) {
+            return ResponseEntity.badRequest().body("Quiz ID is missing");
+        }
+        // Find the existing report by user ID and quiz ID
+        Report existingReport = this.reportService.findByUserAndQuiz(user.getId(), quizId);
+
+        System.out.println("existing report: " + existingReport);
+        // Validate if the report exists
+        if (existingReport == null) {
+            Report newReport = new Report();
+            newReport.setUser(user);
+            newReport.setQuiz(report.getQuiz());
+            newReport.setMarksB(report.getMarksB());
+            newReport.setProgress("Completed");
+            newReport.setMarks(BigDecimal.valueOf(0));
+            Report report1 = reportRepository.save(newReport);
+            return ResponseEntity.ok(report1);
+
+        }
+        // Update the MarksB field with the value from the request body
+        existingReport.setMarksB(report.getMarksB());
+        // Save the updated report entity back to the database
+        Report updatedReport = reportRepository.save(existingReport);
+        // Return the updated report in the response
+        return ResponseEntity.ok(updatedReport);
+    }
+
+
+
+
+    // ADD THE SECTION B MARKS ENDS HERE
+
 //Report on quiz id
 @GetMapping("/getReports/{quiz_Id}")
 public ResponseEntity<List<Report>>  getQuizIds(@PathVariable("quiz_Id") Long quiz_Id){
         Quiz quiz = quizService.getQuiz(quiz_Id);
-        List<Report> reports = reportService.reportByQuiz_Id(quiz);
+        List<Report> reports = reportService.reportByQuiz_Id(quiz.getqId());
     return ResponseEntity.ok(reports);
 }
 

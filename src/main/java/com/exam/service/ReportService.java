@@ -34,7 +34,7 @@ public class ReportService {
 
 
     //report By Quiz
-    public List<Report> reportByQuiz_Id(Quiz quiz){
+    public List<Report> reportByQuiz_Id(Long quiz){
         return reportRepository.findByQuiz(quiz);
     }
     ///Report By User
@@ -43,26 +43,15 @@ public class ReportService {
     }
 
 
+    public List<Report> findReportsByUserAndQuiz(User user, Quiz quiz) {
+        return reportRepository.findByUserAndQuiz(user, quiz);
+    }
 
+    public Report findByUserAndQuiz(Integer id, Long quizId) {
 
-//    get report by user_Id and Quiz_id
-//    public List<Report> getSpecificUserReport(Quiz quiz, User user){
-//        return reportRepository.findByUserIdAndQuizId(Math.toIntExact(quiz.getqId()), Long.valueOf(user.getId()));
-//    }
-
-
-
-    //custome formular to get report by quiz id
-//    public List<Report> getReportsByQuizId(Long quizId) {
-//        return reportRepository.findByQuizId(quizId);
-//    }
+        return reportRepository.findByUser_idAndQuiz_qId(id,quizId);
+    }
 
 
 
-    //get Report by userId and QuizId
-//    public List<Report> getReports(Quiz quiz, User user){
-//      return reportRepository.findByquiz(quiz, user);
-//
-//
-//    }
 }

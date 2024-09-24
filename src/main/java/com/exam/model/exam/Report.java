@@ -13,6 +13,7 @@ public class Report {
     private Long id;
     @Column(precision = 10, scale = 1)
     private BigDecimal marks;
+    private BigDecimal marksB;
 
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'Completed'")
@@ -26,11 +27,12 @@ public class Report {
     private User user;
 
 
-    public Report(Long id, BigDecimal marks, Quiz quiz, User user, String progress) {
+    public Report(Long id, BigDecimal marks, BigDecimal marksB, Quiz quiz, User user, String progress) {
         this.progress = progress;
         this.id = id;
         this.marks = marks;
         this.quiz = quiz;
+        this.marksB = marksB;
     }
 
     public Quiz getQuiz() {
@@ -76,5 +78,11 @@ public class Report {
         this.marks = marks;
     }
 
+    public BigDecimal getMarksB() {
+        return marksB;
+    }
 
+    public void setMarksB(BigDecimal marksB) {
+        this.marksB = marksB;
+    }
 }

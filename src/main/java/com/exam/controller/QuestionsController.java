@@ -41,6 +41,8 @@ public class QuestionsController {
     private QuizRepository quizRepository;
     @Autowired
     private QuizService quizService;
+
+
     @Autowired
     private final UserDetailsService userDetailsService;
     public QuestionsController(UserDetailsService userDetailsService) {
@@ -181,6 +183,25 @@ Collections.shuffle(list);
 //        return ResponseEntity.ok(map);
 //    }
 
+//    @PutMapping("addtheoryMarks/{qid}")
+//    public  ResponseEntity<?> addmarks(@RequestBody Report report, Principal principal, @PathVariable("qid") Long qid){
+//        if (principal == null || qid == null) {
+//            return ResponseEntity.badRequest().body("Principal or quiz ID is null");
+//        }
+//        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+//        Quiz quiz = this.quizService.getQuiz(qid);
+//
+//        if (user == null || quiz == null) {
+//            return ResponseEntity.badRequest().body("User or quiz not found");
+//        }
+//        report.setUser(user);
+//        report.setQuiz(quiz);
+//        report.setMarksB(report.getMarksB());
+//        Report reports = reportRepository.save(report);
+//
+//        return ResponseEntity.ok(reports);
+//    };
+
 
 
     @PostMapping("question/eval-quiz/{qid}")
@@ -238,6 +259,8 @@ Collections.shuffle(list);
         report.setUser(user);
         report.setProgress("Completed");
         report.setMarks(BigDecimal.valueOf(marksGot));
+        report.setMarksB(BigDecimal.valueOf(0));
+
         reportService.addReport(report);
 
         Map<String, Object> map = Map.of(
