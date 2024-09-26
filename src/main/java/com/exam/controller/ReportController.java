@@ -107,9 +107,9 @@ private ReportService reportService;
 
 //Report on quiz id
 @GetMapping("/getReports/{quiz_Id}")
-public ResponseEntity<Optional<Report>> getQuizIds(@PathVariable("quiz_Id") Long quiz_Id){
+public ResponseEntity<List<Report>> getQuizIds(@PathVariable("quiz_Id") Long quiz_Id){
         Quiz quiz = quizService.getQuiz(quiz_Id);
-        Optional<Report> reports = reportService.reportByQuiz_Id(quiz.getqId());
+        List<Report> reports = reportService.reportByQuiz_Id(quiz.getqId());
     return ResponseEntity.ok(reports);
 }
 

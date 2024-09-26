@@ -34,7 +34,7 @@ public class ReportService {
 
 
     //report By Quiz
-    public Optional<Report> reportByQuiz_Id(Long quiz){
+    public List<Report> reportByQuiz_Id(Long quiz){
         return reportRepository.findByQuiz_qId(quiz);
     }
     ///Report By User
