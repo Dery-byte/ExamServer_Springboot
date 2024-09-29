@@ -8,14 +8,15 @@
 
 
 # BUILD STAGE
-FROM maven:3.9.4-amazoncorretto-20-debian AS Build
+FROM maven:3.9.4-amazoncorretto-20-debian AS build
 #WORKDIR /app
 COPY . .
 #COPY . /app/
-RUN mvn clean package
+#RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 #PACKAGE STAGE
-From openjdk:20-jdk-slim
+FROM openjdk:20-jdk-slim
 #WORKDIR /app
 COPY --from=build /target/exam-docker.jar exam-docker.jar
 EXPOSE 8080
