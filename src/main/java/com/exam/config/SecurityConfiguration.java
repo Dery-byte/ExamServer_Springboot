@@ -76,21 +76,21 @@ public class SecurityConfiguration {
 ////            .oauth2Login(Customizer.withDefaults());
     return http.build();
   }
-
-
-  @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("https://assessmentapp-e1d04.web.app") // Specify your frontend URL
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-      }
-    };
-
-
-  }
+//
+//
+//  @Bean
+//  public WebMvcConfigurer corsConfigurer() {
+//    return new WebMvcConfigurer() {
+//      @Override
+//      public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("https://assessmentapp-e1d04.web.app") // Specify your frontend URL
+//                .allowedMethods("GET", "POST", "PUT", "DELETE")
+//                .allowedHeaders("*")
+//                .allowCredentials(true);
+//      }
+//    };
+//
+//
+//  }
 }
