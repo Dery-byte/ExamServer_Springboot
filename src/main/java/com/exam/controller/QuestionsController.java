@@ -22,7 +22,7 @@ import java.util.*;
 
 @RestController
 //@RequestMapping("/questions")
-@CrossOrigin("*")
+@CrossOrigin(origins="https://assessmentapp-e1d04.web.app")
 @RequestMapping("/api/v1/auth")
 public class QuestionsController {
     @Autowired
