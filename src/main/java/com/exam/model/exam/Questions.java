@@ -37,7 +37,7 @@ public class Questions {
         this.givenAnswer = givenAnswer;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.REMOVE)
 //    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
