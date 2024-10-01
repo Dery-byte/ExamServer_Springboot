@@ -12,5 +12,7 @@ import java.util.List;
 public interface NumberOfTheoryToAnswerRepository extends JpaRepository<NumberOfTheoryToAnswer, Long> {
     List<NumberOfTheoryToAnswer> findByQuiz(Quiz quiz);
 
-    void deleteByQuizId(Long quizId);
+//    void findByQuizId(Long quizId);
+
+    void deleteByQuiz_qId(Long quizId);
 }

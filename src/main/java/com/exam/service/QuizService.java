@@ -45,7 +45,7 @@ public class QuizService {
 
 
     public void deleteQuiz(Long quizId){
-        numberOfTheoryToAnswerRepository.deleteByQuizId(quizId);
+        numberOfTheoryToAnswerRepository.deleteByQuiz_qId(quizId);
 
 //        Quiz quiz = new Quiz();
 //        quiz.setqId(quizId);
