@@ -18,11 +18,11 @@ public class Report {
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'Completed'")
     private String progress;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 

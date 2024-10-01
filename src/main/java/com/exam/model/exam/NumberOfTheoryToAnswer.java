@@ -24,7 +24,7 @@ public class NumberOfTheoryToAnswer {
         this.quiz = quiz;
     }
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
