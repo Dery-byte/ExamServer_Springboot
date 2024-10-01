@@ -25,7 +25,8 @@ public class TheoryQuestions {
     private String answer;
     @Column(nullable = false)
     private String marks;
-    @ManyToOne
+
+    @ManyToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 

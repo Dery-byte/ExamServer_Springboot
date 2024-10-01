@@ -15,11 +15,11 @@ public class Registered_courses {
     private Date RegDate;
 //    private String CourseCode;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "c_id")
     private Category category;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 
