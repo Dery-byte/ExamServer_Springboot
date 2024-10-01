@@ -2,6 +2,7 @@ package com.exam.service;
 
 import com.exam.model.exam.Category;
 import com.exam.model.exam.Quiz;
+import com.exam.repository.NumberOfTheoryToAnswerRepository;
 import com.exam.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class QuizService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private NumberOfTheoryToAnswerRepository numberOfTheoryToAnswerRepository;
 
     public Quiz addQuiz(Quiz quiz){
         return this.quizRepository.save(quiz);
@@ -41,6 +45,8 @@ public class QuizService {
 
 
     public void deleteQuiz(Long quizId){
+        numberOfTheoryToAnswerRepository.deleteByQuizId(quizId);
+
 //        Quiz quiz = new Quiz();
 //        quiz.setqId(quizId);
         this.quizRepository.deleteById(quizId);
