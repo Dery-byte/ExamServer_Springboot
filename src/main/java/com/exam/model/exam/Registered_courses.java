@@ -3,6 +3,7 @@ package com.exam.model.exam;
 import com.exam.model.User;
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
