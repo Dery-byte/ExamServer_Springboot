@@ -44,7 +44,7 @@ public class Quiz {
     @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
 
-     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+     @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY)
      @JsonIgnore
      private Set<Questions> questions = new HashSet<>();
 

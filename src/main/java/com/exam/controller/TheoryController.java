@@ -16,7 +16,8 @@ import java.util.*;
 
 @RestController
 //@RequestMapping("/questions")
-@CrossOrigin(origins="https://assessmentapp-e1d04.web.app")
+//@CrossOrigin(origins="https://assessmentapp-e1d04.web.app")
+@CrossOrigin(origins="*")
 @RequestMapping("/api/v1/auth")
 public class TheoryController {
 

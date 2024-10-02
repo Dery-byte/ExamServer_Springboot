@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 @RestController
 //@RequestMapping("/category")
-@RequestMapping("/api/v1/auth")
 @CrossOrigin("*")
+@RequestMapping("/api/v1/auth")
 public class CategoryController {
 
     //add category

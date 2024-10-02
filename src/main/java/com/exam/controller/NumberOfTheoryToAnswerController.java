@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 //@RequestMapping("/questions")
-@CrossOrigin("*")
+@CrossOrigin( origins = "*")
 @RequestMapping("/api/v1/auth")
 public class NumberOfTheoryToAnswerController {
     @Autowired

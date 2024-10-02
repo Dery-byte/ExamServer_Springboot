@@ -13,9 +13,8 @@ import java.security.Principal;
 
 @RestController
 //@RequestMapping("/category")
-@RequestMapping("/api/v1/auth")
 @CrossOrigin("*")
-
+@RequestMapping("/api/v1/auth")
 public class RegisteredCoursesController {
 @Autowired
 private RegisteredCourseService registeredCourseService;
@@ -23,7 +22,10 @@ private RegisteredCourseService registeredCourseService;
     private final UserDetailsService userDetailsService;
     public RegisteredCoursesController(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
-    }@PostMapping("/registerCourse")
+    }
+
+
+    @PostMapping("/registerCourse")
     public ResponseEntity<Registered_courses> RegCourse(@RequestBody Registered_courses registered_courses, Principal principal){
         User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
         registered_courses.setUser(user);
