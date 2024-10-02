@@ -58,13 +58,13 @@ public class User implements UserDetails {
 
 //Trying to check for one quiz attempts
 
-  @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonIgnore
   private Set<Report> reports = new LinkedHashSet<>();
 
 
   @JsonIgnore
-  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Token> tokens;
 
   @Override

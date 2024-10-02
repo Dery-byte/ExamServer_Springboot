@@ -66,11 +66,14 @@ public Page<Questions> getLimitedRecords(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return this.questionsRepository.findAll(pageRequest);
     }
+
     public void deleteQuestion(Long quesId){
         Questions questions = new Questions();
         questions.setQuesId(quesId);
         this.questionsRepository.delete(questions);
     }
+
+
     public  Questions get (Long questionId){
         return this.questionsRepository.getOne(questionId);
     }

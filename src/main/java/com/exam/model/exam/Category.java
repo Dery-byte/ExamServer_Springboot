@@ -20,7 +20,7 @@ public class Category {
     private String description;
     private String level;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
