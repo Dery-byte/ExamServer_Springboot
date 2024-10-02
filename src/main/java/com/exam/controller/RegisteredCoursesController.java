@@ -14,12 +14,9 @@ import java.util.Date;
 
 import java.security.Principal;
 
-import static java.time.LocalTime.now;
-
-
 @RestController
 //@RequestMapping("/category")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/auth")
 public class RegisteredCoursesController {
 @Autowired
