@@ -17,5 +17,5 @@ public interface QuestionsRepository extends JpaRepository <Questions, Long> {
     @Modifying
     @Transactional
     @Query("DELETE FROM Questions q WHERE q.quiz.qId= :quizId")
-    void deleteByQuiz_Id(Long aLong);
+    void deleteByQuiz_Id(Long quizId);
 }
