@@ -27,6 +27,9 @@ QuizRepository quizRepository;
 @Autowired
 ReportRepository reportRepository;
 
+@Autowired
+QuestionsRepository questionsRepository;
+
 
 
 
@@ -59,10 +62,12 @@ ReportRepository reportRepository;
     public void deleteCategory(Long categoryId){
 
         List<Quiz> quizzes = quizRepository.findByCategory_cid(categoryId);
+
         for (Quiz quiz : quizzes) {
             reportRepository.deleteByQuizId(quiz.getqId());
             theoryQuestionsRepository.deleteByQuizId(quiz.getqId());
             numberOfTheoryToAnswerRepository.deleteByQuiz_Id(quiz.getqId());
+            questionsRepository.deleteByQuiz_Id(quiz.getqId());
         }
 
         this.quizRepository.deleteByCategory_cid(categoryId);

@@ -50,9 +50,8 @@ public class QuizService {
 
 
     public void deleteQuiz(Long quizId){
-
-
-        this.quizRepository.deleteById(quizId);
+        Quiz quiz = quizRepository.findById(quizId).get();
+        this.quizRepository.delete(quiz);
 
     }
 

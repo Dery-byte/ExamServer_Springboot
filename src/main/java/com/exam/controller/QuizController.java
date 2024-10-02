@@ -45,7 +45,6 @@ public class QuizController {
     }
     @DeleteMapping("delete/quiz/{qid}")
     public  void delete(@PathVariable("qid") Long qid){
-
         this.quizService.deleteQuiz(qid);
     }
 
