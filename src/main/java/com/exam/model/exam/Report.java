@@ -18,7 +18,7 @@ public class Report {
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT 'Completed'")
     private String progress;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
