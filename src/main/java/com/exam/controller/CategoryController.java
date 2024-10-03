@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @RestController
 //@RequestMapping("/category")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/auth")
 public class CategoryController {
 

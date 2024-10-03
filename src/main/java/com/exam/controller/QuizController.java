@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 //@RequestMapping("/quiz")
 @RequestMapping("/api/v1/auth")
 public class QuizController {

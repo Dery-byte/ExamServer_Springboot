@@ -14,7 +14,7 @@ import com.exam.service.Impl.GeminiAIService;
 
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin( origins = "*")
 @RequestMapping("/api/v1/auth")
 public class GradeController {
 

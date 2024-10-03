@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin( origins = "*")
 @RequestMapping("/api/v1/auth")
 public class DemoController {
 
