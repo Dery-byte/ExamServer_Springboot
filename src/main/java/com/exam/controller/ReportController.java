@@ -59,7 +59,7 @@ private ReportService reportService;
 
 
     //ADD THE SECTION MARKS METHODS
-    @PutMapping("addtheoryMark")
+    @PutMapping("/addtheoryMark")
     public ResponseEntity<?> addmarks(@RequestBody Report report, Principal principal) {
         // Validate if the principal is present
         if (principal == null) {
