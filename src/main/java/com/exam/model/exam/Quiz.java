@@ -33,7 +33,7 @@ public class Quiz {
 
     //Trying to check for one quiz attempts
 
-    @OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "quiz",cascade = CascadeType.MERGE)
     @JsonIgnore
     private Set<Report> reports = new LinkedHashSet<>();
 
