@@ -68,7 +68,8 @@ private ReportService reportService;
         // Fetch the user using the principal (currently logged-in user)
         User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
         // Get the quiz ID from the report
-        Long quizId = report.getQuiz().getqId();
+//        Long quizId = report.getQuiz().getqId();
+        Long quizId = report.getQuiz() != null ? report.getQuiz().getqId() : null;
 
         System.out.println("Quiz ID: " + quizId);
         System.out.println("User ID: " + user.getId());
@@ -82,22 +83,22 @@ private ReportService reportService;
         System.out.println("existing report: " + existingReport);
         // Validate if the report exists
         if (existingReport == null) {
-            Report newReport = new Report();
-            newReport.setUser(user);
-            newReport.setQuiz(report.getQuiz());
-            newReport.setMarksB(report.getMarksB());
-            newReport.setProgress("Completed");
-            newReport.setMarks(BigDecimal.valueOf(0));
-            Report report1 = reportRepository.save(newReport);
-            return ResponseEntity.ok(report1);
-
-        }
-        // Update the MarksB field with the value from the request body
-        existingReport.setMarksB(report.getMarksB());
-        // Save the updated report entity back to the database
-        Report updatedReport = reportRepository.save(existingReport);
-        // Return the updated report in the response
+            existingReport = new Report();
+            existingReport.setUser(user);
+            existingReport.setQuiz(report.getQuiz());
+            existingReport.setMarksB(report.getMarksB());
+            existingReport.setProgress("Completed");
+            existingReport.setMarks(BigDecimal.valueOf(0));
+//            Report report1 = reportRepository.save(existingReport);
+//            return ResponseEntity.ok(report1);
+        } else
+            // Update the MarksB field with the value from the request body
+            existingReport.setMarksB(report.getMarksB());
+            // Save the updated report entity back to the database
+            Report updatedReport = reportRepository.save(existingReport);
+            // Return the updated report in the response
         return ResponseEntity.ok(updatedReport);
+
     }
 
 
