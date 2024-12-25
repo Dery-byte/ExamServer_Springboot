@@ -16,7 +16,7 @@ public class GeminiController {
     private QuizGeminiService quizGeminiService;
 
     @PostMapping("/quizEval")
-    public List<String> chat(@RequestBody GeminiRequest geminiRequest) {
+    public List<String> chat(@RequestBody GeminiRequest geminiRequest) throws InterruptedException {
         return quizGeminiService.evaluateQuiz(geminiRequest);
     }
 }
