@@ -56,6 +56,8 @@ public class QuizGeminiService {
                         .flatMap(candidate -> candidate.getContent().getParts().stream())
                         .map(GeminiResponse.Part::getText)
                         .collect(Collectors.toList());
+
+                System.out.println("Hello the response parts Below!!!!!!");
                 System.out.println(responseParts);
                 // Validate response format for each part
                 if (responseParts.stream().allMatch(this::validateResponseFormat)) {
