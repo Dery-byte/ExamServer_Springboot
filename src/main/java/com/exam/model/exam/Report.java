@@ -16,14 +16,14 @@ public class Report {
     private BigDecimal marksB;
 
 
-    @Column(columnDefinition = "VARCHAR(255) DEFAULT 'Completed'")
-    private String progress;
+    @Column(name = "progress")
+    private String progress = "Completed";
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",referencedColumnName = "id", nullable = false)
     private User user;
 
 

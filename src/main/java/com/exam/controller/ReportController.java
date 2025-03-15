@@ -78,7 +78,7 @@ private ReportService reportService;
             return ResponseEntity.badRequest().body("Quiz ID is missing");
         }
         // Find the existing report by user ID and quiz ID
-        Report existingReport = this.reportService.findByUserAndQuiz(user.getId(), quizId);
+        Report existingReport = this.reportService.findByUserAndQuiz(Math.toIntExact(user.getId()), quizId);
 
         System.out.println("existing report: " + existingReport);
         // Validate if the report exists

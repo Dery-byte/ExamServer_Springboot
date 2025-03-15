@@ -28,9 +28,9 @@ public class User implements UserDetails {
 
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
-  private Integer id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+//  @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
+  private Long id;
 
   @Column( nullable = false)
   private String firstname;

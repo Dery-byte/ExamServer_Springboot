@@ -84,7 +84,7 @@ public class AuthenticationService {
     }
 
     private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(Math.toIntExact(user.getId()));
 //        var tokens = tokenRepository.findByToken(user.getTokens().toString());
 
 
@@ -117,6 +117,6 @@ public class AuthenticationService {
     }
 
     public User getUserById(Integer user_id){
-        return (User) userRepository.findById(user_id).get();
+        return (User) userRepository.findById(Long.valueOf(user_id)).get();
     }
 }

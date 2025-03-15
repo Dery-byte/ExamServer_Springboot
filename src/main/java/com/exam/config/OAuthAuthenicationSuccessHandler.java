@@ -50,7 +50,7 @@ public class OAuthAuthenicationSuccessHandler implements AuthenticationSuccessHa
 
         User user = new User();
 //        user.setUserId(UUID.randomUUID().toString());
-        user.setId(Integer.valueOf(UUID.randomUUID().toString()));
+        user.setId(Long.valueOf(Integer.valueOf(UUID.randomUUID().toString())));
         user.setRole(Role.NORMAL);
 //        user.setRoleList(List.of(AppConstants.ROLE_USER));
         user.setEmailVerified(true);
