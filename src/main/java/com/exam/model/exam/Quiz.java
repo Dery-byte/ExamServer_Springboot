@@ -33,7 +33,7 @@ public class Quiz {
 
     //Trying to check for one quiz attempts
 
-    @OneToMany(mappedBy = "quiz",cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Report> reports = new LinkedHashSet<>();
 
@@ -41,7 +41,7 @@ public class Quiz {
 
 
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Category category;
 
      @OneToMany(mappedBy = "quiz", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

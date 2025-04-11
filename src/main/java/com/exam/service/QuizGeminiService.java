@@ -1,23 +1,19 @@
 package com.exam.service;
 
-import com.exam.model.exam.GeminiRequest;
-import com.exam.model.exam.GeminiResponse;
+import com.exam.model.exam.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.*;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
 public class QuizGeminiService {
-
     private static final Logger logger = LoggerFactory.getLogger(QuizGeminiService.class);
 
     @Value("${google.gemini.api.url}")
@@ -29,141 +25,192 @@ public class QuizGeminiService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final int MAX_RETRIES = 3; // Maximum retries for response validation
-    private static final long RETRY_DELAY = 2000L; // Delay between retries in milliseconds
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_DELAY_MS = 2000L;
 
-    public List<String> evaluateQuiz(GeminiRequest geminiRequest) throws InterruptedException {
+    public List<QuestionEvaluationResult> evaluateQuiz(GeminiRequest request) {
+        List<QuestionSubmission> submissions = parseSubmissions(request);
+        return submissions.stream()
+                .map(this::evaluateSingleQuestion)
+                .collect(Collectors.toList());
+    }
+
+    private QuestionEvaluationResult evaluateSingleQuestion(QuestionSubmission submission) {
         String fullApiUrl = apiURL + "?key=" + apiKey;
-
-        // Log the full URL and request body for debugging
-        logger.debug("Full API URL: " + fullApiUrl);
-        logger.debug("Request Body: " + geminiRequest);
-
         int attempts = 0;
+
         while (attempts < MAX_RETRIES) {
             try {
-                // Perform POST request
-                GeminiResponse geminiResponse = restTemplate.postForObject(fullApiUrl, geminiRequest, GeminiResponse.class);
-
-                // Log the response body
-                logger.debug("Response Body: " + geminiResponse);
-
-                if (geminiResponse == null || geminiResponse.getCandidates() == null || geminiResponse.getCandidates().isEmpty()) {
-                    throw new IllegalStateException("Received null or empty response from the API");
-                }
-
-                List<String> responseParts = geminiResponse.getCandidates().stream()
-                        .flatMap(candidate -> candidate.getContent().getParts().stream())
-                        .map(GeminiResponse.Part::getText)
-                        .collect(Collectors.toList());
-
-                System.out.println("Hello the response parts Below!!!!!!");
-                System.out.println(responseParts);
-                // Validate response format for each part
-                if (responseParts.stream().allMatch(this::validateResponseFormat)) {
-                    System.out.println("This is the response Parts: " + responseParts);
-                    return processResponseParts(responseParts);
-                } else {
-                    logger.warn("Response format invalid. Retrying... Attempt {}/{}", attempts + 1, MAX_RETRIES);
-                    Thread.sleep(RETRY_DELAY);
-                }
-            } catch (HttpClientErrorException e) {
-                logger.error("Error response from API: Status code: " + e.getStatusCode() + ", Response body: " + e.getResponseBodyAsString());
-                throw e;
+                GeminiRequest evaluationRequest = createEvaluationRequest(submission);
+                GeminiResponse response = restTemplate.postForObject(
+                        fullApiUrl,
+                        evaluationRequest,
+                        GeminiResponse.class
+                );
+                return parseEvaluationResponse(response, submission);
             } catch (Exception e) {
-                logger.error("Unexpected error: ", e);
-                throw e;
-            }
-            attempts++;
-        }
+                attempts++;
+                logger.warn("Attempt {} failed for question {}: {}",
+                        attempts, submission.getQuestionNumber(), e.getMessage());
 
-        throw new IllegalStateException("Failed to retrieve a valid response after " + MAX_RETRIES + " attempts.");
-    }
+                if (attempts >= MAX_RETRIES) {
+                    return createFailedEvaluation(submission, e);
+                }
 
-    private boolean validateResponseFormat(String responseText) {
-        System.out.println("Validating Response Format...");
-        System.out.println("Response Text: " + responseText);
-        // Regex patterns
-        String questionPattern = "(?s).*Q\\d+[a-z]*(?:i{1,3})?:.*?Answer:.*";
-//        String answerPattern = "(?s).*Answer:.*"; // Sort of Flexible
-
-        String answerPattern = "(?s)Answer:.*?(?=\\n|$)\n";
-
-        String marksPattern = "(?s).*\\d+/\\d+.*";
-        // Validate question format
-        boolean hasQuestions = Pattern.compile(questionPattern).matcher(responseText).find();
-        // Validate if "Answer" exists with proper structure
-        boolean hasAnswers = Pattern.compile(answerPattern).matcher(responseText).find();
-        // Validate if marks in "x/y" format exist
-        boolean hasMarks = Pattern.compile(marksPattern).matcher(responseText).find();
-        // Log validation results
-        System.out.println("Has Questions: " + hasQuestions);
-        System.out.println("Has Answers: " + hasAnswers);
-        System.out.println("Has Marks: " + hasMarks);
-        return hasQuestions && hasAnswers && hasMarks;
-    }
-
-
-    private List<String> processResponseParts(List<String> responseParts) {
-        List<String> results = new ArrayList<>();
-        for (String part : responseParts) {
-            // Extract questions with labels
-            List<String> questions = extractQuestions(part);
-            // Extract answers
-            List<String> answers = extractAnswers(part);
-            // Extract marks
-            List<String> marks = extractMarks(part);
-            // Combine questions, answers, and marks
-            for (int i = 0; i < questions.size(); i++) {
-                String question = questions.get(i);
-                String answer = (i < answers.size()) ? answers.get(i) : "N/A";
-                String mark = (i < marks.size()) ? marks.get(i) : "N/A";
-                results.add(String.format("%s, Answer: %s, Marks: %s", question, answer, mark));
+                try {
+                    TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return createFailedEvaluation(submission, ie);
+                }
             }
         }
-        return results;
+        return createFailedEvaluation(submission, new Exception("Max retries exceeded"));
     }
 
-    // Helper method to extract questions with labels
-    private static List<String> extractQuestions(String text) {
-        List<String> questions = new ArrayList<>();
-        String questionPattern = "(Q\\d+[a-z]*(?:i{1,3})?):\\s*(.+?)\\s*Answer:";
-        Pattern pattern = Pattern.compile(questionPattern, Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            String label = matcher.group(1).trim();     // Capture the question label (e.g., Q1a)
-            String question = matcher.group(2).trim(); // Capture the question text
-            questions.add(String.format("%s: %s", label, question));
-        }
-        if (questions.isEmpty()) {
-            logger.warn("No questions were extracted. Please verify the input text format.");
-        }
-        return questions;
+    private GeminiRequest createEvaluationRequest(QuestionSubmission submission) {
+        String prompt = String.format(
+                "ACT AS A STRICT EXAMINER. Evaluate this answer and respond ONLY with this JSON format:\n" +
+                        "{\n" +
+                        "  \"score\": number (0-%d),\n" +
+                        "  \"feedback\": string,\n" +
+                        "  \"keyMissed\": string[]\n" +
+                        "}\n\n" +
+                        "QUESTION: %s\n" +
+                        "CRITERIA: %s\n" +
+                        "MAX MARKS: %d\n" +
+                        "STUDENT ANSWER: %s",
+                submission.getMaxMarks(),
+                submission.getQuestion(),
+                submission.getCriteria(),
+                submission.getMaxMarks(),
+                submission.getStudentAnswer()
+        );
+
+        return new GeminiRequest(prompt);
     }
 
-    // Helper method to extract answers
-    private static List<String> extractAnswers(String text) {
-        List<String> answers = new ArrayList<>();
-        String answerPattern = "Answer:\\s*(.+?)(?=\\n|\\*|$)";
-        Pattern pattern = Pattern.compile(answerPattern, Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            String answer = matcher.group(1).trim();
-            answers.add(answer);
+    private QuestionEvaluationResult parseEvaluationResponse(GeminiResponse response, QuestionSubmission submission) {
+        if (response == null || response.getCandidates() == null || response.getCandidates().isEmpty()) {
+            throw new IllegalArgumentException("Empty API response");
         }
-        return answers;
+
+        String responseText = response.getCandidates().get(0)
+                .getContent()
+                .getParts()
+                .get(0)
+                .getText();
+
+        try {
+            // Extract JSON part (remove markdown code fences if present)
+            responseText = responseText.replaceAll("^```json|```$", "").trim();
+
+            double score = extractDoubleValue(responseText, "score");
+            String feedback = extractStringValue(responseText, "feedback");
+            List<String> keyMissed = extractStringArray(responseText, "keyMissed");
+
+            // Ensure score is within bounds
+            score = Math.max(0, Math.min(score, submission.getMaxMarks()));
+
+            return new QuestionEvaluationResult(
+                    submission.getQuestionNumber(),
+                    submission.getQuestion(),  // Include original question
+                    submission.getStudentAnswer(),  // Include student's answer
+                    score,
+                    submission.getMaxMarks(),
+                    feedback,
+                    keyMissed
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to parse evaluation: " + responseText, e);
+        }
     }
 
-    // Helper method to extract marks
-    private static List<String> extractMarks(String questionText) {
-        List<String> marks = new ArrayList<>();
-        String regex = "(\\d+/\\d+)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(questionText);
 
-        while (matcher.find()) {
-            marks.add(matcher.group(1));
+
+
+    // Helper methods for JSON parsing
+
+    private double extractDoubleValue(String json, String key) {
+        try {
+            int start = json.indexOf("\"" + key + "\":") + key.length() + 3;
+            int end = findNextDelimiter(json, start);
+            String numberStr = cleanNumberString(json.substring(start, end).trim());
+            return Double.parseDouble(numberStr);
+        } catch (Exception e) {
+            logger.error("Failed to parse {} from JSON: {}", key, json);
+            throw new IllegalArgumentException("Invalid " + key + " format", e);
         }
-        return marks;
+    }
+
+    private String cleanNumberString(String numberStr) {
+        // Remove trailing decimal point
+        if (numberStr.endsWith(".")) {
+            numberStr = numberStr.substring(0, numberStr.length() - 1);
+        }
+        // Remove any non-numeric characters except decimal point and minus
+        return numberStr.replaceAll("[^\\d.-]", "");
+    }
+
+    private int findNextDelimiter(String json, int start) {
+        int commaPos = json.indexOf(",", start);
+        int bracePos = json.indexOf("}", start);
+        return commaPos == -1 ? bracePos : Math.min(commaPos, bracePos);
+    }
+
+
+
+
+    private String extractStringValue(String json, String key) {
+        int start = json.indexOf("\"" + key + "\":\"") + key.length() + 4;
+        int end = json.indexOf("\"", start);
+        return json.substring(start, end);
+    }
+
+    private List<QuestionSubmission> parseSubmissions(GeminiRequest request) {
+        return request.getContents().stream()
+                .flatMap(content -> content.getParts().stream())
+                .map(part -> {
+                    String text = part.getText();
+                    return new QuestionSubmission(
+                            extractField(text, "Question Number:", ":"),
+                            extractField(text, ":", "Answer:"),
+                            extractField(text, "Answer:", "Marks:"),
+                            Integer.parseInt(extractField(text, "Marks:", "Criteria:").trim()),
+                            extractField(text, "Criteria:", null)
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    private String extractField(String text, String startDelimiter, String endDelimiter) {
+        int start = text.indexOf(startDelimiter) + startDelimiter.length();
+        int end = endDelimiter != null ? text.indexOf(endDelimiter, start) : text.length();
+        return text.substring(start, end).trim();
+    }
+
+    private QuestionEvaluationResult createFailedEvaluation(QuestionSubmission submission, Exception e) {
+        return new QuestionEvaluationResult(
+                submission.getQuestionNumber(),
+                submission.getQuestion(), // Add the question text
+                submission.getStudentAnswer(), // Add student's answer
+                0, // score
+                submission.getMaxMarks(),
+                "Evaluation failed after " + MAX_RETRIES + " attempts: " + e.getMessage(),
+                Collections.emptyList() // empty list for keyMissed
+        );
+    }
+
+
+    // Add this helper method to extract string arrays
+    private List<String> extractStringArray(String json, String key) {
+        try {
+            int start = json.indexOf("\"" + key + "\":") + key.length() + 3;
+            int end = json.indexOf("]", start) + 1;
+            String arrayStr = json.substring(start, end).trim();
+            return Arrays.asList(arrayStr.replaceAll("[\\[\\]\"]", "").split(",\\s*"));
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 }

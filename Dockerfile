@@ -10,7 +10,7 @@
 # BUILD STAGE
 FROM maven:3.9.4-amazoncorretto-20-debian AS build
 #WORKDIR /app
-COPY . .
+COPY . .work
 #COPY . /app/
 #RUN mvn clean package
 RUN mvn clean package -DskipTests
