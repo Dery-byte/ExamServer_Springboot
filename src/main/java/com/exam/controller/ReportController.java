@@ -61,46 +61,39 @@ private ReportService reportService;
     //ADD THE SECTION MARKS METHODS
     @PutMapping("/addtheoryMark")
     public ResponseEntity<?> addmarks(@RequestBody Report report, Principal principal) {
-        // Validate if the principal is present
         if (principal == null) {
             return ResponseEntity.badRequest().body("Principal is null");
         }
-        // Fetch the user using the principal (currently logged-in user)
+
         User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
-        // Get the quiz ID from the report
-//        Long quizId = report.getQuiz().getqId();
         Long quizId = report.getQuiz() != null ? report.getQuiz().getqId() : null;
 
-        System.out.println("Quiz ID: " + quizId);
-        System.out.println("User ID: " + user.getId());
-        // Validate if quizId is present
         if (quizId == null) {
             return ResponseEntity.badRequest().body("Quiz ID is missing");
         }
-        // Find the existing report by user ID and quiz ID
+
+        // Get a managed Quiz instance
+        Quiz managedQuiz = quizService.getQuiz(quizId);
+        if (managedQuiz == null) {
+            return ResponseEntity.badRequest().body("Quiz not found");
+        }
+
         Report existingReport = this.reportService.findByUserAndQuiz(Math.toIntExact(user.getId()), quizId);
 
-        System.out.println("existing report: " + existingReport);
-        // Validate if the report exists
         if (existingReport == null) {
             existingReport = new Report();
             existingReport.setUser(user);
-            existingReport.setQuiz(report.getQuiz());
+            existingReport.setQuiz(managedQuiz);  // Using the managed quiz
             existingReport.setMarksB(report.getMarksB());
             existingReport.setProgress("Completed");
             existingReport.setMarks(BigDecimal.valueOf(0));
-//            Report report1 = reportRepository.save(existingReport);
-//            return ResponseEntity.ok(report1);
-        } else
-            // Update the MarksB field with the value from the request body
+        } else {
             existingReport.setMarksB(report.getMarksB());
-            // Save the updated report entity back to the database
-            Report updatedReport = reportRepository.save(existingReport);
-            // Return the updated report in the response
+        }
+
+        Report updatedReport = reportRepository.save(existingReport);
         return ResponseEntity.ok(updatedReport);
-
     }
-
 
 
 
