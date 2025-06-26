@@ -29,7 +29,8 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # PACKAGE STAGE
-FROM openjdk:20-jdk-slim
+FROM openjdk:17-jdk-slim
 COPY --from=build /app/target/exam-docker.jar exam-docker.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "exam-docker.jar"]
+
