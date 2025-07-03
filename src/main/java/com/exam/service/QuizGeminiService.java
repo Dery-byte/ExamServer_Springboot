@@ -22,6 +22,17 @@ public class QuizGeminiService {
     @Value("${google.gemini.api.key}")
     private String apiKey;
 
+
+
+//    @Value("${deepseek.api.url}")
+//    private String apiURL;
+//
+//    @Value("deepseek.api.key")
+//    private String apiKey;
+
+
+
+
     @Autowired
     private RestTemplate restTemplate;
 
