@@ -46,6 +46,11 @@ public class QuizGeminiService {
                 .collect(Collectors.toList());
     }
 
+
+
+
+
+
     private QuestionEvaluationResult evaluateSingleQuestion(QuestionSubmission submission) {
         String fullApiUrl = apiURL + "?key=" + apiKey;
         int attempts = 0;
@@ -64,9 +69,9 @@ public class QuizGeminiService {
                 logger.warn("Attempt {} failed for question {}: {}",
                         attempts, submission.getQuestionNumber(), e.getMessage());
 
-                if (attempts >= MAX_RETRIES) {
-                    return createFailedEvaluation(submission, e);
-                }
+//                if (attempts >= MAX_RETRIES) {
+//                    return createFailedEvaluation(submission, e);
+//                }
 
                 try {
                     TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);

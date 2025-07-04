@@ -1,5 +1,6 @@
 package com.exam.model.exam;
 
+import com.exam.model.QuizStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -36,7 +37,9 @@ public class Quiz {
     @OneToMany(mappedBy = "quiz",cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Report> reports = new LinkedHashSet<>();
+    @Enumerated(EnumType.STRING)
 
+    private QuizStatus status = QuizStatus.OPEN;
 
 
 
@@ -151,6 +154,14 @@ public class Quiz {
 
     public Category getCategory() {
         return category;
+    }
+
+    public QuizStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(QuizStatus status) {
+        this.status = status;
     }
 
     public void setCategory(Category category) {

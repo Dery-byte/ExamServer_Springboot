@@ -1,6 +1,9 @@
 package com.exam.controller;
 
 
+import com.exam.DTO.UpdateQuizStatusRequest;
+import com.exam.helper.ResourceNotFoundException;
+import com.exam.model.QuizStatus;
 import com.exam.model.exam.Category;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
@@ -12,10 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -118,6 +118,54 @@ public class QuizController {
         category.setCid(cid);
         return this.quizService.getActiveQuizzesofCategory(category);
     }
+
+
+
+    @PutMapping("/quiz/status/{quizId}")
+    public ResponseEntity<Map<String, String>> updateQuizStatus(
+            @PathVariable Long quizId,
+            @RequestBody UpdateQuizStatusRequest request) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with ID: " + quizId));
+
+        // Validate and convert the status string
+        QuizStatus newStatus;
+        try {
+            newStatus = QuizStatus.valueOf(request.getStatus().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid status"));
+        }
+        quiz.setStatus(newStatus);
+        quizRepository.save(quiz);
+
+        return ResponseEntity.ok(Map.of("status", quiz.getStatus().name()));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //    @GetMapping("/category/active/{cid}")
 //    public List<Quiz> activeQuizzesOfCategory(@PathVariable("cid") Long cid){
 //        Category category =new Category();
