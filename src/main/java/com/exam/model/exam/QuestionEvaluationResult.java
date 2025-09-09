@@ -16,7 +16,7 @@ public class QuestionEvaluationResult {
     private String question;  // Add this field
     private String studentAnswer;  // Add this field
     private double score;
-    private int maxMarks;
+    private Double maxMarks;
     private String feedback;
     private List<String> keyMissed;  // Add this field if needed
 

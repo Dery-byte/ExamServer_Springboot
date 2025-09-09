@@ -1,26 +1,36 @@
 package com.exam.service;
 
+import com.exam.DTO.ForgottenPasswordRequest;
+import com.exam.DTO.ResetPasswordRequest;
 import com.exam.auth.AuthenticationRequest;
 import com.exam.auth.AuthenticationResponse;
 import com.exam.auth.RegisterRequest;
+import com.exam.exception.ResetPasswordTokenAlreadyUsedException;
+import com.exam.exception.ResetPasswordTokenExpiredException;
 import com.exam.helper.UserFoundException;
 import com.exam.helper.UserNotFoundException;
 import com.exam.repository.TokenRepository;
 import com.exam.repository.UserRepository;
+import com.exam.service.Impl.EmailService;
+import com.exam.service.Impl.EmailTemplateName;
+import com.exam.service.Impl.MailService;
 import com.exam.token.Token;
 import com.exam.token.TokenType;
 import com.exam.model.Role;
 import com.exam.model.User;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +40,16 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final MailService emailService;
+    private final EmailService emailServices;
+
+
+
+
+
+    @Value("${application.mailing.frontend.baseUrl}")
+    private String frontendBaseUrl;
+
 
     public AuthenticationResponse register(RegisterRequest request) throws UserFoundException {
         var userExist = userRepository.findByUsername(request.getUsername());
@@ -118,5 +138,109 @@ public class AuthenticationService {
 
     public User getUserById(Integer user_id){
         return (User) userRepository.findById(Long.valueOf(user_id)).get();
+    }
+
+
+
+
+
+
+
+
+    // PASSWORD RESET STUFF
+
+    public void resetPassword(ResetPasswordRequest request) {
+        Token token = tokenRepository.findByToken(request.getToken())
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+
+        if (LocalDateTime.now().isAfter(token.getExpiresAt())) {
+            throw new ResetPasswordTokenExpiredException("Token has expired. Please request a new one.");
+        }
+
+        if (token.getValidatedAt() != null) {
+            throw new ResetPasswordTokenAlreadyUsedException("This token has already been used.");
+        }
+
+        User user = token.getUser();
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+
+        token.setValidatedAt(LocalDateTime.now());
+        tokenRepository.save(token);
+
+    }
+
+
+
+
+
+    public void forgottenPassword(ForgottenPasswordRequest request) throws MessagingException {
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        System.out.println(user.getFullName());
+        sendResetPasswordEmail(user);
+    }
+
+
+
+    private void sendResetPasswordEmail(User user) throws MessagingException {
+        var newToken = generateAndSaveResetPasswordToken(user);
+//        String resetUrl = resetURL.replace("resetpassword", "reset-password") + "?token=" + newToken;
+        String resetUrl = frontendBaseUrl + "/reset-password?token=" + newToken;
+
+        System.out.println(resetUrl);
+        System.out.println(newToken);
+
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("username", user.getFullName());
+        vars.put("resetUrl", resetUrl);
+        vars.put("newToken", newToken);
+        vars.put("baseUrl", "http://localhost:4200/");
+
+        emailServices.sendEmail(
+                user.getEmail(),
+                EmailTemplateName.RESET_PASSWORD,
+                vars,
+                "Password Reset"
+        );
+
+//        emailService.sendEmail(
+//                user.getUsername(),
+//                user.getFullName(),
+//                EmailTemplateName.RESET_PASSWORD,
+//                resetUrl,
+//                newToken,
+//                "Password Reset"
+//        );
+    }
+
+
+
+
+    private String generateAndSaveResetPasswordToken(User user) {
+        String generatedToken = generateActivationCode(6); // Reuse your existing token generator
+        var token = Token.builder()
+                .token(generatedToken)
+                .createdAt(LocalDateTime.now())
+                .expiresAt(LocalDateTime.now().plusMinutes(15))
+                .user(user)
+                .build();
+        tokenRepository.save(token);
+        return generatedToken;
+    }
+
+
+
+
+    private String generateActivationCode(int length) {
+        String characters = "0123456789";
+        StringBuilder codeBuilder = new StringBuilder();
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < length; i++) {
+            int randomIndex = secureRandom.nextInt(characters.length());
+            codeBuilder.append(characters.charAt(randomIndex));
+        }
+        return codeBuilder.toString();
     }
 }

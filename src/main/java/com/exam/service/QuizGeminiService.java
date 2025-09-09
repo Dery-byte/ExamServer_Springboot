@@ -192,7 +192,12 @@ public class QuizGeminiService {
                             extractField(text, "Question Number:", ":"),
                             extractField(text, ":", "Answer:"),
                             extractField(text, "Answer:", "Marks:"),
-                            Integer.parseInt(extractField(text, "Marks:", "Criteria:").trim()),
+//                            Integer.parseInt(extractField(text, "Marks:", "Criteria:").trim()),
+
+
+Double.parseDouble(extractField(text, "Marks:", "Criteria:")
+                                            .replaceAll("[^0-9.]", "").trim()
+                            ),
                             extractField(text, "Criteria:", null)
                     );
                 })

@@ -1,5 +1,7 @@
 package com.exam.controller;
 
+import com.exam.DTO.ForgottenPasswordRequest;
+import com.exam.DTO.ResetPasswordRequest;
 import com.exam.auth.AuthenticationRequest;
 import com.exam.auth.AuthenticationResponse;
 import com.exam.auth.RegisterRequest;
@@ -8,6 +10,7 @@ import com.exam.helper.UserNotFoundException;
 import com.exam.model.User;
 import com.exam.repository.UserRepository;
 import com.exam.service.AuthenticationService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -250,4 +253,33 @@ return "Password changed " + user.getPassword();
     public List<User> getAllUsers() {
         return  service.getAllUsers();
     }
+
+
+
+
+
+
+
+
+
+
+
+    @PostMapping("/forgotten-password")
+    public ResponseEntity<Void> forgottenPassword(
+            @RequestBody ForgottenPasswordRequest request
+    ) throws MessagingException {
+        service.forgottenPassword(request);
+        return ResponseEntity.accepted().build();
+    }
+
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<Void> resetPassword(
+            @RequestBody ResetPasswordRequest request
+    ) {
+        service.resetPassword(request);
+        return ResponseEntity.ok().build();
+    }
 }
+
+

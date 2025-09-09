@@ -15,7 +15,7 @@ public class QuestionSubmission {
     private String questionNumber;
     private String question;
     private String studentAnswer;
-    private int maxMarks;
+    private Double maxMarks;
     private String criteria;
 
     // Constructors

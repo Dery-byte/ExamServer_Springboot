@@ -26,12 +26,10 @@ import java.util.Set;
 @Table(name = "user")
 public class User implements UserDetails {
 
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
 //  @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
   private Long id;
-
   @Column( nullable = false)
   private String firstname;
   @Column(nullable = false)
@@ -55,14 +53,11 @@ public class User implements UserDetails {
   @Column(length = 1000)
   private String about;
 
-
 //Trying to check for one quiz attempts
 
   @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonIgnore
   private Set<Report> reports = new LinkedHashSet<>();
-
-
   @JsonIgnore
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Token> tokens;
@@ -153,4 +148,8 @@ public class User implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
+    public String getFullName() {
+        return firstname + " " + lastname;
+    }
+
 }
