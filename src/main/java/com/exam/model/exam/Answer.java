@@ -33,7 +33,7 @@ public class Answer {
 private String studentAnswer;
 
 
-    private Integer score;
+    private double score;
 
     private Integer maxMarks;
 
@@ -89,11 +89,11 @@ private String studentAnswer;
         this.studentAnswer = studentAnswer;
     }
 
-    public Integer getScore() {
+    public double getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(double score) {
         this.score = score;
     }
 
