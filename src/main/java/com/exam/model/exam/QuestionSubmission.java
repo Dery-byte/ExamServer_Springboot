@@ -12,10 +12,13 @@ import lombok.Setter;
 @Setter
 @Getter
 public class QuestionSubmission {
+
+    private String quizId;
+    private String tqid;
     private String questionNumber;
     private String question;
     private String studentAnswer;
-    private Double maxMarks;
+    private int maxMarks;
     private String criteria;
 
     // Constructors

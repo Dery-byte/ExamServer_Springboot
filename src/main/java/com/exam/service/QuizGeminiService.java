@@ -1,6 +1,9 @@
 package com.exam.service;
 
+import com.exam.model.User;
 import com.exam.model.exam.*;
+import com.exam.repository.AnswerRepository;
+import com.exam.repository.TheoryQuestionsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +42,38 @@ public class QuizGeminiService {
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MS = 2000L;
 
-    public List<QuestionEvaluationResult> evaluateQuiz(GeminiRequest request) {
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private TheoryQuestionsRepository theoryQuestionsRepository;
+
+//    public List<QuestionEvaluationResult> evaluateQuiz(GeminiRequest request) {
+//        List<QuestionSubmission> submissions = parseSubmissions(request);
+//        return submissions.stream()
+//                .map(this::evaluateSingleQuestion)
+//                .collect(Collectors.toList());
+//    }
+
+
+    public List<QuestionEvaluationResult> evaluateQuiz(GeminiRequest request, User user) {
         List<QuestionSubmission> submissions = parseSubmissions(request);
-        return submissions.stream()
+
+        List<QuestionEvaluationResult> results = submissions.stream()
                 .map(this::evaluateSingleQuestion)
                 .collect(Collectors.toList());
+
+        // Save into DB
+        for (QuestionEvaluationResult result : results) {
+            TheoryQuestions theoryQuestions = theoryQuestionsRepository.findById(Long.valueOf(result.getTqid()))
+                    .orElseThrow(() -> new RuntimeException("Question not found"));
+            Long quizId = theoryQuestions.getQuiz().getqId(); // ✅ extract quizId
+            Answer answer = mapToAnswer(result, user, theoryQuestions,quizId);
+            answerRepository.save(answer);
+        }
+
+        return results;
     }
-
-
-
-
 
 
     private QuestionEvaluationResult evaluateSingleQuestion(QuestionSubmission submission) {
@@ -121,7 +146,7 @@ public class QuizGeminiService {
             // Extract JSON part (remove markdown code fences if present)
             responseText = responseText.replaceAll("^```json|```$", "").trim();
 
-            double score = extractDoubleValue(responseText, "score");
+            int score = (int) extractDoubleValue(responseText, "score");
             String feedback = extractStringValue(responseText, "feedback");
             List<String> keyMissed = extractStringArray(responseText, "keyMissed");
 
@@ -129,6 +154,8 @@ public class QuizGeminiService {
             score = Math.max(0, Math.min(score, submission.getMaxMarks()));
 
             return new QuestionEvaluationResult(
+                    submission.getQuizId(),
+                    submission.getTqid(),
                     submission.getQuestionNumber(),
                     submission.getQuestion(),  // Include original question
                     submission.getStudentAnswer(),  // Include student's answer
@@ -189,21 +216,20 @@ public class QuizGeminiService {
                 .map(part -> {
                     String text = part.getText();
                     return new QuestionSubmission(
-                            extractField(text, "Question Number:", ":"),
+                            extractField(text, "quizId ", ":"),
+                            extractField(text, "tqid ", ":"),
+                            extractField(text, "Question Number ", ":"),
                             extractField(text, ":", "Answer:"),
                             extractField(text, "Answer:", "Marks:"),
-//                            Integer.parseInt(extractField(text, "Marks:", "Criteria:").trim()),
-
-
-Double.parseDouble(extractField(text, "Marks:", "Criteria:")
-                                            .replaceAll("[^0-9.]", "").trim()
-                            ),
+                            Integer.parseInt(extractField(text, "Marks:", "Criteria:").trim()),
+//Double.parseDouble(extractField(text, "Marks:", "Criteria:")
+//                                            .replaceAll("[^0-9.]", "").trim()
+//                            ),
                             extractField(text, "Criteria:", null)
                     );
                 })
                 .collect(Collectors.toList());
     }
-
     private String extractField(String text, String startDelimiter, String endDelimiter) {
         int start = text.indexOf(startDelimiter) + startDelimiter.length();
         int end = endDelimiter != null ? text.indexOf(endDelimiter, start) : text.length();
@@ -212,6 +238,8 @@ Double.parseDouble(extractField(text, "Marks:", "Criteria:")
 
     private QuestionEvaluationResult createFailedEvaluation(QuestionSubmission submission, Exception e) {
         return new QuestionEvaluationResult(
+                submission.getQuizId(),
+                submission.getTqid(),
                 submission.getQuestionNumber(),
                 submission.getQuestion(), // Add the question text
                 submission.getStudentAnswer(), // Add student's answer
@@ -234,4 +262,42 @@ Double.parseDouble(extractField(text, "Marks:", "Criteria:")
             return Collections.emptyList();
         }
     }
+
+
+
+
+
+
+
+//    private Answer mapToAnswer(QuestionEvaluationResult result, User user, TheoryQuestions theoryQuestions) {
+//        Answer answer = new Answer();
+//        answer.setStudentAnswer(result.getStudentAnswer());
+//        answer.setScore((int) result.getScore());
+//        answer.setMaxMarks(result.getMaxMarks());
+//        answer.setFeedback(result.getFeedback());
+//        answer.setKeyMissed(result.getKeyMissed());
+//        answer.setUser(user);
+//        answer.setQuiz();
+//        answer.setTheoryQuestion(theoryQuestions);
+//        return answer;
+//    }
+
+    private Answer mapToAnswer(QuestionEvaluationResult result, User user, TheoryQuestions theoryQuestions, Long quizId) {
+        Answer answer = new Answer();
+        answer.setStudentAnswer(result.getStudentAnswer());
+        answer.setScore((int) result.getScore());
+        answer.setMaxMarks(result.getMaxMarks()); // safe conversion
+        answer.setFeedback(result.getFeedback());
+        answer.setKeyMissed(result.getKeyMissed());
+        answer.setUser(user);
+        answer.setTheoryQuestion(theoryQuestions);
+        // ✅ Create a proxy Quiz object with only ID
+        Quiz quiz = new Quiz();
+        quiz.setqId(quizId);
+        answer.setQuiz(quiz);
+
+        return answer;
+    }
+
+
 }
