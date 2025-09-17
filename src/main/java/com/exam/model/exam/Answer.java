@@ -24,7 +24,14 @@ public class Answer {
     @JoinColumn(name = "quiz_id", nullable = false)     // Link to Quiz
     private Quiz quiz;
 
-    private String studentAnswer;
+
+//    @Column(columnDefinition = "LONGTEXT")
+//    private String studentAnswer;
+
+//    @Column(nullable = false, columnDefinition = "TEXT")
+@Column(nullable = false, length =70000000) // Large length value
+private String studentAnswer;
+
 
     private Integer score;
 
