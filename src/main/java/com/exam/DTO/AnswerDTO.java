@@ -9,16 +9,19 @@ import java.util.List;
 @AllArgsConstructor
 public class AnswerDTO {
     private Long answerId;
+    // extra fields from TheoryQuestions
+    private String quesO;
+    private String question;
     private String studentAnswer;
-    private double score;
     private Integer maxMarks;
-    private String feedback;
+    private double score;
     private List<String> keyMissed;
     private Long theoryQuestionId;
     private Long quizId;
+    private String feedback;
 
 
-    // extra fields from TheoryQuestions
-    private String question;
-    private String quesO;
+
+
+
 }

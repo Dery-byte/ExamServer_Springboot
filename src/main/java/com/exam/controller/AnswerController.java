@@ -13,13 +13,12 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/v1/auth")
 public class AnswerController {
-
     private final AnswerService answerService;
     @Autowired
     private final UserDetailsService userDetailsService;
-
     public AnswerController(AnswerService answerService, UserDetailsService userDetailsService) {
         this.answerService = answerService;
         this.userDetailsService = userDetailsService;

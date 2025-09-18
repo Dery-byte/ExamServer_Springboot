@@ -44,15 +44,16 @@ private AnswerRepository answerRepository;
                     TheoryQuestions tq = a.getTheoryQuestion();
                     return new AnswerDTO(
                             a.getAnswerId(),
-                            a.getStudentAnswer(),
-                            a.getScore(),
-                            a.getMaxMarks(),
-                            a.getFeedback(),
-                            a.getKeyMissed(),
-                            tq.getTqId(),
-                            a.getQuiz().getqId(),
+                            tq.getQuesNo(),
                             tq.getQuestion(),
-                            tq.getQuesNo()
+                            a.getStudentAnswer(),
+                            a.getMaxMarks(),
+                            a.getScore(),
+                            a.getKeyMissed(),
+                            a.getQuiz().getqId(),
+                            tq.getTqId(),
+                            a.getFeedback()
+
                     );
                 })
                 .collect(Collectors.toList());
