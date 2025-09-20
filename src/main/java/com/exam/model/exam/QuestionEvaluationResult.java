@@ -12,14 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuestionEvaluationResult {
-
     private String quizId;
     private String tqid;
     private String questionNumber;
     private String question;  // Add this field
     private String studentAnswer;  // Add this field
-    private int score;
-    private int maxMarks;
+    private double score;
+    private double maxMarks;
     private String feedback;
     private List<String> keyMissed;  // Add this field if needed
 

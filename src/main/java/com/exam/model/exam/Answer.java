@@ -35,7 +35,7 @@ private String studentAnswer;
 
     private double score;
 
-    private Integer maxMarks;
+    private double maxMarks;
 
     private String feedback;
 
@@ -97,11 +97,11 @@ private String studentAnswer;
         this.score = score;
     }
 
-    public Integer getMaxMarks() {
+    public double getMaxMarks() {
         return maxMarks;
     }
 
-    public void setMaxMarks(Integer maxMarks) {
+    public void setMaxMarks(double maxMarks) {
         this.maxMarks = maxMarks;
     }
 

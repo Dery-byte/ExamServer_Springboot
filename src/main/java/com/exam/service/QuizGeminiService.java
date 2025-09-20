@@ -94,6 +94,7 @@ public class QuizGeminiService {
                 logger.warn("Attempt {} failed for question {}: {}",
                         attempts, submission.getQuestionNumber(), e.getMessage());
 
+                System.out.println(e.getMessage());
 //                if (attempts >= MAX_RETRIES) {
 //                    return createFailedEvaluation(submission, e);
 //                }
@@ -113,13 +114,16 @@ public class QuizGeminiService {
         String prompt = String.format(
                 "ACT AS A STRICT EXAMINER. Evaluate this answer and respond ONLY with this JSON format:\n" +
                         "{\n" +
-                        "  \"score\": number (0-%d),\n" +
+//                        "  \"score\": number (0-%d),\n" +
+
+                        "  \"score\": decimal (0-%.2f),\n" +
                         "  \"feedback\": string,\n" +
                         "  \"keyMissed\": string[]\n" +
                         "}\n\n" +
                         "QUESTION: %s\n" +
                         "CRITERIA: %s\n" +
-                        "MAX MARKS: %d\n" +
+                        "MAX MARKS: %.2f\n" +  // Changed from %d to %.2f
+//                        "MAX MARKS: %d\n" +
                         "STUDENT ANSWER: %s",
                 submission.getMaxMarks(),
                 submission.getQuestion(),
@@ -146,7 +150,10 @@ public class QuizGeminiService {
             // Extract JSON part (remove markdown code fences if present)
             responseText = responseText.replaceAll("^```json|```$", "").trim();
 
-            int score = (int) extractDoubleValue(responseText, "score");
+//            int score = (int) extractDoubleValue(responseText, "score");
+
+            double score = extractDoubleValue(responseText, "score");
+
             String feedback = extractStringValue(responseText, "feedback");
             List<String> keyMissed = extractStringArray(responseText, "keyMissed");
 
@@ -179,6 +186,7 @@ public class QuizGeminiService {
             int start = json.indexOf("\"" + key + "\":") + key.length() + 3;
             int end = findNextDelimiter(json, start);
             String numberStr = cleanNumberString(json.substring(start, end).trim());
+            System.out.println(Double.parseDouble(numberStr));
             return Double.parseDouble(numberStr);
         } catch (Exception e) {
             logger.error("Failed to parse {} from JSON: {}", key, json);
@@ -285,7 +293,9 @@ public class QuizGeminiService {
     private Answer mapToAnswer(QuestionEvaluationResult result, User user, TheoryQuestions theoryQuestions, Long quizId) {
         Answer answer = new Answer();
         answer.setStudentAnswer(result.getStudentAnswer());
-        answer.setScore((int) result.getScore());
+
+        answer.setScore(result.getScore());
+//        answer.setScore((int) result.getScore());
         answer.setMaxMarks(result.getMaxMarks()); // safe conversion
         answer.setFeedback(result.getFeedback());
         answer.setKeyMissed(result.getKeyMissed());

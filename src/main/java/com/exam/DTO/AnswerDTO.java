@@ -13,7 +13,7 @@ public class AnswerDTO {
     private String quesO;
     private String question;
     private String studentAnswer;
-    private Integer maxMarks;
+    private double maxMarks;
     private double score;
     private List<String> keyMissed;
     private Long theoryQuestionId;
