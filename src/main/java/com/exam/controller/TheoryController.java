@@ -72,7 +72,7 @@ public class TheoryController {
         Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
         if (optionalQuiz.isPresent()) {
             Quiz quiz = optionalQuiz.get();
-            int numberOfQuestions = Integer.parseInt(quiz.getNumberOfQuestions());
+//            int numberOfQuestions = Integer.parseInt(quiz.getNumberOfQuestions());
             // Set the quiz for each question
             theoryQuestions.forEach(question -> question.setQuiz(quiz));
 

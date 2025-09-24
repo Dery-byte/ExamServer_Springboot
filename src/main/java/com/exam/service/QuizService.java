@@ -28,6 +28,7 @@ public class QuizService {
     private Registered_coursesRepository registeredCoursesRepository;
 
     public Quiz addQuiz(Quiz quiz){
+//        quiz.setStartTimeFromAMPM(quiz.getStartTime());
         return this.quizRepository.save(quiz);
     }
 

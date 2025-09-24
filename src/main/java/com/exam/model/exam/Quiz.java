@@ -1,10 +1,20 @@
 package com.exam.model.exam;
 
+import com.exam.helper.CustomLocalDateDeserializer;
 import com.exam.model.QuizStatus;
+import com.exam.model.QuizType;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.api.client.util.DateTime;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -41,8 +51,32 @@ public class Quiz {
 
     private QuizStatus status = QuizStatus.OPEN;
 
+    private QuizType quizType;
+
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime startTime;
 
 
+    @JsonDeserialize(using = CustomLocalDateDeserializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd") // Format for JSON serialization
+    private LocalDate quizDate;
+
+
+    public QuizType getQuizType() {
+        return quizType;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setQuizType(QuizType quizType) {
+        this.quizType = quizType;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Category category;
@@ -68,7 +102,15 @@ public class Quiz {
         this.reports = reports;
     }
 
-    public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions) {
+    public LocalDate getQuizDate() {
+        return quizDate;
+    }
+
+    public void setQuizDate(LocalDate quizDate) {
+        this.quizDate = quizDate;
+    }
+
+    public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions, QuizType quizType, LocalDate quizDate, LocalTime startTime) {
         this.qId = qId;
         this.title = title;
         this.description = description;
@@ -80,6 +122,9 @@ public class Quiz {
         this.reports = reports;
         this.category = category;
         this.questions = questions;
+        this.quizType = quizType;
+        this.quizDate = quizDate;
+        this.startTime = startTime;
     }
     @JsonCreator
     public Quiz() {
@@ -174,5 +219,27 @@ public class Quiz {
 
     public void setQuestions(Set<Questions> questions) {
         this.questions = questions;
+    }
+
+
+
+
+
+    public void setStartTimeFromAMPM(String ampmTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
+        this.startTime = LocalTime.parse(ampmTime.toUpperCase(), formatter);
+    }
+
+    @JsonProperty("startTimeAMPM")
+    public String getStartTimeAMPM() {
+        if (startTime == null) return null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
+        return startTime.format(formatter).toLowerCase();
+    }
+
+    @JsonProperty("startTime24H")
+    public String getStartTime24H() {
+        if (startTime == null) return null;
+        return startTime.toString(); // "12:34:00"
     }
 }
