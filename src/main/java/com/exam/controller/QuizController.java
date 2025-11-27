@@ -4,6 +4,7 @@ package com.exam.controller;
 import com.exam.DTO.UpdateQuizStatusRequest;
 import com.exam.helper.ResourceNotFoundException;
 import com.exam.model.QuizStatus;
+import com.exam.model.User;
 import com.exam.model.exam.Category;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
@@ -13,8 +14,10 @@ import com.exam.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 
 @RestController
@@ -28,9 +31,18 @@ public class QuizController {
     @Autowired
     private QuizRepository quizRepository;
 
+
+    @Autowired
+    private final UserDetailsService userDetailsService;
+
     @Autowired
     @Lazy
     ReportRepository reportRepository;
+
+    public QuizController(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @GetMapping("/getQuizzes")
     public ResponseEntity<?> quizzes(){
         return ResponseEntity.ok(this.quizService.getQuizzes());
@@ -110,6 +122,32 @@ public class QuizController {
 
 
 
+
+
+    ///
+    ///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /// Active quizzes of category
 
     @GetMapping("/category/active/{cid}")
@@ -118,6 +156,63 @@ public class QuizController {
         category.setCid(cid);
         return this.quizService.getActiveQuizzesofCategory(category);
     }
+
+
+
+
+//    QUIZZES TAKEN BY STUDENTS
+    @GetMapping("/category/taken/{cid}")
+    public List<Quiz> quizzesTakenByStudents(@PathVariable("cid")  Long cid) {
+        Category category = new Category();
+        category.setCid(cid);
+        return quizService.getTakenQuizzesOfCategory(category);
+    }
+
+
+
+//    QUIZZES TAKEN BY SPECIFIC STUDENTS
+
+    @GetMapping("/category/takenByUser/{cid}")
+    public List<Quiz> getTakenQuizzesByUser(
+            @PathVariable Long cid,
+            Principal principal
+    ) {
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        Long userId = user.getId();
+        Category category = new Category();
+        category.setCid(cid);
+        return quizService.getTakenQuizzesOfCategoryByUser(userId, category);
+    }
+
+    @GetMapping("/category/taken/{cid}/user/{uid}")
+    public List<Quiz> getTakenQuizzesByUsersss(
+            @PathVariable Long cid,
+            @PathVariable Long uid
+    ) {
+        Category category = new Category();
+        category.setCid(cid);
+        return quizService.getTakenQuizzesOfCategoryByUser(uid, category);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

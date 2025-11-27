@@ -1,6 +1,7 @@
 package com.exam.repository;
 
 import com.exam.model.User;
+import com.exam.model.exam.Category;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.Report;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,6 +38,17 @@ List<Report> findByUserAndQuiz(User user, Quiz quiz);
     @Transactional
     @Query("DELETE FROM report r WHERE r.quiz.qId = :quizId")
     void deleteByQuizId(@Param("quizId") Long quizId);
+
+
+
+
+    // fetch reports only for quizzes in a category
+    List<Report> findByQuiz_Category(Category category);
+
+    // Fetch reports for Quizzes in a category by a specific user.
+    List<Report> findByUser_IdAndQuiz_Category(Long userId, Category category);
+
+
 }
 
 

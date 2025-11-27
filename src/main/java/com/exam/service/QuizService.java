@@ -8,6 +8,7 @@ import com.exam.model.exam.Report;
 import com.exam.repository.NumberOfTheoryToAnswerRepository;
 import com.exam.repository.QuizRepository;
 import com.exam.repository.Registered_coursesRepository;
+import com.exam.repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,11 @@ public class QuizService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+
+    @Autowired
+    private ReportRepository reportRepository;
+
 
     @Autowired
     private NumberOfTheoryToAnswerRepository numberOfTheoryToAnswerRepository;
@@ -69,6 +75,48 @@ public class QuizService {
     //Get Acvtive And Categories
     public List<Quiz> getActiveQuizzesofCategory(Category c){
         return this.quizRepository.findByCategoryAndActive(c, true);
+    }
+
+
+
+
+
+
+
+
+    public List<Quiz> getTakenQuizzesOfCategory(Category category) {
+        List<Report> reports = reportRepository.findByQuiz_Category(category);
+        // extract unique quizzes
+        return reports.stream()
+                .map(Report::getQuiz)
+                .distinct()
+                .toList();
+    }
+
+
+
+
+
+//    public List<Quiz> getTakenQuizzesOfCategoryByUser(Long userId, Category category) {
+//        List<Report> reports =
+//                reportRepository.findByUser_IdAndQuiz_Category(userId, category);
+//        return reports.stream()
+//                .map(Report::getQuiz)
+//                .distinct()
+//                .toList();
+//    }
+
+
+
+
+
+    public List<Quiz> getTakenQuizzesOfCategoryByUser(Long userId, Category category) {
+        List<Report> reports =
+                reportRepository.findByUser_IdAndQuiz_Category(userId, category);
+        return reports.stream()
+                .map(Report::getQuiz)
+                .distinct()
+                .toList();
     }
 
 
