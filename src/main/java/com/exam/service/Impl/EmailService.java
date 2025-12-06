@@ -52,7 +52,7 @@ public class EmailService {
         context.setVariables(properties);
 
         // ❗ MUST be a Mailjet verified domain, NOT Gmail
-        helper.setFrom("noreply@mailjet.com", "EduApp Support");
+        helper.setFrom("optimusinforservice@gmail.com", "EduApp Support");
         helper.setReplyTo("emmanuelderryshare@gmail.com");
 
 
