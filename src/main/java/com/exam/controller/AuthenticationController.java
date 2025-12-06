@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.List;
 
@@ -267,7 +268,7 @@ return "Password changed " + user.getPassword();
     @PostMapping("/forgotten-password")
     public ResponseEntity<Void> forgottenPassword(
             @RequestBody ForgottenPasswordRequest request
-    ) throws MessagingException {
+    ) throws MessagingException, UnsupportedEncodingException {
         service.forgottenPassword(request);
         return ResponseEntity.accepted().build();
     }

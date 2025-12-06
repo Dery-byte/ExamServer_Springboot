@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -174,7 +175,7 @@ public class AuthenticationService {
 
 
 
-    public void forgottenPassword(ForgottenPasswordRequest request) throws MessagingException {
+    public void forgottenPassword(ForgottenPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -184,7 +185,7 @@ public class AuthenticationService {
 
 
 
-    private void sendResetPasswordEmail(User user) throws MessagingException {
+    private void sendResetPasswordEmail(User user) throws MessagingException, UnsupportedEncodingException {
         var newToken = generateAndSaveResetPasswordToken(user);
 //        String resetUrl = resetURL.replace("resetpassword", "reset-password") + "?token=" + newToken;
         String resetUrl = frontendBaseUrl + "/reset-password?token=" + newToken;
