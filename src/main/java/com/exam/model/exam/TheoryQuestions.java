@@ -25,14 +25,12 @@ public class TheoryQuestions {
     private String answer;
     @Column(nullable = false)
     private String marks;
-
     @ManyToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
     public TheoryQuestions() {
     }
-
     public TheoryQuestions(Long tqId,String  quesNo, String question, String marks,String answer, Quiz quiz) {
         TqId = tqId;
         this.question = question;

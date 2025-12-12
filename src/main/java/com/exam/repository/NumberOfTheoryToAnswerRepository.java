@@ -24,4 +24,10 @@ public interface NumberOfTheoryToAnswerRepository extends JpaRepository<NumberOf
        void deleteByQuiz_Id( @Param("quizId") Long quizId);
 
 //    void deleteByQuizCategory_cid(Long categoryId);
+
+
+
+
+//    void deleteByQuiz_Id(Long quizId);
+
 }

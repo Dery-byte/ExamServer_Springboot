@@ -1,16 +1,11 @@
 package com.exam.service;
 
 import com.exam.model.User;
-import com.exam.model.exam.Category;
-import com.exam.model.exam.Quiz;
-import com.exam.model.exam.Registered_courses;
-import com.exam.model.exam.Report;
-import com.exam.repository.NumberOfTheoryToAnswerRepository;
-import com.exam.repository.QuizRepository;
-import com.exam.repository.Registered_coursesRepository;
-import com.exam.repository.ReportRepository;
+import com.exam.model.exam.*;
+import com.exam.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,10 +17,13 @@ public class QuizService {
 
     @Autowired
     private QuizRepository quizRepository;
-
-
     @Autowired
     private ReportRepository reportRepository;
+    @Autowired
+    private TheoryQuestionsRepository theoryQuestionsRepository;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
 
     @Autowired
@@ -55,12 +53,30 @@ public class QuizService {
 //
 //    }
 
+//
+//    public void deleteQuiz(Long quizId){
+//        Quiz quiz = quizRepository.findById(quizId).get();
+//        this.quizRepository.delete(quiz);
+//
+//    }
 
-    public void deleteQuiz(Long quizId){
-        Quiz quiz = quizRepository.findById(quizId).get();
-        this.quizRepository.delete(quiz);
 
+
+    @Transactional
+    public void deleteQuiz(Long quizId) {
+
+        // 1. Delete all answers for theory questions of this quiz
+        List<TheoryQuestions> theoryQuestions = theoryQuestionsRepository.findByQuiz_qId(quizId);
+        for (TheoryQuestions tq : theoryQuestions) {
+            answerRepository.deleteByTheoryQuestionId(tq.getTqId());
+        }
+        // Delete children first
+        theoryQuestionsRepository.deleteByQuiz_qId(quizId);
+        numberOfTheoryToAnswerRepository.deleteByQuiz_Id(quizId);
+        // Delete quiz if present
+        quizRepository.findById(quizId).ifPresent(quizRepository::delete);
     }
+
 
 
     public List<Quiz> getQuizzesOfCategory(Category category) {

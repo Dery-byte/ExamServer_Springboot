@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -21,4 +22,11 @@ public interface TheoryQuestionsRepository extends JpaRepository<TheoryQuestions
     @Query("DELETE FROM TheoryQuestions t WHERE t.quiz.qId = :quizId")
     void deleteByQuizId(@Param("quizId") Long quizId);
 
+
+    void deleteByQuiz_qId(Long quizId);
+
+    List<TheoryQuestions> findByQuiz_qId(Long quizId);
+
+
+//    List<TheoryQuestions> findByQuiz_QId(Long quizId);
 }
