@@ -62,7 +62,6 @@ public class QuizGeminiService {
         List<QuestionEvaluationResult> results = submissions.stream()
                 .map(this::evaluateSingleQuestion)
                 .collect(Collectors.toList());
-
         // Save into DB
         for (QuestionEvaluationResult result : results) {
             TheoryQuestions theoryQuestions = theoryQuestionsRepository.findById(Long.valueOf(result.getTqid()))
@@ -71,7 +70,6 @@ public class QuizGeminiService {
             Answer answer = mapToAnswer(result, user, theoryQuestions,quizId);
             answerRepository.save(answer);
         }
-
         return results;
     }
 
@@ -79,7 +77,6 @@ public class QuizGeminiService {
     private QuestionEvaluationResult evaluateSingleQuestion(QuestionSubmission submission) {
         String fullApiUrl = apiURL + "?key=" + apiKey;
         int attempts = 0;
-
         while (attempts < MAX_RETRIES) {
             try {
                 GeminiRequest evaluationRequest = createEvaluationRequest(submission);
@@ -93,12 +90,10 @@ public class QuizGeminiService {
                 attempts++;
                 logger.warn("Attempt {} failed for question {}: {}",
                         attempts, submission.getQuestionNumber(), e.getMessage());
-
                 System.out.println(e.getMessage());
 //                if (attempts >= MAX_RETRIES) {
 //                    return createFailedEvaluation(submission, e);
 //                }
-
                 try {
                     TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
                 } catch (InterruptedException ie) {
@@ -131,7 +126,6 @@ public class QuizGeminiService {
                 submission.getMaxMarks(),
                 submission.getStudentAnswer()
         );
-
         return new GeminiRequest(prompt);
     }
 
@@ -258,7 +252,6 @@ public class QuizGeminiService {
         );
     }
 
-
     // Add this helper method to extract string arrays
     private List<String> extractStringArray(String json, String key) {
         try {
@@ -293,7 +286,6 @@ public class QuizGeminiService {
     private Answer mapToAnswer(QuestionEvaluationResult result, User user, TheoryQuestions theoryQuestions, Long quizId) {
         Answer answer = new Answer();
         answer.setStudentAnswer(result.getStudentAnswer());
-
         answer.setScore(result.getScore());
 //        answer.setScore((int) result.getScore());
         answer.setMaxMarks(result.getMaxMarks()); // safe conversion
@@ -305,7 +297,6 @@ public class QuizGeminiService {
         Quiz quiz = new Quiz();
         quiz.setqId(quizId);
         answer.setQuiz(quiz);
-
         return answer;
     }
 

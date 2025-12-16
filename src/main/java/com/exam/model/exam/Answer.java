@@ -24,6 +24,13 @@ public class Answer {
     @JoinColumn(name = "quiz_id", nullable = false)     // Link to Quiz
     private Quiz quiz;
 
+    // ✅ ADD THIS - Link to Report
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_id")
+    private Report report;
+
+
+
 
 //    @Column(columnDefinition = "LONGTEXT")
 //    private String studentAnswer;
@@ -48,6 +55,14 @@ private String studentAnswer;
 
     // === Getters & Setters ===
 
+
+    public Report getReport() {
+        return report;
+    }
+
+    public void setReport(Report report) {
+        this.report = report;
+    }
 
     public Quiz getQuiz() {
         return quiz;

@@ -19,6 +19,28 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
 //    Optional<Report> findById(Long id);
 
+    // ✅ Find by User ID
+    List<Report> findByUser_Id(Long userId);
+
+    // ✅ Find by User and Quiz
+    List<Report> findByUser_IdAndQuiz_qId(Long userId, Long quizId);
+
+    // ✅ Find by Quiz (entity)
+    List<Report> findByQuiz(Quiz quiz);
+
+
+
+    // ✅ Get latest report for user and quiz
+    Optional<Report> findTopByUser_IdAndQuiz_qIdOrderBySubmissionDateDesc(Long userId, Long quizId);
+
+    // ✅ Get report with answers (eager fetch)
+    @Query("SELECT DISTINCT r FROM report r LEFT JOIN FETCH r.answers WHERE r.id = :reportId")
+    Optional<Report> findByIdWithAnswers(@Param("reportId") Long reportId);
+
+    // ✅ Get all reports for quiz with answers
+    @Query("SELECT DISTINCT r FROM report r LEFT JOIN FETCH r.answers WHERE r.quiz.qId = :quizId")
+    List<Report> findByQuizIdWithAnswers(@Param("quizId") Long quizId);
+
     List<Report>findByQuiz_qId(Long id);
 
 

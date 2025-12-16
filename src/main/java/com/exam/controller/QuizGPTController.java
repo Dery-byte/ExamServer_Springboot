@@ -1,5 +1,6 @@
 package com.exam.controller;
 
+import com.exam.DTO.QuizEvaluationResponse;
 import com.exam.model.User;
 import com.exam.model.exam.GeminiRequest;
 import com.exam.model.exam.QuestionEvaluationResult;
@@ -37,6 +38,10 @@ public class QuizGPTController {
      * Evaluate quiz answers using GPT
      * POST /api/quiz/gpt/evaluate
      */
+
+
+
+
     @PostMapping("/evaluate")
     public ResponseEntity<?> evaluateQuiz(
             @Valid @RequestBody GeminiRequest request,
@@ -51,29 +56,15 @@ public class QuizGPTController {
                         .body(createErrorResponse("Request contents cannot be empty"));
             }
 
-            // Evaluate quiz
-            List<QuestionEvaluationResult> results = quizGPTService.evaluateQuiz(request, currentUser);
+            // Evaluate quiz and get the response DTO
+            QuizEvaluationResponse response = quizGPTService.evaluateQuiz(request, currentUser);
 
-            // Calculate summary statistics
-            double totalScore = results.stream()
-                    .mapToDouble(QuestionEvaluationResult::getScore)
-                    .sum();
+            // Log the results
+            logger.info("Quiz evaluation completed for user {}. Score: {}/{} ({}%)",
+                    currentUser.getUsername(), response.getSummary().getTotalScore(),
+                    response.getSummary().getTotalMaxMarks(), response.getSummary().getPercentage());
 
-            double totalMaxMarks = results.stream()
-                    .mapToDouble(QuestionEvaluationResult::getMaxMarks)
-                    .sum();
-
-            double percentage = totalMaxMarks > 0 ? (totalScore / totalMaxMarks) * 100 : 0;
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("message", "Quiz evaluated successfully");
-            response.put("results", results);
-            response.put("summary", createSummary(totalScore, totalMaxMarks, percentage, results.size()));
-
-            logger.info("Quiz evaluation completed for user {}. Score: {}/{}",
-                    currentUser.getUsername(), totalScore, totalMaxMarks);
-
+            // Return the response
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException e) {
@@ -87,6 +78,10 @@ public class QuizGPTController {
                     .body(createErrorResponse("Failed to evaluate quiz: " + e.getMessage()));
         }
     }
+
+
+
+
 
     /**
      * Evaluate a single question using GPT
@@ -111,7 +106,7 @@ public class QuizGPTController {
                         .body(createErrorResponse("Only one question allowed for single evaluation"));
             }
 
-            List<QuestionEvaluationResult> results = quizGPTService.evaluateQuiz(request, currentUser);
+            List<QuestionEvaluationResult> results = (List<QuestionEvaluationResult>) quizGPTService.evaluateQuiz(request, currentUser);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
