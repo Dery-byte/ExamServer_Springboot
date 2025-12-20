@@ -29,6 +29,9 @@ public class Answer {
     @JoinColumn(name = "report_id")
     private Report report;
 
+    @Column(nullable = false)
+    private String  quesNo;
+
 
 
 
@@ -62,6 +65,14 @@ private String studentAnswer;
 
     public void setReport(Report report) {
         this.report = report;
+    }
+
+    public String getQuesNo() {
+        return quesNo;
+    }
+
+    public void setQuesNo(String quesNo) {
+        this.quesNo = quesNo;
     }
 
     public Quiz getQuiz() {

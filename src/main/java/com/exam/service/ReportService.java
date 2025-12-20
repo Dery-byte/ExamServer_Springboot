@@ -114,6 +114,7 @@ public class ReportService {
                     data.put("totalMaxMarks", report.getMarksB());
                     data.put("percentage", report.getPercentage());
                     data.put("grade", report.getGrade());
+//                    data.put("QuesNo", report)
                     data.put("submissionDate", report.getSubmissionDate());
                     data.put("answers", answers.stream()
                             .map(this::createAnswerDTO)
@@ -156,6 +157,7 @@ public class ReportService {
     // Helper method
     private Map<String, Object> createAnswerDTO(Answer answer) {
         Map<String, Object> dto = new HashMap<>();
+        dto.put("quesNo", answer.getQuesNo());
         dto.put("answerId", answer.getAnswerId());
         dto.put("questionId", answer.getTheoryQuestion().getTqId());
         dto.put("questionText", answer.getTheoryQuestion().getQuestion());
@@ -255,10 +257,8 @@ public class ReportService {
     public List<Report> reportByUser_id(User user){
         return reportRepository.findByUser(user);
     }
-
-
     public List<Report> findReportsByUserAndQuiz(User user, Quiz quiz) {
-        return reportRepository.findByUserAndQuiz(user, quiz);
+        return reportRepository.findByUserAndQuiz(Optional.ofNullable(user), Optional.ofNullable(quiz));
     }
 
     public Report findByUserAndQuiz(Integer id, Long quizId) {

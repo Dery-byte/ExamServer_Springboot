@@ -283,6 +283,7 @@ public class QuizGeminiService {
 //        return answer;
 //    }
 
+
     private Answer mapToAnswer(QuestionEvaluationResult result, User user, TheoryQuestions theoryQuestions, Long quizId) {
         Answer answer = new Answer();
         answer.setStudentAnswer(result.getStudentAnswer());

@@ -204,20 +204,16 @@ public class QuizGPTService {
     @Transactional
     public QuizEvaluationResponse evaluateQuiz(GeminiRequest request, User user) {
         List<QuestionSubmission> submissions = parseSubmissions(request);
-
         logger.info("📝 Processing {} questions for user {} (ID: {})",
                 submissions.size(), user.getUsername(), user.getId());
-
         // Step 1: Evaluate all questions
         List<QuestionEvaluationResult> results = submissions.stream()
                 .map(this::evaluateSingleQuestion)
                 .collect(Collectors.toList());
-
         // Step 2: Calculate totals
         double totalScore = 0;
         double totalMaxMarks = 0;
         int successfulEvaluations = 0;
-
         for (QuestionEvaluationResult result : results) {
             if (!result.getFeedback().startsWith("Evaluation failed") &&
                     !result.getFeedback().startsWith("Authentication failed")) {
@@ -226,7 +222,6 @@ public class QuizGPTService {
                 successfulEvaluations++;
             }
         }
-
         // Step 3: Get Quiz and managed User
         Long quizId = Long.valueOf(submissions.get(0).getQuizId());
         Quiz quiz = quizRepository.findById(quizId)
@@ -235,36 +230,43 @@ public class QuizGPTService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Step 4: Create Report
-        Report report = new Report();
+//        Report report = new Report();
+// CHECK IF REPORT EXISTS
+        Report report = reportRepository.findByUserAndQuiz(managedUser, quiz)
+                .orElse(new Report());
+
         report.setUser(managedUser);
         report.setQuiz(quiz);
-        report.setMarks(BigDecimal.valueOf(0));
+//        report.setMarks(BigDecimal.valueOf(0));
         report.setMaxScoreSectionB(BigDecimal.valueOf(totalMaxMarks));
         report.setMarksB(BigDecimal.valueOf(totalScore));
         report.setProgress("Completed");
         report.setEvaluationMethod("GPT");
         report.setSubmissionDate(LocalDateTime.now());
+
+
+        // Only set marks if it's a new report (don't overwrite OBJ marks)
+        if (report.getId() == null) {
+            report.setMarks(BigDecimal.valueOf(0));
+        }
+
         report.calculatePercentageAndGrade();
-
         Report savedReport = reportRepository.saveAndFlush(report);
-
         // Step 5: Save Answers and link them to Report
         int savedAnswersCount = 0;
         List<QuestionEvaluationResult> successfulResults = new ArrayList<>();
-
         for (QuestionEvaluationResult result : results) {
             if (result.getFeedback().startsWith("Evaluation failed") ||
                     result.getFeedback().startsWith("Authentication failed")) {
                 successfulResults.add(result);
                 continue;
             }
-
             try {
                 Long tqid = Long.valueOf(result.getTqid());
                 TheoryQuestions theoryQuestions = theoryQuestionsRepository.findById(tqid)
                         .orElseThrow(() -> new RuntimeException("Question not found: " + tqid));
-
                 Answer answer = new Answer();
+                answer.setQuesNo(result.getQuestionNumber());
                 answer.setStudentAnswer(result.getStudentAnswer());
                 answer.setScore(result.getScore());
                 answer.setMaxMarks(result.getMaxMarks());
@@ -274,7 +276,6 @@ public class QuizGPTService {
                 answer.setQuiz(quiz);
                 answer.setTheoryQuestion(theoryQuestions);
                 answer.setReport(savedReport);
-
                 answerRepository.saveAndFlush(answer);
                 savedAnswersCount++;
                 successfulResults.add(result);
@@ -285,7 +286,6 @@ public class QuizGPTService {
                 successfulResults.add(result);
             }
         }
-
         // Step 6: Build response
         QuizEvaluationResponse response = new QuizEvaluationResponse();
         response.setReportId(savedReport.getId());
@@ -293,7 +293,6 @@ public class QuizGPTService {
         response.setUsername(user.getUsername());
         response.setQuizId(quizId);
         response.setResults(successfulResults);
-
         QuizEvaluationResponse.Summary summary = new QuizEvaluationResponse.Summary();
         summary.setTotalScore(totalScore);
         summary.setTotalMaxMarks(totalMaxMarks);
@@ -301,11 +300,64 @@ public class QuizGPTService {
         summary.setGrade(report.getGrade() != null ? report.getGrade() : "N/A");
         summary.setQuestionsAnswered(successfulEvaluations);
         summary.setAnswersSaved(savedAnswersCount);
-
         response.setSummary(summary);
-
         return response;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -523,6 +575,10 @@ public class QuizGPTService {
                 Collections.emptyList()
         );
     }
+
+
+
+
 }
 
 

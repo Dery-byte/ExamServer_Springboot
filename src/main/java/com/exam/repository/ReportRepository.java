@@ -51,7 +51,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     List<Report> findByUser(User user);
 
-List<Report> findByUserAndQuiz(User user, Quiz quiz);
+Optional<Report> findByUserAndQuiz(User user, Quiz quiz);
 
     Report findByUser_idAndQuiz_qId(Integer id, Long quizId);
 

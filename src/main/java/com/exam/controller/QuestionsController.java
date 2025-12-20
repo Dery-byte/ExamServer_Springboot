@@ -1,11 +1,13 @@
 package com.exam.controller;
 
+import com.exam.DTO.QuizEvaluationResult;
 import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.Report;
 import com.exam.repository.QuizRepository;
 import com.exam.repository.ReportRepository;
+import com.exam.service.Impl.QuizEvaluationService;
 import com.exam.service.QuestionsService;
 import com.exam.service.QuizService;
 import com.exam.service.ReportService;
@@ -43,6 +45,9 @@ public class QuestionsController {
     private QuizRepository quizRepository;
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private QuizEvaluationService quizEvaluationService;
 
 
     @Autowired
@@ -206,8 +211,11 @@ Collections.shuffle(list);
 
 
 
+
+
+
     @PostMapping("question/eval-quiz/{qid}")
-    public ResponseEntity<?> evalQuiz(@RequestBody List<Questions> questions, Principal principal, @PathVariable("qid") Long qid) {
+    public ResponseEntity<?> evalQuiz2(@RequestBody List<Questions> questions, Principal principal, @PathVariable("qid") Long qid) {
         // Ensure the principal and qid are not null
         if (principal == null || qid == null) {
             return ResponseEntity.badRequest().body("Principal or quiz ID is null");
@@ -274,6 +282,7 @@ Collections.shuffle(list);
 
         return ResponseEntity.ok(map);
     }
+
 
     private boolean isGivenAnswerAttempted(List<String> givenAnswersList) {
         if (givenAnswersList != null && !givenAnswersList.isEmpty()) {
@@ -501,7 +510,27 @@ public ResponseEntity<String> uploadQuestions(
 //    }
 
 
+@PostMapping("/eval-quiz/{qid}")
+public ResponseEntity<?> evalQuiz(
+        @RequestBody List<Questions> questions,
+        Principal principal,
+        @PathVariable Long qid
+) {
 
+    if (principal == null || qid == null) {
+        return ResponseEntity.badRequest()
+                .body("Principal or quiz ID is null");
+    }
+
+    QuizEvaluationResult result =
+            quizEvaluationService.evaluateQuiz(
+                    questions,
+                    principal.getName(),
+                    qid
+            );
+
+    return ResponseEntity.ok(result);
+}
 
 
 
