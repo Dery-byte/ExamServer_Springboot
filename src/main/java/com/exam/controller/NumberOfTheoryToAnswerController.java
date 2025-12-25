@@ -41,4 +41,14 @@ public class NumberOfTheoryToAnswerController {
         List<NumberOfTheoryToAnswer> numberToAnswer = numberOfTheoryToAnswerService.TheoryTOByQuiz_Id(quiz);
         return ResponseEntity.ok(numberToAnswer);
     }
+
+
+    @GetMapping("/quiz/{quizId}")
+    public ResponseEntity<List<NumberOfTheoryToAnswer>> getQuestionsByQuizId(
+            @PathVariable Long quizId) {
+        List<NumberOfTheoryToAnswer> questions = numberOfTheoryToAnswerService.findByQuizId(quizId);
+        return ResponseEntity.ok(questions);
+    }
+
+
 }

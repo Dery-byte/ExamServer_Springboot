@@ -18,6 +18,8 @@ public interface NumberOfTheoryToAnswerRepository extends JpaRepository<NumberOf
 
 //    void findByQuizId(Long quizId);
 
+    List<NumberOfTheoryToAnswer> findByQuiz_qId(Long quizId);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM NumberOfTheoryToAnswer n WHERE n.quiz.qId= :quizId")

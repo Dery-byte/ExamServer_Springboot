@@ -13,6 +13,7 @@ import java.util.List;
 public class NumberOfTheoryToAnswerService {
     @Autowired
     private NumberOfTheoryToAnswerRepository numberOfTheoryToAnswerRepository;
+
     public NumberOfTheoryToAnswer addQuestions(NumberOfTheoryToAnswer numberOfTheoryToAnswer){
         return this.numberOfTheoryToAnswerRepository.save(numberOfTheoryToAnswer);
     }
@@ -27,4 +28,7 @@ public class NumberOfTheoryToAnswerService {
         return numberOfTheoryToAnswerRepository.findByQuiz(quiz);
     }
 
+    public List<NumberOfTheoryToAnswer> findByQuizId(Long quizId) {
+        return numberOfTheoryToAnswerRepository.findByQuiz_qId(quizId);
+    }
 }
