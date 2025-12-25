@@ -140,6 +140,21 @@ public Page<Questions> getLimitedRecords(int page, int size) {
         List<Questions> randomRecords = allRecords.subList(0, Math.min(2, allRecords.size()));
         return ResponseEntity.ok(randomRecords);
     }
+
+
+
+
+//    public Questions get(Long quesId) {
+//        return questionsRepository.findById(quesId).orElse(null);
+//    }
+
+    // 🔴 ADD THIS METHOD
+    public List<Questions> getQuestionsByQuizId(Long quizId) {
+        List<Questions> list = questionsRepository.findByQuiz_qId(quizId);
+        System.out.println("Questions found for quiz " + quizId + " = " + list.size());
+        return list;
+    }
+
 //    public Report AddReport(Report report){
 //        return reportRepository.save(report);
 //    }

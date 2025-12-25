@@ -5,8 +5,10 @@ import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.Report;
+import com.exam.model.exam.StudentAnswer;
 import com.exam.repository.QuizRepository;
 import com.exam.repository.ReportRepository;
+import com.exam.repository.StudentAnswerRepository;
 import com.exam.service.Impl.QuizEvaluationService;
 import com.exam.service.QuestionsService;
 import com.exam.service.QuizService;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -48,6 +51,9 @@ public class QuestionsController {
 
     @Autowired
     private QuizEvaluationService quizEvaluationService;
+
+    @Autowired
+    private StudentAnswerRepository studentAnswerRepository;
 
 
     @Autowired
@@ -214,74 +220,164 @@ Collections.shuffle(list);
 
 
 
-    @PostMapping("question/eval-quiz/{qid}")
-    public ResponseEntity<?> evalQuiz2(@RequestBody List<Questions> questions, Principal principal, @PathVariable("qid") Long qid) {
-        // Ensure the principal and qid are not null
-        if (principal == null || qid == null) {
-            return ResponseEntity.badRequest().body("Principal or quiz ID is null");
-        }
+//    @PostMapping("question/eval-quiz/{qid}")
+//    public ResponseEntity<?> evalQuiz2(@RequestBody List<Questions> questions, Principal principal, @PathVariable("qid") Long qid) {
+//        // Ensure the principal and qid are not null
+//        if (principal == null || qid == null) {
+//            return ResponseEntity.badRequest().body("Principal or quiz ID is null");
+//        }
+//
+//        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+//        Quiz quiz = this.quizService.getQuiz(qid);
+//
+//        if (user == null || quiz == null) {
+//            return ResponseEntity.badRequest().body("User or quiz not found");
+//        }
+//
+//        double marksGot = 0.0;
+//        int correctAnswers = 0;
+//        int attempted = 0;
+//        double maxMarks = 0;
+//
+//        if (questions == null || questions.isEmpty()) {
+//            return ResponseEntity.badRequest().body("No questions provided");
+//        }
+//
+//        maxMarks = Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
+//
+//        for (Questions q : questions) {
+//            if (q == null) continue; // Skip null questions
+//            Questions question = this.questionsService.get(q.getQuesId());
+//            if (question == null) continue; // Skip if the question is not found
+//            List<String> correctAnswersList = q.getcorrect_answer() != null ? Arrays.asList(q.getcorrect_answer()): null;
+//            List<String> givenAnswersList = q.getGivenAnswer() != null ? Arrays.asList(q.getGivenAnswer()) : null;
+//            if (correctAnswersList != null && givenAnswersList != null) {
+//                Collections.sort(correctAnswersList);
+//                Collections.sort(givenAnswersList);
+//                if (correctAnswersList.equals(givenAnswersList)) {
+//                    correctAnswers++;
+//                    double marksSingle = (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) / (double) questions.size());
+//                    marksGot += marksSingle;
+//                }
+//            }
+//            if (isGivenAnswerAttempted(givenAnswersList)) {
+//                attempted++;
+//            }
+//        }
+//
+//        Report report = new Report();
+//        report.setQuiz(quiz);
+//        report.setUser(user);
+//        report.setProgress("Completed");
+//        report.setMarks(BigDecimal.valueOf(marksGot));
+//        report.setMarksB(BigDecimal.valueOf(0));
+//        reportService.addReport(report);
+//        Map<String, Object> map = Map.of(
+//                "marksGot", marksGot,
+//                "correctAnswers", correctAnswers,
+//                "attempted", attempted,
+//                "maxMarks", maxMarks
+//        );
+//        return ResponseEntity.ok(map);
+//    }
 
-        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
-        Quiz quiz = this.quizService.getQuiz(qid);
 
-        if (user == null || quiz == null) {
-            return ResponseEntity.badRequest().body("User or quiz not found");
-        }
+@PostMapping("question/eval-quiz/{qid}")
+@Transactional
+public ResponseEntity<?> evalQuiz2(@RequestBody List<Questions> questions,
+                                   Principal principal,
+                                   @PathVariable("qid") Long qid) {
 
-        double marksGot = 0.0;
-        int correctAnswers = 0;
-        int attempted = 0;
-        double maxMarks = 0;
-
-        if (questions == null || questions.isEmpty()) {
-            return ResponseEntity.badRequest().body("No questions provided");
-        }
-
-        maxMarks = Double.parseDouble(questions.get(0).getQuiz().getMaxMarks());
-
-        for (Questions q : questions) {
-            if (q == null) continue; // Skip null questions
-
-            Questions question = this.questionsService.get(q.getQuesId());
-            if (question == null) continue; // Skip if the question is not found
-
-            List<String> correctAnswersList = q.getcorrect_answer() != null ? Arrays.asList(q.getcorrect_answer()): null;
-            List<String> givenAnswersList = q.getGivenAnswer() != null ? Arrays.asList(q.getGivenAnswer()) : null;
-
-            if (correctAnswersList != null && givenAnswersList != null) {
-                Collections.sort(correctAnswersList);
-                Collections.sort(givenAnswersList);
-                if (correctAnswersList.equals(givenAnswersList)) {
-                    // correct
-                    correctAnswers++;
-                    double marksSingle = (Double.parseDouble(questions.get(0).getQuiz().getMaxMarks()) / (double) questions.size());
-                    marksGot += marksSingle;
-                }
-            }
-
-            if (isGivenAnswerAttempted(givenAnswersList)) {
-                attempted++;
-            }
-        }
-
-        Report report = new Report();
-        report.setQuiz(quiz);
-        report.setUser(user);
-        report.setProgress("Completed");
-        report.setMarks(BigDecimal.valueOf(marksGot));
-        report.setMarksB(BigDecimal.valueOf(0));
-
-        reportService.addReport(report);
-
-        Map<String, Object> map = Map.of(
-                "marksGot", marksGot,
-                "correctAnswers", correctAnswers,
-                "attempted", attempted,
-                "maxMarks", maxMarks
-        );
-
-        return ResponseEntity.ok(map);
+    if (principal == null || qid == null) {
+        return ResponseEntity.badRequest().body("Principal or quiz ID is null"); }
+    User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+    Quiz quiz = this.quizService.getQuiz(qid);
+    if (user == null || quiz == null) {
+        return ResponseEntity.badRequest().body("User or quiz not found");
     }
+    double marksGot = 0.0;
+    int correctAnswers = 0;
+    int attempted = 0;
+    double maxMarks = Double.parseDouble(quiz.getMaxMarks());
+    List<Map<String, Object>> resultList = new ArrayList<>();
+    for (Questions q : questions) {
+        if (q == null) continue;
+        Questions question = this.questionsService.get(q.getQuesId());
+        if (question == null) continue;
+        // Correct and given answers
+        List<String> correctAnswersList = question.getcorrect_answer() != null
+                ? Arrays.asList(question.getcorrect_answer())
+                : new ArrayList<>();
+        List<String> givenAnswersList = q.getGivenAnswer() != null
+                ? Arrays.asList(q.getGivenAnswer())
+                : new ArrayList<>();
+        // Check correctness
+        boolean isCorrect = false;
+        if (!givenAnswersList.isEmpty()) {
+            attempted++;
+            Collections.sort(correctAnswersList);
+            Collections.sort(givenAnswersList);
+            isCorrect = correctAnswersList.equals(givenAnswersList);
+            if (isCorrect) {
+                correctAnswers++;
+                marksGot += maxMarks / questions.size();
+            }
+        }
+
+        // Save student answer
+        StudentAnswer studentAnswer = new StudentAnswer();
+        studentAnswer.setUser(user); // map User -> Student
+        studentAnswer.setQuestion(question);
+        studentAnswer.setSelectedOptions(q.getGivenAnswer()); // null if skipped
+        studentAnswerRepository.save(studentAnswer);
+
+        // Prepare response entry
+        Map<String, Object> questionMap = new HashMap<>();
+        questionMap.put("quesId", question.getQuesId());
+        questionMap.put("content", question.getContent());
+        questionMap.put("image", question.getImage());
+        questionMap.put("option1", question.getOption1());
+        questionMap.put("option2", question.getOption2());
+        questionMap.put("option3", question.getOption3());
+        questionMap.put("option4", question.getOption4());
+        questionMap.put("correct_answer", question.getcorrect_answer());
+        questionMap.put("selectedAnswers", q.getGivenAnswer()); // student answer
+        questionMap.put("isCorrect", isCorrect);
+        questionMap.put("quiz", quiz); // optional, can be serialized as is
+        resultList.add(questionMap);
+    }
+    // Save report
+    Report report = new Report();
+    report.setQuiz(quiz);
+    report.setUser(user);
+    report.setProgress("Completed");
+    report.setMarks(BigDecimal.valueOf(marksGot));
+    report.setMarksB(BigDecimal.valueOf(0));
+    reportService.addReport(report);
+    // Final JSON response
+    Map<String, Object> response = new HashMap<>();
+    response.put("studentId", user.getId());
+    response.put("quizId", quiz.getqId());
+    response.put("marksGot", marksGot);
+    response.put("correctAnswers", correctAnswers);
+    response.put("attempted", attempted);
+    response.put("maxMarks", maxMarks);
+    response.put("results", resultList);
+
+    return ResponseEntity.ok(response);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private boolean isGivenAnswerAttempted(List<String> givenAnswersList) {

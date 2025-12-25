@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -130,6 +131,22 @@ public ResponseEntity<List<Report>> getQuizIds(@PathVariable("quiz_Id") Long qui
         }
 }
 
+
+    @GetMapping("/quiz/result/{quizId}")
+    public ResponseEntity<?> getStudentQuizResult(@PathVariable("quizId") Long quizId,
+                                                  Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.badRequest().body("User not logged in");
+        }
+
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        if (user == null ) {
+            return ResponseEntity.badRequest().body("Student not found");
+        }
+
+        Map<String, Object> result = reportService.getStudentQuizResult(quizId, user.getId());
+        return ResponseEntity.ok(result);
+    }
 
 
 

@@ -54,11 +54,4 @@ public class TheoryService {
         return theoryQuestionsRepository.saveAll(theoryQuestions);
     }
 
-
-
-
-
-
-
-
 }

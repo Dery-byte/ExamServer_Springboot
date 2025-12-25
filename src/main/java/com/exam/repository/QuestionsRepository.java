@@ -8,10 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 @Repository
 public interface QuestionsRepository extends JpaRepository <Questions, Long> {
     Set<Questions> findByQuiz(Quiz quiz);
+
+
+    List<Questions> findByQuiz_qId(Long quizId);
 
 
     @Modifying
