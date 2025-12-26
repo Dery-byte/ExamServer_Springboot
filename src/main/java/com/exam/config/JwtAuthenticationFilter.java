@@ -88,6 +88,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -116,7 +118,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
-
+        String path = request.getRequestURI();
+        if (path.equals("/token-info")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // FALLBACK: Check Authorization header (for backward compatibility)
         if (jwt == null) {
             final String authHeader = request.getHeader("Authorization");

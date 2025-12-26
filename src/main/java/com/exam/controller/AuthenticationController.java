@@ -2,6 +2,7 @@ package com.exam.controller;
 
 import com.exam.DTO.ForgottenPasswordRequest;
 import com.exam.DTO.ResetPasswordRequest;
+import com.exam.DTO.TokenInfo;
 import com.exam.auth.AuthenticationRequest;
 import com.exam.auth.AuthenticationResponse;
 import com.exam.auth.RegisterRequest;
@@ -10,8 +11,13 @@ import com.exam.helper.UserNotFoundException;
 import com.exam.model.User;
 import com.exam.repository.UserRepository;
 import com.exam.service.AuthenticationService;
+import com.exam.service.JwtService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -36,10 +43,11 @@ public class AuthenticationController {
     private final AuthenticationService service;
     @Autowired
     private final UserDetailsService userDetailsService;
-//    @Autowired
-//    private CategoryService categoryService;
-//    @Autowired
-//    private QuizService quizService;
+
+
+    @Autowired
+    private JwtService jwtService;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -54,7 +62,6 @@ public class AuthenticationController {
     public String home(){
         return "index";
     }
-
 
 
 //    @PostMapping("/add")
@@ -246,8 +253,25 @@ public class AuthenticationController {
         // Return response without token (or with user details only)
         return ResponseEntity.ok(AuthenticationResponse.builder()
                 .message("Authentication successful")
+//                        .token(authResponse.getToken())
                 .build());
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -329,6 +353,65 @@ return "Password changed " + user.getPassword();
         service.resetPassword(request);
         return ResponseEntity.ok().build();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @GetMapping("/token-info")
+    public TokenInfo getTokenInfo(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+
+        // Debug: Check if cookies exist
+        if (cookies == null) {
+            System.out.println("❌ No cookies found in request");
+            return new TokenInfo(0);
+        }
+
+        // Debug: Log all cookies
+        System.out.println("🍪 Cookies found: " + cookies.length);
+        for (Cookie cookie : cookies) {
+            System.out.println("  - " + cookie.getName() + " = " + cookie.getValue().substring(0, Math.min(20, cookie.getValue().length())) + "...");
+        }
+
+        String accessToken = null;
+        for (Cookie cookie : cookies) {
+            if ("accessToken".equals(cookie.getName())) {
+                accessToken = cookie.getValue();
+                System.out.println("✅ Token cookie found");
+                break;
+            }
+        }
+
+        if (accessToken == null) {
+            System.out.println("❌ No 'token' cookie found");
+            return new TokenInfo(0);
+        }
+
+        try {
+            Claims claims = jwtService.extractAllClaims(accessToken);
+            long exp = claims.getExpiration().getTime() / 1000;
+            System.out.println("✅ Token expiration: " + exp + " (" + new Date(exp * 1000) + ")");
+            return new TokenInfo(exp);
+        } catch (Exception e) {
+            System.out.println("❌ Error extracting claims: " + e.getMessage());
+            e.printStackTrace();
+            return new TokenInfo(0);
+        }
+    }
+
+
 }
 
 
