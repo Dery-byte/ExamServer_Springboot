@@ -211,12 +211,19 @@ public class AuthenticationController {
     ) throws UserFoundException {
         return ResponseEntity.ok(service.register(request));
     }
+
+
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) throws UserNotFoundException {
         return ResponseEntity.ok(service.authenticate(request));
     }
+
+
+
+
 
     //get the current user details
     @GetMapping("/current-user")

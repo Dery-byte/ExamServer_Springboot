@@ -321,10 +321,8 @@ public class ReportService {
                 attempted++;
                 Set<String> correctSet = new HashSet<>(correctList);
                 Set<String> selectedSet = new HashSet<>(selectedList);
-
                 boolean hasAnyCorrect = selectedSet.stream().anyMatch(correctSet::contains);
                 boolean hasWrong = selectedSet.stream().anyMatch(a -> !correctSet.contains(a));
-
                 if (!hasAnyCorrect) {
                     status = AnswerStatus.WRONG;
                 } else if (!hasWrong && selectedSet.size() == correctSet.size()) {
@@ -350,7 +348,6 @@ public class ReportService {
             questionMap.put("correct_answer", question.getcorrect_answer());
             questionMap.put("selectedAnswers", selected);
             questionMap.put("status", status.name()); // CORRECT / PARTIAL / WRONG / SKIPPED
-
             resultList.add(questionMap);
         }
 
@@ -365,7 +362,6 @@ public class ReportService {
         response.put("attempted", attempted);
         response.put("maxMarks", maxMarks);
         response.put("results", resultList);
-
         return response;
     }
 

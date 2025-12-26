@@ -78,6 +78,9 @@ public class AuthenticationService {
     }
     }
 
+
+
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws UserNotFoundException {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -103,6 +106,18 @@ public class AuthenticationService {
                 .build();
         tokenRepository.save(token);
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(Math.toIntExact(user.getId()));
