@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -276,16 +277,44 @@ public class AuthenticationController {
 
 
 
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(HttpServletResponse response) {
+//        // Clear the cookie
+//        Cookie cookie = new Cookie("token", null);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(true);
+//        cookie.setPath("/");
+//        cookie.setMaxAge(0);  // Delete immediately
+//        response.addCookie(cookie);
+//        return ResponseEntity.ok().body("Logged out successfully");
+//    }
+
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        // Clear the cookie
-        Cookie cookie = new Cookie("accessToken", null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);  // Delete immediately
-        response.addCookie(cookie);
-        return ResponseEntity.ok().body("Logged out successfully");
+        // Clear BOTH cookies (accessToken and token)
+        // Clear accessToken cookie
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(false); // Set to true in production with HTTPS
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0);
+        response.addCookie(accessTokenCookie);
+
+        // Clear token cookie (this is the main one!)
+        Cookie tokenCookie = new Cookie("token", null);
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(false); // Set to true in production with HTTPS
+        tokenCookie.setPath("/");
+        tokenCookie.setMaxAge(0);
+        response.addCookie(tokenCookie);
+
+        System.out.println("✅ User logged out - cookies cleared");
+
+        return ResponseEntity.ok().body(Map.of(
+                "message", "Logged out successfully",
+                "timestamp", System.currentTimeMillis()
+        ));
     }
 
 
