@@ -11,6 +11,8 @@ import com.exam.model.User;
 import com.exam.repository.UserRepository;
 import com.exam.service.AuthenticationService;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -214,13 +216,53 @@ public class AuthenticationController {
 
 
 
+//    @PostMapping("/authenticate")
+//    public ResponseEntity<AuthenticationResponse> authenticate(
+//            @RequestBody AuthenticationRequest request
+//    ) throws UserNotFoundException {
+//        return ResponseEntity.ok(service.authenticate(request));
+//    }
+
+
+
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+            @RequestBody AuthenticationRequest request,
+            HttpServletResponse response  // Add this parameter
     ) throws UserNotFoundException {
-        return ResponseEntity.ok(service.authenticate(request));
+        AuthenticationResponse authResponse = service.authenticate(request);
+
+        // Set token as HttpOnly cookie
+        Cookie cookie = new Cookie("accessToken", authResponse.getToken());
+        cookie.setHttpOnly(true);        // Prevents JavaScript access
+        cookie.setSecure(true);          // HTTPS only (set to false in development if using HTTP)
+        cookie.setPath("/");             // Available to all paths
+        cookie.setMaxAge(3600);          // 1 hour (adjust based on your token expiration)
+        cookie.setAttribute("SameSite", "Strict"); // CSRF protection
+
+        response.addCookie(cookie);
+
+        // Return response without token (or with user details only)
+        return ResponseEntity.ok(AuthenticationResponse.builder()
+                .message("Authentication successful")
+                .build());
     }
 
+
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        // Clear the cookie
+        Cookie cookie = new Cookie("accessToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);  // Delete immediately
+        response.addCookie(cookie);
+        return ResponseEntity.ok().body("Logged out successfully");
+    }
 
 
 
@@ -229,7 +271,6 @@ public class AuthenticationController {
     @GetMapping("/current-user")
     public User getCurrentUser(Principal principal){ 
         return (User) this.userDetailsService.loadUserByUsername(principal.getName());
-
     }
 
     //Change Password if logged In
