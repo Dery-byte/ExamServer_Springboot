@@ -277,21 +277,12 @@ public class AuthenticationController {
 
 
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(HttpServletResponse response) {
-//        // Clear the cookie
-//        Cookie cookie = new Cookie("token", null);
-//        cookie.setHttpOnly(true);
-//        cookie.setSecure(true);
-//        cookie.setPath("/");
-//        cookie.setMaxAge(0);  // Delete immediately
-//        response.addCookie(cookie);
-//        return ResponseEntity.ok().body("Logged out successfully");
-//    }
 
 
-    @PostMapping("/logout")
+
+    @PostMapping("/logoutssss")
     public ResponseEntity<?> logout(HttpServletResponse response) {
+        System.out.println("🔍 Logout endpoint HIT!");
         // Clear BOTH cookies (accessToken and token)
         // Clear accessToken cookie
         Cookie accessTokenCookie = new Cookie("accessToken", null);
@@ -302,19 +293,23 @@ public class AuthenticationController {
         response.addCookie(accessTokenCookie);
 
         // Clear token cookie (this is the main one!)
-        Cookie tokenCookie = new Cookie("token", null);
-        tokenCookie.setHttpOnly(true);
-        tokenCookie.setSecure(false); // Set to true in production with HTTPS
-        tokenCookie.setPath("/");
-        tokenCookie.setMaxAge(0);
-        response.addCookie(tokenCookie);
+//        Cookie tokenCookie = new Cookie("token", null);
+//        tokenCookie.setHttpOnly(true);
+//        tokenCookie.setSecure(false); // Set to true in production with HTTPS
+//        tokenCookie.setPath("/");
+//        tokenCookie.setMaxAge(0);
+//        response.addCookie(tokenCookie);
 
         System.out.println("✅ User logged out - cookies cleared");
 
-        return ResponseEntity.ok().body(Map.of(
+        Map<String, Object> responseBody = Map.of(
                 "message", "Logged out successfully",
                 "timestamp", System.currentTimeMillis()
-        ));
+        );
+
+        System.out.println("📤 Sending response: " + responseBody);
+
+        return ResponseEntity.ok().body(responseBody);
     }
 
 
