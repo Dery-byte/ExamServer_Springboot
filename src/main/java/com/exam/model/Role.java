@@ -1,8 +1,7 @@
 package com.exam.model;
 
 public enum Role {
-
-  USER,
   ADMIN,
+    LECTURER,
   NORMAL
 }

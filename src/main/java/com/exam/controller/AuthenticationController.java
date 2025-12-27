@@ -214,13 +214,30 @@ public class AuthenticationController {
 //        }
 
 
-
+// STUDENT
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) throws UserFoundException {
         return ResponseEntity.ok(service.register(request));
     }
+
+//LECTURER
+    @PostMapping("/register/lecturer")
+    public ResponseEntity<AuthenticationResponse> registerLecturer(
+            @RequestBody RegisterRequest request
+    ) throws UserFoundException {
+        return ResponseEntity.ok(service.registerAslecturer(request));
+    }
+    //ADMIN
+    @PostMapping("/register/admin")
+    public ResponseEntity<AuthenticationResponse> registerAdmin(
+            @RequestBody RegisterRequest request
+    ) throws UserFoundException {
+        return ResponseEntity.ok(service.registerAsAdmin(request));
+    }
+
+
 
 
 

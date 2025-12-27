@@ -50,7 +50,7 @@ public class AuthenticationService {
     @Value("${application.mailing.frontend.baseUrl}")
     private String frontendBaseUrl;
 
-
+// RESGISTER AS A STUDENT
     public AuthenticationResponse register(RegisterRequest request) throws UserFoundException {
         var userExist = userRepository.findByUsername(request.getUsername());
         if (userExist.isPresent()) {
@@ -77,6 +77,61 @@ public class AuthenticationService {
     }
     }
 
+
+    // RESGISTER AS A LECTURER
+    public AuthenticationResponse registerAslecturer(RegisterRequest request) throws UserFoundException {
+        var userExist = userRepository.findByUsername(request.getUsername());
+        if (userExist.isPresent()) {
+            System.out.println("User is already in the system");
+            throw new UserFoundException();
+        }
+        else
+        {
+            var user = User.builder()
+                    .firstname(request.getFirstname())
+                    .lastname(request.getLastname())
+                    .email(request.getEmail())
+                    .phone(request.getPhone())
+                    .username(request.getUsername())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.LECTURER)
+                    .build();
+            var savedUser = userRepository.save(user);
+            var jwtToken = jwtService.generateToken(user);
+            saveUserToken(savedUser, jwtToken);
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .build();
+        }
+    }
+
+
+    // RESGISTER AS ADMIN
+    public AuthenticationResponse registerAsAdmin(RegisterRequest request) throws UserFoundException {
+        var userExist = userRepository.findByUsername(request.getUsername());
+        if (userExist.isPresent()) {
+            System.out.println("User is already in the system");
+            throw new UserFoundException();
+        }
+        else
+        {
+            var user = User.builder()
+                    .firstname(request.getFirstname())
+                    .lastname(request.getLastname())
+                    .email(request.getEmail())
+                    .phone(request.getPhone())
+                    .username(request.getUsername())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.ADMIN)
+                    .build();
+            var savedUser = userRepository.save(user);
+            var jwtToken = jwtService.generateToken(user);
+            saveUserToken(savedUser, jwtToken);
+            return AuthenticationResponse.builder()
+                    .token(jwtToken)
+                    .build();
+        }
+    }
 
 
 
