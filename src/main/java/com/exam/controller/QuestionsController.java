@@ -61,20 +61,36 @@ public class QuestionsController {
     public QuestionsController(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+
+
+
+
     // get questions of any quiz
-    @GetMapping("question/quiz/all/{qid}")
+    @GetMapping("questions/quiz/all/{qid}")
     public  ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid){
         Quiz quiz = new Quiz();
         quiz.setqId(qid);
         Set<Questions> questionsOfQuiz =this.questionsService.getQuestionsOfQuiz(quiz);
         List<Questions> list = new ArrayList<>(questionsOfQuiz);
-
 Collections.shuffle(list);
-
-
-//        return ResponseEntity.ok(questionsOfQuiz);
         return ResponseEntity.ok(list);
     }
+
+
+    // FETCH QUESTIONS FOR A LECTURER
+    @GetMapping("/question/quiz/all/{quizId}")
+    public List<Questions> getMyQuizQuestions(
+            @PathVariable Long quizId,
+            Principal principal) {
+        List<Questions> questionsOfQuiz = this.questionsService.getQuestionsForMyQuiz(quizId, principal);
+//        List<Questions> list = new ArrayList<>(questionsOfQuiz);
+        Collections.shuffle(questionsOfQuiz);
+        return ResponseEntity.ok(questionsOfQuiz).getBody();
+    }
+
+
+
+
 
 
     //GET RANDOM QUESTIONS AND LIMITED
@@ -83,13 +99,6 @@ Collections.shuffle(list);
         return this.questionsService.getRandomRecords();
     }
 
-//GET LIMITED QUESTIONS
-//@GetMapping("/limited-records")
-//public Page<Questions> getLimitedRecords(
-//        @RequestParam(defaultValue = "0") int page,
-//        @RequestParam(defaultValue = "10") int size
-//) {
-//    return questionsService.getLimitedRecords(page, size);
 //}
     @GetMapping("question/{quesId}")
     public  Questions getSpecificQuestionsOfQuizAdmin(@PathVariable("quesId") Long quesId ){
@@ -102,6 +111,10 @@ Collections.shuffle(list);
     public ResponseEntity<Questions> add(@RequestBody Questions questions){
         return ResponseEntity.ok(this.questionsService.addQuestions(questions));
     }
+
+
+
+
 
     //Delete Question
     @DeleteMapping("/question/{quesId}")

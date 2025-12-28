@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -53,15 +54,24 @@ public class QuestionsService {
 //    }
 
     public Set<Questions> getQuestionsOfQuiz(Quiz quiz){
-
         return this.questionsRepository.findByQuiz(quiz);
     }
 
-//    public Set<Questions> getQuestionsQuiz(Quiz quiz){
-//        return this.questionsRepository.findByQuiz(quiz);
-//    }
 
-//limited Questions
+
+
+    public List<Questions> getQuestionsForMyQuiz(Long quizId, Principal principal) {
+        String username = principal.getName();
+        return questionsRepository.findByQuiz_qIdAndQuiz_Category_User_Username(quizId, username);
+    }
+
+
+
+
+
+
+
+    //limited Questions
 public Page<Questions> getLimitedRecords(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return this.questionsRepository.findAll(pageRequest);
@@ -154,6 +164,8 @@ public Page<Questions> getLimitedRecords(int page, int size) {
         System.out.println("Questions found for quiz " + quizId + " = " + list.size());
         return list;
     }
+
+
 
 //    public Report AddReport(Report report){
 //        return reportRepository.save(report);
