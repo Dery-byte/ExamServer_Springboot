@@ -1,5 +1,7 @@
 package com.exam.controller;
 
+import com.exam.DTO.TheoryQuestionDTO;
+import com.exam.DTO.TheoryUpdateRequest;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.TheoryQuestions;
@@ -45,12 +47,34 @@ public class TheoryController {
         this.theoryService.deleteQuestion(quesId);
     }
 
-    //update Questions
-    @PutMapping("/theoryquestion/updateQuestions")
-    public TheoryQuestions updateQuestion(@RequestBody TheoryQuestions theoryQuestions) {
-        return this.theoryService.updateQuestions(theoryQuestions);
-    }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    //update Questions
+
+    @PutMapping("/theoryquestion/updateQuestions")
+    public TheoryQuestionDTO updateQuestion(@RequestBody TheoryUpdateRequest request) {
+        return this.theoryService.updateQuestions(request);
+    }
 
     @GetMapping("theoryquestion/quiz/all/{qid}")
     public ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid) {

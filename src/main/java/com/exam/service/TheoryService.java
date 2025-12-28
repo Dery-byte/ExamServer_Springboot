@@ -1,6 +1,8 @@
 package com.exam.service;
 
 
+import com.exam.DTO.TheoryQuestionDTO;
+import com.exam.DTO.TheoryUpdateRequest;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.TheoryQuestions;
@@ -39,8 +41,41 @@ public class TheoryService {
 
 
 
-    public TheoryQuestions updateQuestions(TheoryQuestions theoryQuestions){
-        return this.theoryQuestionsRepository.save(theoryQuestions);
+//    public TheoryQuestions updateQuestions(TheoryQuestions theoryQuestions){
+//        return this.theoryQuestionsRepository.save(theoryQuestions);
+//    }
+//
+
+
+    public TheoryQuestionDTO updateQuestions(TheoryUpdateRequest request){
+        // Fetch existing entity
+        TheoryQuestions tq = theoryQuestionsRepository.findById(request.getTqId())
+                .orElseThrow(() -> new RuntimeException("Question not found"));
+
+        // Update fields if provided
+        if (request.getQuesNo() != null) tq.setQuesNo(request.getQuesNo());
+        if (request.getQuestion() != null) tq.setQuestion(request.getQuestion());
+        if (request.getMarks() != null) tq.setMarks(request.getMarks());
+        if (request.getQuizId() != null) {
+//            Quiz quiz = new Quiz();
+//            quiz.setqId(request.getQuizId());
+//            tq.setQuiz(quiz);
+        }
+
+        TheoryQuestions updated = this.theoryQuestionsRepository.save(tq);
+        return toDTO(updated);  // convert to DTO for response
+    }
+
+    public TheoryQuestionDTO toDTO(TheoryQuestions tq) {
+        TheoryQuestionDTO dto = new TheoryQuestionDTO();
+        dto.setTqId(tq.getTqId());
+        dto.setQuesNo(tq.getQuesNo());
+        dto.setQuestion(tq.getQuestion());
+        dto.setMarks(tq.getMarks());
+        if (tq.getQuiz() != null) {
+            dto.setQuizId(tq.getQuiz().getqId());
+        }
+        return dto;
     }
 
 
