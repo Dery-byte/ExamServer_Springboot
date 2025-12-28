@@ -3,10 +3,12 @@ package com.exam.service;
 import com.exam.model.User;
 import com.exam.model.exam.*;
 import com.exam.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +31,7 @@ public class QuizService {
     @Autowired
     private NumberOfTheoryToAnswerRepository numberOfTheoryToAnswerRepository;
     @Autowired
-    private Registered_coursesRepository registeredCoursesRepository;
+    private UserRepository userRepository;
 
     public Quiz addQuiz(Quiz quiz){
 //        quiz.setStartTimeFromAMPM(quiz.getStartTime());
@@ -135,6 +137,28 @@ public class QuizService {
                 .toList();
     }
 
+
+
+
+
+    // ADD QUIZ AND USER
+    @Transactional
+    public Quiz addQuizForLoggedInUser(Quiz quiz, Principal principal) {
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        quiz.setUser(user); // link quiz to user
+        return quizRepository.save(quiz);
+    }
+
+// fetch quiz based on the users
+    @Transactional(readOnly = true)
+    public List<Quiz> getQuizzesForLoggedInUser(Principal principal) {
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        return quizRepository.findByUser_Id(user.getId());
+    }
 
 
 }

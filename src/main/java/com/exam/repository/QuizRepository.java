@@ -26,4 +26,8 @@ public interface QuizRepository  extends JpaRepository <Quiz, Long> {
     void deleteByCategory_cid(@Param("categoryId") Long categoryId);
 
     List<Quiz> findByCategory_cid(Long categoryId);
+
+
+    // Fetch all quizzes for a given user ID
+    List<Quiz> findByUser_Id(Long userId);
 }

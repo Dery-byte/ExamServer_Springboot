@@ -1,6 +1,8 @@
 package com.exam.model;
 
+import com.exam.model.exam.Category;
 import com.exam.model.exam.Providers;
+import com.exam.model.exam.Quiz;
 import com.exam.model.exam.Report;
 import com.exam.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,10 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Builder
@@ -24,6 +23,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
+
+
 public class User implements UserDetails {
 
   @Id
@@ -61,8 +62,18 @@ public class User implements UserDetails {
   @JsonIgnore
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Token> tokens;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Quiz> quizzes = new HashSet<>();
+
+
+    // 🔹 CATEGORIES MAPPED TO USER
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Category> categories = new HashSet<>();
 
   @Override
+//  @JsonIgnore
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return List.of(new SimpleGrantedAuthority(role.name()));
   }

@@ -195,7 +195,16 @@ public class QuizController {
     }
 
 
+    @PostMapping("/user/addQuiz")
+    public Quiz addQuizForUser(@RequestBody Quiz quiz, Principal principal) {
+        return quizService.addQuizForLoggedInUser(quiz, principal);
+    }
 
+    // ✅ Fetch quizzes for logged-in user
+    @GetMapping("/user/getQuiz")
+    public List<Quiz> getQuizzesForLoggedInUser(Principal principal) {
+        return quizService.getQuizzesForLoggedInUser(principal);
+    }
 
 
 

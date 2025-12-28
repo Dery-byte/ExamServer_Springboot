@@ -1,5 +1,6 @@
 package com.exam.model.exam;
 
+import com.exam.model.User;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -24,6 +25,14 @@ public class Category {
     @JsonIgnore
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
+
+    // 🔹 USERS MAPPED TO CATEGORY
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id") // creates a column in category table
+    private User user;
+
+
+
     @JsonCreator
     public Category(Long cid, String level, String title, String CourseCode, String description, Set<Quiz> quizzes) {
         this.cid = cid;
@@ -36,12 +45,6 @@ public class Category {
 
     public Category() {
     }
-
-//    public Category( Long cid, String title, String description) {
-//        this.cid = cid;
-//        this.title = title;
-//        this.description = description;
-//    }
 
     public Long getCid() {
         return cid;
@@ -66,6 +69,22 @@ public class Category {
 
     public void setCid(Long cid) {
         this.cid = cid;
+    }
+
+    public Set<Quiz> getQuizzes() {
+        return quizzes;
+    }
+
+    public void setQuizzes(Set<Quiz> quizzes) {
+        this.quizzes = quizzes;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getTitle() {

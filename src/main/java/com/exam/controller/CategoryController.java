@@ -1,12 +1,17 @@
 package com.exam.controller;
 
+import com.exam.DTO.CategoryDTO;
+import com.exam.DTO.CategoryRequest;
+import com.exam.DTO.CategoryUpdateRequest;
 import com.exam.model.exam.Category;
 import com.exam.model.exam.Quiz;
+import com.exam.repository.CategoryRepository;
 import com.exam.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +25,9 @@ public class CategoryController {
     //add category
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
     @PostMapping("/add")
     public ResponseEntity<Category> addCategory(@RequestBody Category category){
         Category category1 = this.categoryService.addCategory(category);
@@ -35,12 +43,42 @@ public class CategoryController {
     public Category getCategory(@PathVariable("categoryId") Long categoryId){
         return this.categoryService.getCategory(categoryId);
     }
+
+
+
+
+
+
+
+
+
     //update Categories
+//    @PutMapping("/category/updateCategory")
+//    public Category updateCategory(@RequestBody Category category){
+//        return  this.categoryService.UpdateCategory(category);
+//    }
+
+//    @PutMapping("/category/updateCategory")
+//    public CategoryDTO updateCategory(@RequestBody Category category){
+//        return categoryService.updateCategory(category);
+//    }
+
+
     @PutMapping("/category/updateCategory")
-    public Category updateCategory(@RequestBody Category category){
-        return  this.categoryService.UpdateCategory(category);
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryUpdateRequest request) {
+        CategoryDTO updated = categoryService.updateCategory(request);
+        return ResponseEntity.ok(updated);
     }
-        //delete category
+
+
+
+
+
+
+
+
+
+    //delete category
     @DeleteMapping("/category/{categoryId}")
     public void deleteCategory(@PathVariable("categoryId") Long categoryId){
         this.categoryService.deleteCategory(categoryId);
@@ -62,6 +100,22 @@ private List<Quiz> itemList = new ArrayList<>();
 
 
 
+    // ✅ GET CATEGORIES BY USER
+
+    @GetMapping("/categoriesForUser")
+    public List<Category> getCategoriesForLoggedInUser(Principal principal) {
+        return categoryService.getCategoriesForLoggedInUser(principal);
+    }
+
+
+
+    // ✅ ASSIGN CATEGORY TO USER
+    @PostMapping("/user/addCategory")
+    public Category addCategoryForLoggedInUser(
+            @RequestBody CategoryRequest category,
+            Principal principal) {
+        return categoryService.addCategoryForUser(category, principal);
+    }
 
 
 
@@ -95,49 +149,6 @@ private List<Quiz> itemList = new ArrayList<>();
 
 
 
-
-
-
-
-
-
-
-
-
-//
-////    @PostMapping("/add")
-////    public ResponseEntity<Category> addCategory(@RequestBody Category category){
-////        Category category1 = this.categoryService.addCategory(category);
-////        return ResponseEntity.ok(category1);
-////    }
-//
-//    //getCategory
-//
-//    @GetMapping("/{categoryId}")
-//    public Category getCategory(@PathVariable("categoryId") Long categoryId){
-//        return this.categoryService.getCategory(categoryId);
-//    }
-//
-//
-//
-//    //get All Categories
-//
-//    @GetMapping("/getCategories")
-//    public ResponseEntity<?> getCategories(){
-//        return ResponseEntity.ok(this.categoryService.getCategories());
-//    }
-//
-//    //update Categories
-//    @PutMapping("/updateCategory")
-//    public Category updateCategory(@RequestBody Category category){
-//        return  this.categoryService.UpdateCategory(category);
-//
-//    }
-//    //delete category
-//    @DeleteMapping("/{categoryId}")
-//    public void deleteCategory(@PathVariable("categoryId") Long categoryId){
-//        this.categoryService.deleteCategory(categoryId);
-//    }
 
 
 }

@@ -3,6 +3,7 @@ package com.exam.model.exam;
 import com.exam.helper.CustomLocalDateDeserializer;
 import com.exam.model.QuizStatus;
 import com.exam.model.QuizType;
+import com.exam.model.User;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -62,6 +63,20 @@ public class Quiz {
     private LocalDate quizDate;
 
 
+
+
+    @ManyToOne(fetch = FetchType.EAGER) // Each quiz belongs to one user
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+
+
+
+
+
+
+
     public QuizType getQuizType() {
         return quizType;
     }
@@ -85,6 +100,13 @@ public class Quiz {
      @JsonIgnore
      private Set<Questions> questions = new HashSet<>();
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getQuizTime() {
         return quizTime;
