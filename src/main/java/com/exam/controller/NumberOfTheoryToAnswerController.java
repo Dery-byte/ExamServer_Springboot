@@ -1,5 +1,6 @@
 package com.exam.controller;
 
+import com.exam.DTO.NumberOfTheoryUpdateRequest;
 import com.exam.model.exam.NumberOfTheoryToAnswer;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.Report;
@@ -29,10 +30,54 @@ public class NumberOfTheoryToAnswerController {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    @PutMapping("/numberOfTheoryQuestion/update")
+//    public NumberOfTheoryToAnswer updateQuestion(@RequestBody NumberOfTheoryToAnswer numberOfTheoryToAnswer) {
+//        return this.numberOfTheoryToAnswerService.updateNoTheoryAnswer(numberOfTheoryToAnswer);
+//    }
+//
+//
+
+
     @PutMapping("/numberOfTheoryQuestion/update")
-    public NumberOfTheoryToAnswer updateQuestion(@RequestBody NumberOfTheoryToAnswer numberOfTheoryToAnswer) {
-        return this.numberOfTheoryToAnswerService.updateNoTheoryAnswer(numberOfTheoryToAnswer);
+    public NumberOfTheoryToAnswer updateQuestion(@RequestBody NumberOfTheoryUpdateRequest request) {
+        return this.numberOfTheoryToAnswerService.updateNoTheoryAnswer(request);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @GetMapping("/numberOfTheoryQuestion/{quiz_Id}")

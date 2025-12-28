@@ -1,4 +1,5 @@
 package com.exam.service;
+import com.exam.DTO.NumberOfTheoryUpdateRequest;
 import com.exam.model.User;
 import com.exam.model.exam.NumberOfTheoryToAnswer;
 import com.exam.model.exam.Quiz;
@@ -19,9 +20,34 @@ public class NumberOfTheoryToAnswerService {
     }
 
 
-    public NumberOfTheoryToAnswer updateNoTheoryAnswer(NumberOfTheoryToAnswer numberOfTheoryToAnswer){
-        return this.numberOfTheoryToAnswerRepository.save(numberOfTheoryToAnswer);
+
+
+
+
+
+
+
+//    public NumberOfTheoryToAnswer updateNoTheoryAnswer(NumberOfTheoryToAnswer numberOfTheoryToAnswer){
+//        return this.numberOfTheoryToAnswerRepository.save(numberOfTheoryToAnswer);
+//    }
+
+    public NumberOfTheoryToAnswer updateNoTheoryAnswer(NumberOfTheoryUpdateRequest request){
+        NumberOfTheoryToAnswer entity = numberOfTheoryToAnswerRepository
+                .findById(request.getAnswerTheoryId())
+                .orElseThrow(() -> new RuntimeException("Record not found"));
+        // Update only the provided fields
+        if(request.getTotalQuestToAnswer() != null) {
+            entity.setTotalQuestToAnswer(request.getTotalQuestToAnswer());
+        }
+        if(request.getTimeAllowed() != null) {
+            entity.setTimeAllowed(request.getTimeAllowed());
+        }
+        return numberOfTheoryToAnswerRepository.save(entity);
     }
+
+
+
+
 
 
     public List<NumberOfTheoryToAnswer> TheoryTOByQuiz_Id(Quiz quiz){
