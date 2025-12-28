@@ -1,6 +1,7 @@
 package com.exam.controller;
 
 import com.exam.DTO.QuestionDTO;
+import com.exam.DTO.QuestionEvalRequest;
 import com.exam.DTO.QuizEvaluationResult;
 import com.exam.DTO.UpdateQuestionDTO;
 import com.exam.model.User;
@@ -72,7 +73,7 @@ public class QuestionsController {
 
 
     // get questions of any quiz
-    @GetMapping("questions/quiz/all/{qid}")
+    @GetMapping("question/quiz/all/{qid}")
     public  ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid){
         Quiz quiz = new Quiz();
         quiz.setqId(qid);
@@ -84,7 +85,7 @@ Collections.shuffle(list);
 
 
     // FETCH QUESTIONS FOR A LECTURER
-    @GetMapping("/question/quiz/all/{quizId}")
+    @GetMapping("/questions/quiz/all/{quizId}")
     public List<Questions> getMyQuizQuestions(
             @PathVariable Long quizId,
             Principal principal) {
@@ -189,10 +190,9 @@ Collections.shuffle(list);
 
     @PostMapping("question/eval-quiz/{qid}")
 @Transactional
-public ResponseEntity<?> evalQuiz2(@RequestBody List<Questions> questions,
+public ResponseEntity<?> evalQuiz2(@RequestBody List<QuestionEvalRequest> questions,
                                    Principal principal,
                                    @PathVariable("qid") Long qid) {
-
     if (principal == null || qid == null) {
         return ResponseEntity.badRequest().body("Principal or quiz ID is null"); }
     User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
@@ -205,7 +205,7 @@ public ResponseEntity<?> evalQuiz2(@RequestBody List<Questions> questions,
     int attempted = 0;
     double maxMarks = Double.parseDouble(quiz.getMaxMarks());
     List<Map<String, Object>> resultList = new ArrayList<>();
-    for (Questions q : questions) {
+    for (QuestionEvalRequest q : questions) {
         if (q == null) continue;
         Questions question = this.questionsService.get(q.getQuesId());
         if (question == null) continue;
