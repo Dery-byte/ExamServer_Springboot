@@ -1,5 +1,7 @@
 package com.exam.service;
 
+import com.exam.DTO.QuestionDTO;
+import com.exam.DTO.UpdateQuestionDTO;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.repository.QuestionsRepository;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.Collections;
@@ -30,9 +33,89 @@ public class QuestionsService {
         return this.questionsRepository.save(questions);
     }
 
-    public Questions updateQuestions(Questions questions){
-        return this.questionsRepository.save(questions);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    public Questions updateQuestions(Questions questions){
+//        return this.questionsRepository.save(questions);
+//    }
+
+    @Transactional
+    public QuestionDTO updateQuestion(UpdateQuestionDTO dto) {
+
+        Questions question = questionsRepository.findById(dto.getQuesId())
+                .orElseThrow(() -> new RuntimeException("Question not found"));
+        question.setContent(dto.getContent());
+        question.setImage(dto.getImage());
+        question.setOption1(dto.getOption1());
+        question.setOption2(dto.getOption2());
+        question.setOption3(dto.getOption3());
+        question.setOption4(dto.getOption4());
+        question.setcorrect_answer(dto.getCorrect_answer());
+        Questions updated = questionsRepository.save(question);
+
+        return toDTO(updated); // RETURN DTO
     }
+
+
+
+    private QuestionDTO toDTO(Questions question) {
+
+        QuestionDTO dto = new QuestionDTO();
+        dto.setQuesId(question.getQuesId());
+        dto.setContent(question.getContent());
+        dto.setImage(question.getImage());
+
+        dto.setOption1(question.getOption1());
+        dto.setOption2(question.getOption2());
+        dto.setOption3(question.getOption3());
+        dto.setOption4(question.getOption4());
+
+        dto.setCorrect_answer(question.getcorrect_answer());
+
+//        if (question.getQuiz() != null) {
+//            dto.setQuizId(question.getQuiz().getqId());
+//        }
+
+        return dto;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     public Set<Questions> getQuestions(){
         return new HashSet<>(this.questionsRepository.findAll());
