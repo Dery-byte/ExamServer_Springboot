@@ -27,9 +27,35 @@ public class TheoryService {
         return this.theoryQuestionsRepository.save(theoryQuestions);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
     public TheoryQuestions updateQuestions(TheoryQuestions theoryQuestions){
         return this.theoryQuestionsRepository.save(theoryQuestions);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public Set<TheoryQuestions> getAllQuestions(){
         return new HashSet<>(this.theoryQuestionsRepository.findAll());

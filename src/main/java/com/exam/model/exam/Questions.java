@@ -11,7 +11,6 @@ public class Questions {
     private Long quesId;
     @Column(length = 5000)
     private String content;
-
     private String image;
     private String option1;
     private String option2;
