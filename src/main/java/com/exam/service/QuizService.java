@@ -1,5 +1,7 @@
 package com.exam.service;
 
+import com.exam.DTO.QuizDTO;
+import com.exam.DTO.QuizUpdateRequest;
 import com.exam.model.User;
 import com.exam.model.exam.*;
 import com.exam.repository.*;
@@ -33,14 +35,90 @@ public class QuizService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public Quiz addQuiz(Quiz quiz){
 //        quiz.setStartTimeFromAMPM(quiz.getStartTime());
         return this.quizRepository.save(quiz);
     }
 
-    public Quiz updateQuiz(Quiz quiz){
-        return this.quizRepository.save(quiz);
+
+
+
+
+//    public Quiz updateQuiz(Quiz quiz){
+//        return this.quizRepository.save(quiz);
+//    }
+
+    public QuizDTO updateQuiz(QuizUpdateRequest request) {
+        if (request.getqId() == null) {
+            throw new IllegalArgumentException("Quiz ID cannot be null");
+        }
+
+        Quiz quiz = quizRepository.findById(request.getqId())
+                .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + request.getqId()));
+
+        // Update fields
+        if (request.getTitle() != null) {
+            quiz.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null) {
+            quiz.setDescription(request.getDescription());
+        }
+        if (request.getMaxMarks() != null) {
+            quiz.setMaxMarks(request.getMaxMarks());
+        }
+        if (request.getQuizTime() != null) {
+            quiz.setQuizTime(request.getQuizTime());
+        }
+        if (request.getNumberOfQuestions() != null) {
+            quiz.setNumberOfQuestions(request.getNumberOfQuestions());
+        }
+        if (request.getQuizpassword() != null) {
+            quiz.setQuizpassword(request.getQuizpassword());
+        }
+        if (request.getStatus() != null) {
+            quiz.setStatus(request.getStatus());
+        }
+        if (request.getQuizType() != null) {
+            quiz.setQuizType(request.getQuizType());
+        }
+        if (request.getStartTime() != null) {
+            quiz.setStartTime(request.getStartTime());
+        }
+        if (request.getQuizDate() != null) {
+            quiz.setQuizDate(request.getQuizDate());
+        }
+
+        quiz.setActive(request.isActive());
+
+        // Update category if provided
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+            quiz.setCategory(category);
+        }
+
+        // User field is NOT touched, so it remains unchanged
+
+        Quiz updated = quizRepository.save(quiz);
+        return new QuizDTO(updated);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public Set<Quiz> getQuizzes(){
         return new HashSet<>(this.quizRepository.findAll());

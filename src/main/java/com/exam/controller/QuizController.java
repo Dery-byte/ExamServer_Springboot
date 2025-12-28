@@ -1,6 +1,8 @@
 package com.exam.controller;
 
 
+import com.exam.DTO.QuizDTO;
+import com.exam.DTO.QuizUpdateRequest;
 import com.exam.DTO.UpdateQuizStatusRequest;
 import com.exam.helper.ResourceNotFoundException;
 import com.exam.model.QuizStatus;
@@ -64,10 +66,37 @@ public class QuizController {
 
 
     //update quiz
+//    @PutMapping("/update")
+//    public  ResponseEntity<Quiz> update(@RequestBody Quiz quiz){
+//        return ResponseEntity.ok(this.quizService.updateQuiz(quiz));
+//    }
+
+
     @PutMapping("/update")
-    public  ResponseEntity<Quiz> update(@RequestBody Quiz quiz){
-        return ResponseEntity.ok(this.quizService.updateQuiz(quiz));
+    public ResponseEntity<QuizDTO> updateQuiz(@RequestBody QuizUpdateRequest request) {
+        QuizDTO updated = quizService.updateQuiz(request);
+        return ResponseEntity.ok(updated);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //get Single quiz
     @GetMapping("singleQuiz/{qid}")
