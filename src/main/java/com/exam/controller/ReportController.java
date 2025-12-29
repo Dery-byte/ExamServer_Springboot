@@ -1,5 +1,6 @@
 package com.exam.controller;
 
+import com.exam.DTO.ReportDTO;
 import com.exam.model.User;
 import com.exam.model.exam.Quiz;
 import com.exam.model.exam.Report;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,17 +35,16 @@ private ReportService reportService;
     ReportRepository reportRepository;
     @Autowired
     private QuizService quizService;
-
     @Autowired
     private final UserDetailsService userDetailsService;
-
-
     @Autowired
     private AuthenticationService authenticationService;
-
     public ReportController(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+
+
+
 
     //get all reports
     @GetMapping("/getReport")
@@ -91,14 +92,13 @@ private ReportService reportService;
         } else {
             existingReport.setMarksB(report.getMarksB());
         }
-
         Report updatedReport = reportRepository.save(existingReport);
         return ResponseEntity.ok(updatedReport);
     }
 
 
 
-    // ADD THE SECTION B MARKS ENDS HERE
+
 
 //Report on quiz id
 @GetMapping("/getReports/{quiz_Id}")
@@ -107,6 +107,15 @@ public ResponseEntity<List<Report>> getQuizIds(@PathVariable("quiz_Id") Long qui
         List<Report> reports = reportService.reportByQuiz_Id(quiz.getqId());
     return ResponseEntity.ok(reports);
 }
+
+
+
+
+
+
+
+
+
 
 // Reports by user ID
     @GetMapping("/getReportsByUser/{user_Id}")
@@ -132,18 +141,29 @@ public ResponseEntity<List<Report>> getQuizIds(@PathVariable("quiz_Id") Long qui
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     @GetMapping("/quiz/result/{quizId}")
     public ResponseEntity<?> getStudentQuizResult(@PathVariable("quizId") Long quizId,
                                                   Principal principal) {
         if (principal == null) {
             return ResponseEntity.badRequest().body("User not logged in");
         }
-
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
         if (user == null ) {
             return ResponseEntity.badRequest().body("Student not found");
         }
-
         Map<String, Object> result = reportService.getStudentQuizResult(quizId, user.getId());
         return ResponseEntity.ok(result);
     }
@@ -153,20 +173,30 @@ public ResponseEntity<List<Report>> getQuizIds(@PathVariable("quiz_Id") Long qui
 
 
 //GET THE QUIZ BY QUID_ID AND USER_ID
-//    @GetMapping("/getReportByUidAndQid/{quiz_Id}/{user_Id}")
-//    public ResponseEntity<?> getQuizResultsByQuizIdAndUserId( @PathVariable("quiz_Id") Long quiz_Id , @PathVariable("user_Id") Integer user_Id ){
-//        Optional<Quiz> quiz = Optional.ofNullable(quizService.getQuiz(quiz_Id));
-//        Optional<User> user = Optional.ofNullable(authenticationService.getUserById(user_Id));
-//        Optional<User> users = Optional.of(Optional.ofNullable(authenticationService.getUserById(user_Id)).orElseThrow());
-//        if(quiz.isPresent() && user.isPresent()){
-//            List<Report> quizResults = reportService.getReportByUserAndType(user,quiz);
-//            return ResponseEntity.ok(quizResults);
-//        }
-//        else{
-////            Make sure to handle the error here
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Quiz not Found");
-//        }
-//    }
+// Reports by user ID
+@GetMapping("/my/quiz-titles/reports")
+public ResponseEntity<List<Report>> getMyReports(Principal principal) {
+    return ResponseEntity.ok(
+            reportService.getReportsForCurrentUser(principal)
+    );
+}
+
+
+    @GetMapping("/my-students-reports")
+    public ResponseEntity<List<ReportDTO>> getMyStudentsReports(
+            @AuthenticationPrincipal User loggedInLecturer) {
+        List<ReportDTO> reports = reportService.getReportsForMyQuizzes(
+                loggedInLecturer.getId()
+        );
+        return ResponseEntity.ok(reports);
+    }
+
+
+
+
+
+
+
 
 
 }

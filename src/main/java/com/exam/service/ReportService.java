@@ -1,15 +1,19 @@
 package com.exam.service;
 
+import com.exam.DTO.ReportDTO;
 import com.exam.model.AnswerStatus;
 import com.exam.model.User;
 import com.exam.model.exam.*;
 import com.exam.repository.AnswerRepository;
 import com.exam.repository.ReportRepository;
 import com.exam.repository.StudentAnswerRepository;
+import com.exam.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +30,9 @@ public class ReportService {
     private QuestionsService questionsService;
     @Autowired
     private StudentAnswerRepository studentAnswerRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     public Map<String, Object> getQuizReportsWithAnswers(Long quizId) {
@@ -289,23 +296,18 @@ public class ReportService {
 
         // Fetch all questions of the quiz
         List<Questions> questions = questionsService.getQuestionsByQuizId(quizId);
-
         // Fetch all student answers for this quiz
         List<StudentAnswer> answers = studentAnswerRepository.findByStudentAndQuiz(studentId, quizId);
         Map<Long, StudentAnswer> answerMap = answers.stream()
                 .collect(Collectors.toMap(a -> a.getQuestion().getQuesId(), a -> a));
-
         double marksGot = 0.0;
         int correctAnswers = 0;
         int attempted = 0;
         double maxMarks = Double.parseDouble(quiz.getMaxMarks());
-
         List<Map<String, Object>> resultList = new ArrayList<>();
-
         for (Questions question : questions) {
             StudentAnswer studentAnswer = answerMap.get(question.getQuesId());
             String[] selected = studentAnswer != null ? studentAnswer.getSelectedOptions() : null;
-
             List<String> correctList = question.getcorrect_answer() != null
                     ? Arrays.asList(question.getcorrect_answer())
                     : new ArrayList<>();
@@ -364,5 +366,45 @@ public class ReportService {
         response.put("results", resultList);
         return response;
     }
+
+
+
+
+
+//GET QUIZ REPORT FOR CURRENT USER
+//        public List<Report> getReportsForCurrentUser(Principal principal) {
+//            if (principal == null) {
+//                throw new RuntimeException("User not authenticated");
+//            }
+//            return reportRepository.findByUserUsername(principal.getName());
+//        }
+
+
+
+    public List<Report> getReportsForCurrentUser(Principal principal) {
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        String username = principal.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return reportRepository.findByUserId(user.getId());
+    }
+
+
+
+
+
+    public List<ReportDTO> getReportsForMyQuizzes(Long lecturerId) {
+        List<Report> reports = reportRepository.findByQuizUserId(lecturerId);
+        // Convert to DTOs
+        return reports.stream()
+                .map(ReportDTO::new)
+                .collect(Collectors.toList());
+    }
+
+
+
+
 
 }

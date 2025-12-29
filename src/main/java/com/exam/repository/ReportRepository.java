@@ -30,6 +30,24 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
 
 
+
+
+
+
+
+    List<Report> findByUserUsername(String username);
+
+    List<Report> findByUserId(Long userId);
+
+
+
+
+
+
+
+
+
+
     // ✅ Get latest report for user and quiz
     Optional<Report> findTopByUser_IdAndQuiz_qIdOrderBySubmissionDateDesc(Long userId, Long quizId);
 
@@ -69,6 +87,26 @@ Optional<Report> findByUserAndQuiz(User user, Quiz quiz);
 
     // Fetch reports for Quizzes in a category by a specific user.
     List<Report> findByUser_IdAndQuiz_Category(Long userId, Category category);
+
+    // ✅ Spring Data JPA derives this query automatically
+    List<Report> findByQuizUserId(Long lecturerId);
+
+    // ✅ Alternative naming (same result)
+    List<Report> findByQuiz_User_Id(Long lecturerId);
+
+
+
+
+
+    // ✅ Fetch ALL student reports for quizzes created by the logged-in LECTURER
+    @Query("SELECT r FROM report r WHERE r.quiz.user.id = :lecturerId")
+    List<Report> findByQuizCreatorId(@Param("lecturerId") Long lecturerId);
+
+
+
+
+
+
 
 
 }
