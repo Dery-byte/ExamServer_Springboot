@@ -1,6 +1,7 @@
 package com.exam.controller;
 
 import com.exam.DTO.ForgottenPasswordRequest;
+import com.exam.DTO.LecturerDTO;
 import com.exam.DTO.ResetPasswordRequest;
 import com.exam.DTO.TokenInfo;
 import com.exam.auth.AuthenticationRequest;
@@ -474,35 +475,35 @@ return "Password changed " + user.getPassword();
 
 
 
-
     // Get all lecturers
     @GetMapping("/all/lecturers")
-    public ResponseEntity<List<User>> getAllLecturers() {
-        return ResponseEntity.ok(service.getAllLecturers());
+    public ResponseEntity<List<LecturerDTO>> getAllLecturers() {
+        List<LecturerDTO> lecturers = service.getAllLecturers();
+        return ResponseEntity.ok(lecturers);
     }
 
     // Get lecturer by ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getLecturer(@PathVariable Long id) {
+    public ResponseEntity<LecturerDTO> getLecturer(@PathVariable Long id) {
         return service.getLecturerById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Create or update lecturer
+    // Create lecturer
     @PostMapping
-    public ResponseEntity<User> createLecturer(@RequestBody User lecturer) {
-        User saved = service.saveOrUpdateLecturer(lecturer);
+    public ResponseEntity<LecturerDTO> createLecturer(@RequestBody User lecturer) {
+        LecturerDTO saved = service.saveOrUpdateLecturer(lecturer);
         return ResponseEntity.ok(saved);
     }
 
     // Update lecturer
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateLecturer(@PathVariable Long id, @RequestBody User lecturer) {
+    public ResponseEntity<LecturerDTO> updateLecturer(@PathVariable Long id, @RequestBody User lecturer) {
         return service.getLecturerById(id)
                 .map(existing -> {
                     lecturer.setId(id);
-                    User updated = service.saveOrUpdateLecturer(lecturer);
+                    LecturerDTO updated = service.saveOrUpdateLecturer(lecturer);
                     return ResponseEntity.ok(updated);
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -521,6 +522,20 @@ return "Password changed " + user.getPassword();
 
 
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
 
 

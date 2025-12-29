@@ -147,4 +147,45 @@ UserRepository userRepository;
 
 
 
+    @Transactional
+    public Category assignCourseToLecturer(Long categoryId, Long userId) throws Exception {
+        // Find the category
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new Exception("Category with ID " + categoryId + " not found"));
+        // Find the user (lecturer)
+        User lecturer = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("Lecturer with ID " + userId + " not found"));
+        // Verify that the user is actually a lecturer
+        if (!"LECTURER".equals(lecturer.getRole())) {
+            throw new Exception("User with ID " + userId + " is not a lecturer");
+        }
+        // Assign the lecturer to the category
+        category.setUser(lecturer);
+        // Save and return the updated category
+        return categoryRepository.save(category);
+    }
+
+
+    @Transactional
+    public Category unassignCourseFromLecturer(Long categoryId) throws Exception {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new Exception("Category with ID " + categoryId + " not found"));
+
+        category.setUser(null);
+        return categoryRepository.save(category);
+    }
+
+
+
+
+
+
+    /**
+     * Get all categories assigned to a specific lecturer
+     */
+//    public List<Category> getCategoriesByLecturer(Long lecturerId) {
+//        return categoryRepository.findByUserIdOrderByCourseCodeAsc(lecturerId);
+//    }
+
+
 }

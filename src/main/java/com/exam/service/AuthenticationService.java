@@ -1,6 +1,7 @@
 package com.exam.service;
 
 import com.exam.DTO.ForgottenPasswordRequest;
+import com.exam.DTO.LecturerDTO;
 import com.exam.DTO.ResetPasswordRequest;
 import com.exam.auth.AuthenticationRequest;
 import com.exam.auth.AuthenticationResponse;
@@ -355,20 +356,38 @@ public class AuthenticationService {
 
 
 
-    // Get all lecturers
-    public List<User> getAllLecturers() {
-        return userRepository.findByRole(Role.LECTURER);
+
+    // Convert User to DTO
+    private LecturerDTO toDTO(User user) {
+        return new LecturerDTO(
+                user.getId(),
+                user.getFirstname(),
+                user.getLastname(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getFullName()
+        );
     }
 
-    // Get lecturer by id
-    public Optional<User> getLecturerById(Long id) {
-        return userRepository.findByIdAndRole(id, Role.LECTURER);
+    // Get all lecturers as DTOs
+    public List<LecturerDTO> getAllLecturers() {
+        return userRepository.findByRole(Role.LECTURER)
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    // Create or update lecturer
-    public User saveOrUpdateLecturer(User lecturer) {
+    // Get lecturer by id as DTO
+    public Optional<LecturerDTO> getLecturerById(Long id) {
+        return userRepository.findByIdAndRole(id, Role.LECTURER)
+                .map(this::toDTO);
+    }
+
+    // Create or update lecturer and return DTO
+    public LecturerDTO saveOrUpdateLecturer(User lecturer) {
         lecturer.setRole(Role.LECTURER); // Ensure role is LECTURER
-        return userRepository.save(lecturer);
+        User saved = userRepository.save(lecturer);
+        return toDTO(saved);
     }
 
     // Delete lecturer

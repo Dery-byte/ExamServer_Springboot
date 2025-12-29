@@ -3,12 +3,15 @@ package com.exam.controller;
 import com.exam.DTO.CategoryDTO;
 import com.exam.DTO.CategoryRequest;
 import com.exam.DTO.CategoryUpdateRequest;
+import com.exam.exception.ErrorMessage;
 import com.exam.model.exam.Category;
 import com.exam.model.exam.Quiz;
 import com.exam.repository.CategoryRepository;
 import com.exam.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -122,6 +125,33 @@ private List<Quiz> itemList = new ArrayList<>();
 
 
 
+    @PutMapping("/courses/{categoryId}/assign/{lecturerId}")
+    public ResponseEntity<?> assignCourseToLecturer(
+            @PathVariable("categoryId") Long categoryId,
+            @PathVariable("lecturerId") Long lecturerId) {
+        try {
+            Category updatedCategory = categoryService.assignCourseToLecturer(categoryId, lecturerId);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorMessage(e.getMessage()));
+        }
+
+    }
+
+    @PutMapping("/{categoryId}/unassign")
+    public ResponseEntity<?> unassignCourseFromLecturer(
+            @PathVariable("categoryId") Long categoryId) {
+        try {
+            Category updatedCategory = categoryService.unassignCourseFromLecturer(categoryId);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorMessage(e.getMessage()));
+        }
+    }
 
 
 
