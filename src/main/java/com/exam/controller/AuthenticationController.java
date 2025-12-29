@@ -453,6 +453,74 @@ return "Password changed " + user.getPassword();
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Get all lecturers
+    @GetMapping("/all/lecturers")
+    public ResponseEntity<List<User>> getAllLecturers() {
+        return ResponseEntity.ok(service.getAllLecturers());
+    }
+
+    // Get lecturer by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getLecturer(@PathVariable Long id) {
+        return service.getLecturerById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Create or update lecturer
+    @PostMapping
+    public ResponseEntity<User> createLecturer(@RequestBody User lecturer) {
+        User saved = service.saveOrUpdateLecturer(lecturer);
+        return ResponseEntity.ok(saved);
+    }
+
+    // Update lecturer
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateLecturer(@PathVariable Long id, @RequestBody User lecturer) {
+        return service.getLecturerById(id)
+                .map(existing -> {
+                    lecturer.setId(id);
+                    User updated = service.saveOrUpdateLecturer(lecturer);
+                    return ResponseEntity.ok(updated);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Delete lecturer
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLecturer(@PathVariable Long id) {
+        service.deleteLecturer(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
+
+
+
+
 }
 
 

@@ -313,4 +313,67 @@ public class AuthenticationService {
         }
         return codeBuilder.toString();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Get all lecturers
+    public List<User> getAllLecturers() {
+        return userRepository.findByRole(Role.LECTURER);
+    }
+
+    // Get lecturer by id
+    public Optional<User> getLecturerById(Long id) {
+        return userRepository.findByIdAndRole(id, Role.LECTURER);
+    }
+
+    // Create or update lecturer
+    public User saveOrUpdateLecturer(User lecturer) {
+        lecturer.setRole(Role.LECTURER); // Ensure role is LECTURER
+        return userRepository.save(lecturer);
+    }
+
+    // Delete lecturer
+    public void deleteLecturer(Long id) {
+        Optional<User> lecturer = userRepository.findByIdAndRole(id, Role.LECTURER);
+        lecturer.ifPresent(userRepository::delete);
+    }
 }

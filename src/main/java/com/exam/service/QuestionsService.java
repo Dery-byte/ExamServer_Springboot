@@ -2,6 +2,8 @@ package com.exam.service;
 
 import com.exam.DTO.QuestionDTO;
 import com.exam.DTO.UpdateQuestionDTO;
+import com.exam.model.Role;
+import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.repository.QuestionsRepository;
@@ -15,10 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class QuestionsService {
@@ -272,7 +271,6 @@ public Page<Questions> getLimitedRecords(int page, int size) {
 //
 //        return ResponseEntity.ok(randomRecords);
 //    }
-
 
 
 
