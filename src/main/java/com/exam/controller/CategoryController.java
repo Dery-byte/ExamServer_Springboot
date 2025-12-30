@@ -56,10 +56,19 @@ public class CategoryController {
 
 
     //update Categories
-//    @PutMapping("/category/updateCategory")
-//    public Category updateCategory(@RequestBody Category category){
-//        return  this.categoryService.UpdateCategory(category);
-//    }
+    @PutMapping("/category/admin/updateCategory/{id}")
+    public ResponseEntity<?> adminUpdateCategory(
+            @PathVariable Long id,
+            @RequestBody CategoryUpdateRequest request) {
+        try {
+            CategoryDTO updatedCategory = this.categoryService.adminUpdateCategory(id, request);
+            return ResponseEntity.ok(updatedCategory);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorMessage(e.getMessage()));
+        }
+    }
 
 //    @PutMapping("/category/updateCategory")
 //    public CategoryDTO updateCategory(@RequestBody Category category){

@@ -53,9 +53,33 @@ UserRepository userRepository;
 
 
 
-//    public Category UpdateCategory(Category category){
-//        return  this.categoryRepository.save(category);
-//    }
+    // Service
+    @Transactional
+    public CategoryDTO adminUpdateCategory(Long categoryId, CategoryUpdateRequest request) throws Exception {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new Exception("Category not found"));
+        category.setTitle(request.getTitle());
+        category.setDescription(request.getDescription());
+        category.setLevel(request.getLevel());
+        category.setCourseCode(request.getCourseCode());
+        Category savedCategory = categoryRepository.save(category);
+        return convertToDTO(savedCategory);
+    }
+
+
+
+    // Helper method to convert Category entity to CategoryDTO
+    private CategoryDTO convertToDTO(Category category) {
+        CategoryDTO dto = new CategoryDTO();
+        dto.setCid(category.getCid());
+        dto.setLevel(String.valueOf(category.getLevel()));
+        dto.setCourseCode(String.valueOf(category.getCourseCode()));
+//        dto.setId(category.getId());
+        dto.setTitle(category.getTitle());
+        dto.setDescription(category.getDescription());
+        // Map other fields...
+        return dto;
+    }
 
 
     public CategoryDTO updateCategory(CategoryUpdateRequest request) {
