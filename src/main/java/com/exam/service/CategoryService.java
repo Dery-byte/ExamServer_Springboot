@@ -152,19 +152,25 @@ UserRepository userRepository;
         // Find the category
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new Exception("Category with ID " + categoryId + " not found"));
+
         // Find the user (lecturer)
         User lecturer = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("Lecturer with ID " + userId + " not found"));
-        // Verify that the user is actually a lecturer
-        if (!"LECTURER".equals(lecturer.getRole())) {
-            throw new Exception("User with ID " + userId + " is not a lecturer");
+
+        // Verify that the user is actually a lecturer (case-insensitive and trim whitespace)
+        String role = String.valueOf(lecturer.getRole());
+
+        // Handle both "LECTURER" and "ROLE_LECTURER"
+        if (!role.equals("LECTURER") && !role.equals("ROLE_LECTURER")) {
+            throw new Exception("User with ID " + userId + " has role '" + lecturer.getRole() + "' but must be a LECTURER");
         }
+
         // Assign the lecturer to the category
         category.setUser(lecturer);
+
         // Save and return the updated category
         return categoryRepository.save(category);
     }
-
 
     @Transactional
     public Category unassignCourseFromLecturer(Long categoryId) throws Exception {
