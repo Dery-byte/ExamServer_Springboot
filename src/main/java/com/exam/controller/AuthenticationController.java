@@ -482,13 +482,37 @@ return "Password changed " + user.getPassword();
         return ResponseEntity.ok(lecturers);
     }
 
+
+    // Get all lecturers
+    @GetMapping("/all/students")
+    public ResponseEntity<List<LecturerDTO>> getAllStudents() {
+        List<LecturerDTO> lecturers = service.getAllStudents();
+        return ResponseEntity.ok(lecturers);
+    }
+
+
+
     // Get lecturer by ID
-    @GetMapping("/{id}")
+    @GetMapping("/lecturerbyId/{id}")
     public ResponseEntity<LecturerDTO> getLecturer(@PathVariable Long id) {
         return service.getLecturerById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+
+
+
+    @GetMapping("/studentbyId/{id}")
+    public ResponseEntity<LecturerDTO> getStudent(@PathVariable Long id) {
+        return service.getStuentById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+
+
 
     // Create lecturer
     @PostMapping

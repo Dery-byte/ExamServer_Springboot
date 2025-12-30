@@ -377,9 +377,30 @@ public class AuthenticationService {
                 .toList();
     }
 
+
+    // Get all lecturers as DTOs
+    public List<LecturerDTO> getAllStudents() {
+        return userRepository.findByRole(Role.NORMAL)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+
+
+
+
     // Get lecturer by id as DTO
     public Optional<LecturerDTO> getLecturerById(Long id) {
         return userRepository.findByIdAndRole(id, Role.LECTURER)
+                .map(this::toDTO);
+    }
+
+
+
+    // Get lecturer by id as DTO
+    public Optional<LecturerDTO> getStuentById(Long id) {
+        return userRepository.findByIdAndRole(id, Role.NORMAL)
                 .map(this::toDTO);
     }
 
