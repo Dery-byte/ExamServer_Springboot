@@ -544,16 +544,19 @@ return "Password changed " + user.getPassword();
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
-
     // Delete lecturer
-    @DeleteMapping("/lecturer{id}")
+    @DeleteMapping("/lecturer/{id}")
     public ResponseEntity<Void> deleteLecturer(@PathVariable Long id) {
         service.deleteLecturer(id);
         return ResponseEntity.noContent().build();
     }
 
 
+    @DeleteMapping("/student/{id}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+        service.deleteStudent(id);
+        return ResponseEntity.noContent().build();
+    }
 
 
 

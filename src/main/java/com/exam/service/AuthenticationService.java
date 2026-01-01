@@ -519,4 +519,11 @@ public class AuthenticationService {
         Optional<User> lecturer = userRepository.findByIdAndRole(id, Role.LECTURER);
         lecturer.ifPresent(userRepository::delete);
     }
+
+
+
+    public void deleteStudent(Long id) {
+        Optional<User> student = userRepository.findByIdAndRole(id, Role.NORMAL);
+        student.ifPresent(userRepository::delete);
+    }
 }
