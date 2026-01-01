@@ -464,8 +464,19 @@ public class AuthenticationService {
 
     @Transactional
     public Optional<LecturerDTO> updateStudent(Long id, LecturerUpdateDTO updateDTO) {
+
+        System.out.println("=== Received DTO ===");
+        System.out.println("Firstname: " + updateDTO.getFirstname());
+        System.out.println("Lastname: " + updateDTO.getLastname());
+        System.out.println("Email: " + updateDTO.getEmail());
+        System.out.println("Phone: " + updateDTO.getPhone());
+        System.out.println("Phone: " + updateDTO.getUsername());
+
+        System.out.println("==================");
+
+
         return userRepository.findById(id)
-                .filter(user -> user.getRole() == Role.LECTURER)
+                .filter(user -> user.getRole() == Role.NORMAL)
                 .map(existing -> {
                     existing.setFirstname(updateDTO.getFirstname());
                     existing.setLastname(updateDTO.getLastname());

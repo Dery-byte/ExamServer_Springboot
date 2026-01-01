@@ -538,9 +538,7 @@ return "Password changed " + user.getPassword();
     public ResponseEntity<LecturerDTO> updateStudent(
             @PathVariable Long id,
             @RequestBody LecturerUpdateDTO updateDTO) {
-
         System.out.println("UPDATE STUDENT CALLED - ID: " + id);  // ← Add this
-
         return service.updateStudent(id, updateDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

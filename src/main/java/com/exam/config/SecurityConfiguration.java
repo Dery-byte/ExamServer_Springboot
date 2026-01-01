@@ -155,13 +155,11 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         // Allow both local development and production
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",  // Local development
                 "https://assessmentapp-e1d04.web.app"  // Production
         ));
-
         configuration.setAllowedMethods(Arrays.asList(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
         ));
