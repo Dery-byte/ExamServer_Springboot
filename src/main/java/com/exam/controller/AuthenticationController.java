@@ -1,9 +1,6 @@
 package com.exam.controller;
 
-import com.exam.DTO.ForgottenPasswordRequest;
-import com.exam.DTO.LecturerDTO;
-import com.exam.DTO.ResetPasswordRequest;
-import com.exam.DTO.TokenInfo;
+import com.exam.DTO.*;
 import com.exam.auth.AuthenticationRequest;
 import com.exam.auth.AuthenticationResponse;
 import com.exam.auth.RegisterRequest;
@@ -42,7 +39,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
+
+    @Autowired
     private final AuthenticationService service;
+
     @Autowired
     private final UserDetailsService userDetailsService;
 
@@ -522,19 +522,34 @@ return "Password changed " + user.getPassword();
     }
 
     // Update lecturer
-    @PutMapping("/{id}")
-    public ResponseEntity<LecturerDTO> updateLecturer(@PathVariable Long id, @RequestBody User lecturer) {
-        return service.getLecturerById(id)
-                .map(existing -> {
-                    lecturer.setId(id);
-                    LecturerDTO updated = service.saveOrUpdateLecturer(lecturer);
-                    return ResponseEntity.ok(updated);
-                })
+//
+    @PutMapping("/update/lecturer/{id}")
+    public ResponseEntity<LecturerDTO> updateLecturer(
+            @PathVariable Long id,
+            @RequestBody LecturerUpdateDTO updateDTO) {
+        return service.updateLecturer(id, updateDTO)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
+
+
+    @PutMapping("/update/student/{id}")
+    public ResponseEntity<LecturerDTO> updateStudent(
+            @PathVariable Long id,
+            @RequestBody LecturerUpdateDTO updateDTO) {
+
+        System.out.println("UPDATE STUDENT CALLED - ID: " + id);  // ← Add this
+
+        return service.updateStudent(id, updateDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+
     // Delete lecturer
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/lecturer{id}")
     public ResponseEntity<Void> deleteLecturer(@PathVariable Long id) {
         service.deleteLecturer(id);
         return ResponseEntity.noContent().build();

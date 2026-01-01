@@ -7,10 +7,7 @@ import com.exam.model.exam.Report;
 import com.exam.token.Token;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +21,8 @@ import java.util.*;
 @Entity
 @Table(name = "user")
 
-
+@Setter
+@Getter
 public class User implements UserDetails {
 
   @Id
@@ -61,7 +59,8 @@ public class User implements UserDetails {
   private Set<Report> reports = new LinkedHashSet<>();
   @JsonIgnore
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Token> tokens;
+  private List<Token> tokens = new ArrayList<>(); // ✅ Initialize to avoid null
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Quiz> quizzes = new HashSet<>();
@@ -163,4 +162,32 @@ public class User implements UserDetails {
         return firstname + " " + lastname;
     }
 
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

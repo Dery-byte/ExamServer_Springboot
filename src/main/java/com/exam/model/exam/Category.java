@@ -25,7 +25,6 @@ public class Category {
     @JsonIgnore
     private Set<Quiz> quizzes = new LinkedHashSet<>();
 
-
     // 🔹 USERS MAPPED TO CATEGORY
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id") // creates a column in category table

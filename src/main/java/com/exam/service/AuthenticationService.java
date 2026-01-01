@@ -2,6 +2,7 @@ package com.exam.service;
 
 import com.exam.DTO.ForgottenPasswordRequest;
 import com.exam.DTO.LecturerDTO;
+import com.exam.DTO.LecturerUpdateDTO;
 import com.exam.DTO.ResetPasswordRequest;
 import com.exam.auth.AuthenticationRequest;
 import com.exam.auth.AuthenticationResponse;
@@ -14,7 +15,6 @@ import com.exam.repository.TokenRepository;
 import com.exam.repository.UserRepository;
 import com.exam.service.Impl.EmailService;
 import com.exam.service.Impl.EmailTemplateName;
-import com.exam.service.Impl.MailService;
 import com.exam.token.Token;
 import com.exam.token.TokenType;
 import com.exam.model.Role;
@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
@@ -365,7 +366,8 @@ public class AuthenticationService {
                 user.getLastname(),
                 user.getEmail(),
                 user.getUsername(),
-                user.getFullName()
+                user.getFullName(),
+                user.getPhone()
         );
     }
 
@@ -410,6 +412,96 @@ public class AuthenticationService {
         User saved = userRepository.save(lecturer);
         return toDTO(saved);
     }
+
+    @Transactional
+    public Optional<LecturerDTO> updateLecturer(Long id, LecturerUpdateDTO updateDTO) {
+        System.out.println("=== Received DTO ===");
+        System.out.println("Firstname: " + updateDTO.getFirstname());
+        System.out.println("Lastname: " + updateDTO.getLastname());
+        System.out.println("Email: " + updateDTO.getEmail());
+        System.out.println("Phone: " + updateDTO.getPhone());
+        System.out.println("Phone: " + updateDTO.getUsername());
+
+        System.out.println("==================");
+
+        return userRepository.findById(id)
+                .filter(user -> user.getRole() == Role.LECTURER)
+                .map(existing -> {
+                    System.out.println("Before update: " + existing.getFirstname());
+
+                    // ✅ ADD THESE DEBUG LINES
+                    String newFirstname = updateDTO.getFirstname();
+                    String newLastname = updateDTO.getLastname();
+                    String newEmail = updateDTO.getEmail();
+                    String newPhone = updateDTO.getPhone();
+                    String username = updateDTO.getUsername();
+
+                    System.out.println("DTO firstname value: '" + newFirstname + "'");
+                    System.out.println("DTO lastname value: '" + newLastname + "'");
+                    System.out.println("DTO email value: '" + newEmail + "'");
+                    System.out.println("DTO phone value: '" + newPhone + "'");
+
+                    existing.setFirstname(newFirstname);
+                    existing.setLastname(newLastname);
+                    existing.setEmail(newEmail);
+                    existing.setPhone(newPhone);
+                    existing.setUsername(username);
+
+
+//                    System.out.println("After update: " + existing.getFirstname());
+
+                    User saved = userRepository.save(existing);
+                    userRepository.flush();
+//
+//                    System.out.println("Saved entity ID: " + saved.getId());
+//                    System.out.println("Saved first name: " + saved.getFirstname());
+
+                    return toDTO(saved);
+                });
+    }
+
+
+
+    @Transactional
+    public Optional<LecturerDTO> updateStudent(Long id, LecturerUpdateDTO updateDTO) {
+        return userRepository.findById(id)
+                .filter(user -> user.getRole() == Role.LECTURER)
+                .map(existing -> {
+                    existing.setFirstname(updateDTO.getFirstname());
+                    existing.setLastname(updateDTO.getLastname());
+                    existing.setEmail(updateDTO.getEmail());
+                    existing.setPhone(updateDTO.getPhone());
+                    existing.setUsername(updateDTO.getUsername());
+                    User saved = userRepository.save(existing);
+                    userRepository.flush();
+                    return toDTO(saved);
+                });
+    }
+
+
+
+
+    private LecturerDTO LetDTO(User user) {
+        LecturerDTO dto = new LecturerDTO();
+//        dto.setId(user.getId());
+        dto.setFirstname(user.getFirstname());
+        dto.setLastname(user.getLastname());
+        dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
+//        dto.setPhone(user.getPhone());
+//        dto.setRole(user.getRole());
+        return dto;
+    }
+
+
+
+
+    // Get lecturer entity by ID
+    public Optional<User> getLecturerEntityById(Long id) {
+        return userRepository.findById(id)
+                .filter(user -> user.getRole() == Role.LECTURER);
+    }
+
 
     // Delete lecturer
     public void deleteLecturer(Long id) {
