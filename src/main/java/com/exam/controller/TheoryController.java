@@ -116,4 +116,42 @@ public class TheoryController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body("Questions saved successfully");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//SETTING COMPULSORY CONTROLLER
+    // In your TheoryQuestionsController
+    @PutMapping("/update-compulsory/{quizId}/{prefix}")
+    public ResponseEntity<?> updateCompulsoryByPrefix(
+            @PathVariable Long quizId,
+            @PathVariable String prefix,
+            @RequestParam Boolean isCompulsory) {
+        try {
+            theoryService.updateCompulsoryStatusByPrefix(quizId, prefix, isCompulsory);
+            return ResponseEntity.ok("Compulsory status updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error updating compulsory status");
+        }
+    }
 }

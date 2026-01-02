@@ -28,5 +28,12 @@ public interface TheoryQuestionsRepository extends JpaRepository<TheoryQuestions
     List<TheoryQuestions> findByQuiz_qId(Long quizId);
 
 
+
+
+    // Find all questions with a specific prefix (e.g., "Q1")
+    List<TheoryQuestions> findByQuiz_qIdAndQuesNoStartingWith(Long quizId, String prefix);
+
+    // Find all compulsory questions for a quiz
+//    List<TheoryQuestions> findByQuiz_QIdAndIsCompulsoryTrue(Long quizId);
 //    List<TheoryQuestions> findByQuiz_QId(Long quizId);
 }

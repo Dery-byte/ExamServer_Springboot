@@ -25,18 +25,26 @@ public class TheoryQuestions {
     private String answer;
     @Column(nullable = false)
     private String marks;
+
+
+
+    // NEW FIELD: Mark question as compulsory
+    @Column(nullable = false)
+    private Boolean isCompulsory = false;
+
     @ManyToOne(cascade = CascadeType.ALL)
 //    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
     public TheoryQuestions() {
     }
-    public TheoryQuestions(Long tqId,String  quesNo, String question, String marks,String answer, Quiz quiz) {
+    public TheoryQuestions(Long tqId,String  quesNo, String question, String marks,String answer,Boolean isCompulsory, Quiz quiz) {
         TqId = tqId;
         this.question = question;
         this.marks = marks;
         this.quiz = quiz;
         this.answer = answer;
+        this.isCompulsory = isCompulsory != null ? isCompulsory : false;
         this.quesNo = quesNo;
     }
 
@@ -88,7 +96,14 @@ public class TheoryQuestions {
         this.quiz = quiz;
     }
 
+    // NEW GETTER AND SETTER
+    public Boolean getIsCompulsory() {
+        return isCompulsory;
+    }
 
+    public void setIsCompulsory(Boolean isCompulsory) {
+        this.isCompulsory = isCompulsory;
+    }
 
 
 }

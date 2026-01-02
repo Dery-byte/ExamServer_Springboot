@@ -115,4 +115,20 @@ public class TheoryService {
         return theoryQuestionsRepository.saveAll(theoryQuestions);
     }
 
+
+
+
+
+
+    // SETTING QUIZ AS COMPULSORY SERVICE
+    public void updateCompulsoryStatusByPrefix(Long quizId, String prefix, Boolean isCompulsory) {
+        List<TheoryQuestions> questions = theoryQuestionsRepository
+                .findByQuiz_qIdAndQuesNoStartingWith(quizId, prefix);
+
+        questions.forEach(question -> {
+            question.setIsCompulsory(isCompulsory);
+        });
+        theoryQuestionsRepository.saveAll(questions);
+    }
+
 }
