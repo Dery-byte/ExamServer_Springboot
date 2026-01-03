@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth/theory-progress")
@@ -22,6 +23,22 @@ public class TheoryProgressController {
     @Autowired
     private QuizService quizService;
 
+//    @PostMapping("/save/{quizId}")
+//    public ResponseEntity<?> saveAnswers(
+//            @PathVariable Long quizId,
+//            @RequestBody List<TheoryProgressDTO> answers,
+//            @AuthenticationPrincipal User user) {
+//        try {
+//            Quiz quiz = quizService.getQuiz(quizId);
+//            theoryProgressService.saveAnswers(answers, user, quiz);
+//            return ResponseEntity.ok("Answers saved successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Error saving answers: " + e.getMessage());
+//        }
+//    }
+
+
+
     @PostMapping("/save/{quizId}")
     public ResponseEntity<?> saveAnswers(
             @PathVariable Long quizId,
@@ -30,11 +47,18 @@ public class TheoryProgressController {
         try {
             Quiz quiz = quizService.getQuiz(quizId);
             theoryProgressService.saveAnswers(answers, user, quiz);
-            return ResponseEntity.ok("Answers saved successfully");
+            // Return a Map that will be automatically converted to JSON
+            return ResponseEntity.ok(Map.of("message", "Answers saved successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error saving answers: " + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Error saving answers: " + e.getMessage()));
         }
     }
+
+
+
+
+
 
     @GetMapping("/load/{quizId}")
     public ResponseEntity<List<TheoryProgressDTO>> loadAnswers(
@@ -61,4 +85,21 @@ public class TheoryProgressController {
             return ResponseEntity.badRequest().body("Error clearing answers: " + e.getMessage());
         }
     }
+
+
+
+
+//    @DeleteMapping("/clear-all")
+//    public ResponseEntity<?> clearAllUserAnswers(@AuthenticationPrincipal User user) {
+//        try {
+//            theoryProgressService.clearAllUserAnswers(user);
+//            return ResponseEntity.ok(Map.of(
+//                    "message", "All answers cleared successfully"
+//            ));
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(Map.of(
+//                    "error", "Error clearing all answers: " + e.getMessage()
+//            ));
+//        }
+//    }
 }

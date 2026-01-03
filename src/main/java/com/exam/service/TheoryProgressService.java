@@ -45,4 +45,8 @@ public class TheoryProgressService {
     public void clearAnswers(User user, Quiz quiz) {
         theoryProgressRepository.deleteByUserAndQuiz(user, quiz);
     }
+
+
+
+
 }

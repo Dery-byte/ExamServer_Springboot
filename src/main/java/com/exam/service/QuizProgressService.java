@@ -82,7 +82,22 @@ public class QuizProgressService {
         return new UserQuizProgressResponse(answerMap);
     }
 
+
+
+
+
+
+
+
+
+
+
     public void clearAnswers(Long userId, Long quizId) {
         repository.deleteByUserIdAndQuizId(userId, quizId);
     }
+
+
+
+
+
 }
