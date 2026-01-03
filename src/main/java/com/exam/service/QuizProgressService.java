@@ -42,7 +42,6 @@ public class QuizProgressService {
             options = new ArrayList<>();
             answer.setSelectedOptions(options);
         }
-
         if (request.isChecked()) {
             if (!options.contains(request.getOption())) {
                 options.add(request.getOption());
@@ -50,7 +49,6 @@ public class QuizProgressService {
         } else {
             options.remove(request.getOption());
         }
-
         repository.save(answer);
 
         return new QuizProgressResponse(answer.getQuestionId(), answer.getSelectedOptions());
