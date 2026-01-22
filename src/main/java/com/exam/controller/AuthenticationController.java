@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -344,11 +345,23 @@ public class AuthenticationController {
 //    }
 
 
+//
+//    @GetMapping("/current-user")
+//    public UserDetails getCurrentUser(Principal principal){
+//        return this.userDetailsService.loadUserByUsername(principal.getName());
+//    }
+
+
 
     @GetMapping("/current-user")
-    public UserDetails getCurrentUser(Principal principal){
-        return this.userDetailsService.loadUserByUsername(principal.getName());
+    public UserDetails getCurrentUser() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            throw new RuntimeException("User not authenticated");
+        }
+        return (UserDetails) auth.getPrincipal();
     }
+
 
 
 
