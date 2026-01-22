@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -333,11 +334,34 @@ public class AuthenticationController {
 
 
 
-    //get the current user details
+
+
+
+//    //get the current user details
+//    @GetMapping("/current-user")
+//    public User getCurrentUser(Principal principal){
+//        return (User) this.userDetailsService.loadUserByUsername(principal.getName());
+//    }
+
+
+
     @GetMapping("/current-user")
-    public User getCurrentUser(Principal principal){ 
-        return (User) this.userDetailsService.loadUserByUsername(principal.getName());
+    public UserDetails getCurrentUser(Principal principal){
+        return this.userDetailsService.loadUserByUsername(principal.getName());
     }
+
+
+
+//
+//    @GetMapping("/current-user")
+//    public User getCurrentUser(Principal principal){
+//        return userRepository.findByEmail(principal.getName())
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//    }
+
+
+
+
 
     //Change Password if logged In
     @PutMapping("/updatepassword")
@@ -364,6 +388,9 @@ return "Password changed " + user.getPassword();
         }
         return "Username " + users.getUsername() + " not found ";
     }
+
+
+
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return  service.getAllUsers();
