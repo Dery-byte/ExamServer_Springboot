@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class OpenAIService {
 
-    @Autowired
     private final OpenAIConfig openAIConfig;
 
     public OpenAIService(OpenAIConfig openAIConfig) {
