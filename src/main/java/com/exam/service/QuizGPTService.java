@@ -421,23 +421,56 @@ public class QuizGPTService {
     }
 
     private GPTRequest createEvaluationRequest(QuestionSubmission submission) {
+
         String prompt = String.format(
-                "ACT AS A STRICT EXAMINER. Evaluate this answer and respond ONLY with this JSON format:\n" +
+                "YOU ARE AN AUTOMATED EXAM GRADING SYSTEM.\n\n" +
+
+                        "STRICT RULES (NO EXCEPTIONS):\n" +
+                        "1. If the STUDENT ANSWER is empty, blank, '.', '-', 'N/A', or contains only random or meaningless text, THEN:\n" +
+                        "   - score MUST be exactly 0\n" +
+                        "   - feedback MUST say that no valid answer was provided\n" +
+                        "   - keyMissed MUST list the expected key points\n" +
+                        "2. Do NOT infer meaning from missing, unclear, or nonsense answers.\n" +
+                        "3. Partial credit is allowed ONLY if at least one correct, relevant point is clearly stated.\n" +
+                        "4. ZERO is a valid and expected score. Do not avoid zero.\n" +
+                        "5. Do NOT reward effort, formatting, or placeholders.\n\n" +
+
+                        "OUTPUT FORMAT (JSON ONLY, NO EXTRA TEXT):\n" +
                         "{\n" +
-                        "  \"score\": decimal (0-%.2f),\n" +
+                        "  \"score\": number (0 to %.2f),\n" +
                         "  \"feedback\": string,\n" +
                         "  \"keyMissed\": string[]\n" +
                         "}\n\n" +
+
                         "QUESTION: %s\n" +
                         "CRITERIA: %s\n" +
                         "MAX MARKS: %.2f\n" +
                         "STUDENT ANSWER: %s",
+
                 submission.getMaxMarks(),
                 submission.getQuestion(),
                 submission.getCriteria(),
                 submission.getMaxMarks(),
                 submission.getStudentAnswer()
         );
+
+//        String prompt = String.format(
+//                "ACT AS A STRICT EXAMINER. Evaluate this answer and respond ONLY with this JSON format:\n" +
+//                        "{\n" +
+//                        "  \"score\": decimal (0-%.2f),\n" +
+//                        "  \"feedback\": string,\n" +
+//                        "  \"keyMissed\": string[]\n" +
+//                        "}\n\n" +
+//                        "QUESTION: %s\n" +
+//                        "CRITERIA: %s\n" +
+//                        "MAX MARKS: %.2f\n" +
+//                        "STUDENT ANSWER: %s",
+//                submission.getMaxMarks(),
+//                submission.getQuestion(),
+//                submission.getCriteria(),
+//                submission.getMaxMarks(),
+//                submission.getStudentAnswer()
+//        );
 
         GPTRequest request = new GPTRequest();
         request.setModel("gpt-3.5-turbo");
