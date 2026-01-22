@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
@@ -338,11 +340,14 @@ public class AuthenticationController {
 
 
 
-//    //get the current user details
-//    @GetMapping("/current-user")
-//    public User getCurrentUser(Principal principal){
-//        return (User) this.userDetailsService.loadUserByUsername(principal.getName());
-//    }
+    @GetMapping("/current-user")
+    public UserDetails getCurrentUser(Principal principal) {
+        if (principal == null) {
+            // No authentication (cookie missing/invalid)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+        }
+        return userDetailsService.loadUserByUsername(principal.getName());
+    }
 
 
 
@@ -352,11 +357,18 @@ public class AuthenticationController {
 //    }
 
 
-    @GetMapping("/current-user")
-    public UserDetails getCurrentUser(
-            @AuthenticationPrincipal(expression = "username") String username) {
-        return this.userDetailsService.loadUserByUsername(username);
-    }
+//    @GetMapping("/current-user")
+//    public UserDetails getCurrentUser(
+//            @AuthenticationPrincipal(expression = "username") String username) {
+//        return this.userDetailsService.loadUserByUsername(username);
+//    }
+
+
+//    @GetMapping("/current-user")
+//    public UserDetails getCurrentUser(
+//            @AuthenticationPrincipal UserDetails userDetails) {
+//        return userDetails;
+//    }
 
 
 //
