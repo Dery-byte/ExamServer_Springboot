@@ -15,7 +15,11 @@ import org.springframework.stereotype.Service;
 public class OpenAIService {
 
     @Autowired
-    private OpenAIConfig openAIConfig;
+    private final OpenAIConfig openAIConfig;
+
+    public OpenAIService(OpenAIConfig openAIConfig) {
+        this.openAIConfig = openAIConfig;
+    }
 
     public String gradeResponse(GradeRequest gradeRequest) throws Exception {
         String prompt = "Question: " + gradeRequest.getQuestion() + "\n\nStudent's Response: " + gradeRequest.getAnswer() +
