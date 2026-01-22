@@ -345,22 +345,22 @@ public class AuthenticationController {
 //    }
 
 
-//
-//    @GetMapping("/current-user")
-//    public UserDetails getCurrentUser(Principal principal){
-//        return this.userDetailsService.loadUserByUsername(principal.getName());
-//    }
-
-
 
     @GetMapping("/current-user")
-    public UserDetails getCurrentUser() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
-            throw new RuntimeException("User not authenticated");
-        }
-        return (UserDetails) auth.getPrincipal();
+    public UserDetails getCurrentUser(Principal principal){
+        return this.userDetailsService.loadUserByUsername(principal.getName());
     }
+
+
+//
+//    @GetMapping("/current-user")
+//    public UserDetails getCurrentUser() {
+//        var auth = SecurityContextHolder.getContext().getAuthentication();
+//        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+//            throw new RuntimeException("User not authenticated");
+//        }
+//        return (UserDetails) auth.getPrincipal();
+//    }
 
 
 
