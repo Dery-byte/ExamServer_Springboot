@@ -346,9 +346,16 @@ public class AuthenticationController {
 
 
 
+//    @GetMapping("/current-user")
+//    public UserDetails getCurrentUser(Principal principal){
+//        return this.userDetailsService.loadUserByUsername(principal.getName());
+//    }
+
+
     @GetMapping("/current-user")
-    public UserDetails getCurrentUser(Principal principal){
-        return this.userDetailsService.loadUserByUsername(principal.getName());
+    public UserDetails getCurrentUser(
+            @AuthenticationPrincipal(expression = "username") String username) {
+        return this.userDetailsService.loadUserByUsername(username);
     }
 
 
