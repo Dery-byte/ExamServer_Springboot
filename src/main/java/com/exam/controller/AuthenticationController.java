@@ -340,14 +340,34 @@ public class AuthenticationController {
 
 
 
+//    @GetMapping("/current-user")
+//    public UserDetails getCurrentUser(Principal principal) {
+//        if (principal == null) {
+//            // No authentication (cookie missing/invalid)
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+//        }
+//        return userDetailsService.loadUserByUsername(principal.getName());
+//    }
+
     @GetMapping("/current-user")
-    public UserDetails getCurrentUser(Principal principal) {
+    public ResponseEntity<UserResponse> getCurrentUser(Principal principal) {
         if (principal == null) {
-            // No authentication (cookie missing/invalid)
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
+            return ResponseEntity.status(401).build();
         }
-        return userDetailsService.loadUserByUsername(principal.getName());
+
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstname(),
+                user.getLastname()
+        );
+
+        return ResponseEntity.ok(response);
     }
+
 
 
 
