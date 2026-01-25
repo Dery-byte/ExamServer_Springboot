@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,6 +37,7 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 //@CrossOrigin(origins = "*")
@@ -349,27 +351,33 @@ public class AuthenticationController {
 //        return userDetailsService.loadUserByUsername(principal.getName());
 //    }
 
+
     @GetMapping("/current-user")
     public ResponseEntity<UserResponse> getCurrentUser(Principal principal) {
         if (principal == null) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+
+        // Get authorities from Spring Security
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<Map<String, String>> authorities = auth.getAuthorities().stream()
+                .map(authority -> Map.of("authority", authority.getAuthority()))
+                .collect(Collectors.toList());
 
         UserResponse response = new UserResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getFirstname(),
-                user.getLastname()
+                user.getLastname(),
+                user.getRole().name(),
+                authorities.toString()  // Add authorities
         );
 
         return ResponseEntity.ok(response);
     }
-
-
-
 
 //    @GetMapping("/current-user")
 //    public UserDetails getCurrentUser(Principal principal){
