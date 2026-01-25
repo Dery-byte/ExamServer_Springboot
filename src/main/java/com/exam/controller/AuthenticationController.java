@@ -271,8 +271,7 @@ public class AuthenticationController {
         cookie.setSecure(true);          // HTTPS only (set to false in development if using HTTP)
         cookie.setPath("/");             // Available to all paths
         cookie.setMaxAge(3600);          // 1 hour (adjust based on your token expiration)
-        cookie.setAttribute("SameSite", "Strict"); // CSRF protection
-
+        cookie.setAttribute("SameSite", "None"); // CSRF protection
         response.addCookie(cookie);
 
         // Return response without token (or with user details only)
@@ -350,39 +349,39 @@ public class AuthenticationController {
 //        }
 //        return userDetailsService.loadUserByUsername(principal.getName());
 //    }
-
+//
+//
+//    @GetMapping("/current-user")
+//    public ResponseEntity<UserResponse> getCurrentUser(Principal principal) {
+//        if (principal == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+//
+//        // Get authorities from Spring Security
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        List<Map<String, String>> authorities = auth.getAuthorities().stream()
+//                .map(authority -> Map.of("authority", authority.getAuthority()))
+//                .collect(Collectors.toList());
+//
+//        UserResponse response = new UserResponse(
+//                user.getId(),
+//                user.getUsername(),
+//                user.getEmail(),
+//                user.getFirstname(),
+//                user.getLastname(),
+//                user.getRole().name(),
+//                authorities.toString()  // Add authorities
+//        );
+//
+//        return ResponseEntity.ok(response);
+//    }
 
     @GetMapping("/current-user")
-    public ResponseEntity<UserResponse> getCurrentUser(Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-
-        // Get authorities from Spring Security
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        List<Map<String, String>> authorities = auth.getAuthorities().stream()
-                .map(authority -> Map.of("authority", authority.getAuthority()))
-                .collect(Collectors.toList());
-
-        UserResponse response = new UserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getFirstname(),
-                user.getLastname(),
-                user.getRole().name(),
-                authorities.toString()  // Add authorities
-        );
-
-        return ResponseEntity.ok(response);
+    public UserDetails getCurrentUser(Principal principal){
+        return this.userDetailsService.loadUserByUsername(principal.getName());
     }
-
-//    @GetMapping("/current-user")
-//    public UserDetails getCurrentUser(Principal principal){
-//        return this.userDetailsService.loadUserByUsername(principal.getName());
-//    }
 
 
 //    @GetMapping("/current-user")
