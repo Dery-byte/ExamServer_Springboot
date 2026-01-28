@@ -231,9 +231,16 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Public endpoints
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/token-info").permitAll()
-                        .requestMatchers("/current-user").authenticated()  // make sure authenticated users can access
+
+                                // ✅ Allow authentication endpoints - multiple patterns
+                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/api/v1/auth/authenticate").permitAll()
+                                .requestMatchers("/api/v1/auth/register").permitAll()
+                                .requestMatchers("/api/v1/auth/register/**").permitAll()
+                                .requestMatchers("/token-info").permitAll()
+//                        .requestMatchers("/api/v1/auth/**").permitAll()
+//                        .requestMatchers("/token-info").permitAll()
+//                        .requestMatchers("/current-user").authenticated()  // make sure authenticated users can access
 
 
                         // Everything else requires auth
@@ -284,12 +291,23 @@ public class SecurityConfiguration {
                 "Authorization",
                 "Content-Type"
         ));
+
+        // ✅ Expose headers
         configuration.setExposedHeaders(List.of(
-                "Authorization"
+                "Authorization",
+                "Set-Cookie",
+                "Access-Control-Allow-Origin",
+                "Access-Control-Allow-Credentials"
         ));
+        configuration.setExposedHeaders(List.of("*"));
 
         // ✅ Required for cookies
         configuration.setAllowCredentials(true);
+
+        // ✅ Cache preflight for 1 hour
+        configuration.setMaxAge(3600L);
+
+
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

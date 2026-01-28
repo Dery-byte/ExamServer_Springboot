@@ -283,26 +283,60 @@ public class AuthenticationController {
 
 
 // NEW
+
+
+
 @PostMapping("/authenticate")
 public ResponseEntity<AuthenticationResponse> authenticate(
         @RequestBody AuthenticationRequest request,
+        HttpServletRequest httpRequest,
         HttpServletResponse response
 ) throws UserNotFoundException {
+
+    // ✅ Debug logging
+    System.out.println("=== Authentication Request ===");
+    System.out.println("Origin: " + httpRequest.getHeader("Origin"));
+    System.out.println("Method: " + httpRequest.getMethod());
+    System.out.println("Path: " + httpRequest.getRequestURI());
+    System.out.println("Content-Type: " + httpRequest.getHeader("Content-Type"));
+
     AuthenticationResponse authResponse = service.authenticate(request);
 
-    // ✅ CORRECT WAY: Set cookie via response header (not Cookie object)
+    // Set cookie with iOS-compatible format
     String cookieHeader = String.format(
             "accessToken=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
             authResponse.getToken(),
-            7 * 24 * 60 * 60  // 7 days (or match your JWT expiration)
+            7 * 24 * 60 * 60
     );
 
     response.addHeader("Set-Cookie", cookieHeader);
+
+    System.out.println("✅ Cookie set: " + cookieHeader.substring(0, 50) + "...");
 
     return ResponseEntity.ok(AuthenticationResponse.builder()
             .message("Authentication successful")
             .build());
 }
+//@PostMapping("/authenticate")
+//public ResponseEntity<AuthenticationResponse> authenticate(
+//        @RequestBody AuthenticationRequest request,
+//        HttpServletResponse response
+//) throws UserNotFoundException {
+//    AuthenticationResponse authResponse = service.authenticate(request);
+//
+//    // ✅ CORRECT WAY: Set cookie via response header (not Cookie object)
+//    String cookieHeader = String.format(
+//            "accessToken=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
+//            authResponse.getToken(),
+//            7 * 24 * 60 * 60  // 7 days (or match your JWT expiration)
+//    );
+//
+//    response.addHeader("Set-Cookie", cookieHeader);
+//
+//    return ResponseEntity.ok(AuthenticationResponse.builder()
+//            .message("Authentication successful")
+//            .build());
+//}
 
 
 
