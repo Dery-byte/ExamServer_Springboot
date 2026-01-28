@@ -286,28 +286,49 @@ public class AuthenticationController {
 
 
 
+//@PostMapping("/authenticate")
+//public ResponseEntity<AuthenticationResponse> authenticate(
+//        @RequestBody AuthenticationRequest request,
+//        HttpServletResponse response
+//) throws UserNotFoundException {
+//    AuthenticationResponse authResponse = service.authenticate(request);
+//
+//    // Use ResponseCookie for better control (Spring 5+)
+//    String cookieValue = ResponseCookie.from("accessToken", authResponse.getToken())
+//            .httpOnly(true)
+//            .secure(true)          // MUST be true for SameSite=None
+//            .path("/")
+//            .maxAge(3600)
+//            .sameSite("None")      // Required for cross-domain
+//            .build()
+//            .toString();
+//
+//    response.addHeader("Set-Cookie", cookieValue);
+//
+//    return ResponseEntity.ok(AuthenticationResponse.builder()
+//            .message("Authentication successful")
+//            .build());
+//}
+
+
+
+// In your AuthenticationController or wherever you set the JWT cookie
 @PostMapping("/authenticate")
-public ResponseEntity<AuthenticationResponse> authenticate(
+public ResponseEntity<?> authenticate(
         @RequestBody AuthenticationRequest request,
-        HttpServletResponse response
-) throws UserNotFoundException {
+        HttpServletResponse response) throws UserNotFoundException {
     AuthenticationResponse authResponse = service.authenticate(request);
-
-    // Use ResponseCookie for better control (Spring 5+)
-    String cookieValue = ResponseCookie.from("accessToken", authResponse.getToken())
+    // ✅ Create cookie with proper attributes for iOS
+    ResponseCookie cookie = ResponseCookie.from("jwt", authResponse.getToken())
             .httpOnly(true)
-            .secure(true)          // MUST be true for SameSite=None
+            .secure(true)  // MUST be true for SameSite=None
+            .sameSite("None")  // Required for iOS cross-site cookies
             .path("/")
-            .maxAge(3600)
-            .sameSite("None")      // Required for cross-domain
-            .build()
-            .toString();
-
-    response.addHeader("Set-Cookie", cookieValue);
-
-    return ResponseEntity.ok(AuthenticationResponse.builder()
-            .message("Authentication successful")
-            .build());
+            .maxAge(24 * 60 * 60)  // 24 hours
+            .domain(".onrender.com")  // Match your domain
+            .build();
+    response.addHeader("Set-Cookie", cookie.toString());
+    return ResponseEntity.ok(authResponse);
 }
 
 

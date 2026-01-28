@@ -300,36 +300,53 @@ public class SecurityConfiguration {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // ⚠️ CRITICAL: Must be explicit origins (no wildcards with credentials)
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
                 "https://assessmentapp-e1d04.web.app"
         ));
-
         configuration.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
-
-        // ⚠️ CRITICAL: Use wildcard "*" for headers (this is allowed)
-        configuration.setAllowedHeaders(List.of("*"));
-
+        // ✅ FIX: Allow all headers (including custom ones iOS might send)
+        configuration.setAllowedHeaders(List.of("*"));  // Change this!
         configuration.setExposedHeaders(List.of(
                 "Authorization",
-                "Set-Cookie"  // Add this
+                "Set-Cookie"  // Add this!
         ));
-
-        // ⚠️ CRITICAL: Must be true for cookies
         configuration.setAllowCredentials(true);
-
-        // Increase preflight cache
+        // ✅ Add max age for preflight caching
         configuration.setMaxAge(3600L);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+
+
+
 }
