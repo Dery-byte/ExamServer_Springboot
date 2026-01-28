@@ -256,87 +256,121 @@ public class AuthenticationController {
 //    }
 
 
+//
+//
+//    @PostMapping("/authenticate")
+//    public ResponseEntity<AuthenticationResponse> authenticate(
+//            @RequestBody AuthenticationRequest request,
+//            HttpServletResponse response  // Add this parameter
+//    ) throws UserNotFoundException {
+//        AuthenticationResponse authResponse = service.authenticate(request);
+//
+//        // Set token as HttpOnly cookie
+//        Cookie cookie = new Cookie("accessToken", authResponse.getToken());
+//        cookie.setHttpOnly(true);        // Prevents JavaScript access
+//        cookie.setSecure(true);          // HTTPS only (set to false in development if using HTTP)
+//        cookie.setPath("/");             // Available to all paths
+//        cookie.setMaxAge(3600);          // 1 hour (adjust based on your token expiration)
+//        cookie.setAttribute("SameSite", "None"); // CSRF protection
+//        response.addCookie(cookie);
+//
+//        // Return response without token (or with user details only)
+//        return ResponseEntity.ok(AuthenticationResponse.builder()
+//                .message("Authentication successful")
+////                        .token(authResponse.getToken())
+//                .build());
+//    }
 
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request,
-            HttpServletResponse response  // Add this parameter
-    ) throws UserNotFoundException {
-        AuthenticationResponse authResponse = service.authenticate(request);
+// NEW
+@PostMapping("/authenticate")
+public ResponseEntity<AuthenticationResponse> authenticate(
+        @RequestBody AuthenticationRequest request,
+        HttpServletResponse response
+) throws UserNotFoundException {
+    AuthenticationResponse authResponse = service.authenticate(request);
 
-        // Set token as HttpOnly cookie
-        Cookie cookie = new Cookie("accessToken", authResponse.getToken());
-        cookie.setHttpOnly(true);        // Prevents JavaScript access
-        cookie.setSecure(true);          // HTTPS only (set to false in development if using HTTP)
-        cookie.setPath("/");             // Available to all paths
-        cookie.setMaxAge(3600);          // 1 hour (adjust based on your token expiration)
-        cookie.setAttribute("SameSite", "None"); // CSRF protection
-        response.addCookie(cookie);
+    // ✅ CORRECT WAY: Set cookie via response header (not Cookie object)
+    String cookieHeader = String.format(
+            "accessToken=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
+            authResponse.getToken(),
+            7 * 24 * 60 * 60  // 7 days (or match your JWT expiration)
+    );
 
-        // Return response without token (or with user details only)
-        return ResponseEntity.ok(AuthenticationResponse.builder()
-                .message("Authentication successful")
-//                        .token(authResponse.getToken())
-                .build());
-    }
+    response.addHeader("Set-Cookie", cookieHeader);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @PostMapping("/logoutssss")
-    public ResponseEntity<?> logout(HttpServletResponse response) {
-        System.out.println("🔍 Logout endpoint HIT!");
-        // Clear BOTH cookies (accessToken and token)
-        // Clear accessToken cookie
-        Cookie accessTokenCookie = new Cookie("accessToken", null);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(false); // Set to true in production with HTTPS
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(0);
-        response.addCookie(accessTokenCookie);
-
-        // Clear token cookie (this is the main one!)
-//        Cookie tokenCookie = new Cookie("token", null);
-//        tokenCookie.setHttpOnly(true);
-//        tokenCookie.setSecure(false); // Set to true in production with HTTPS
-//        tokenCookie.setPath("/");
-//        tokenCookie.setMaxAge(0);
-//        response.addCookie(tokenCookie);
-
-        System.out.println("✅ User logged out - cookies cleared");
-
-        Map<String, Object> responseBody = Map.of(
-                "message", "Logged out successfully",
-                "timestamp", System.currentTimeMillis()
-        );
-
-        System.out.println("📤 Sending response: " + responseBody);
-
-        return ResponseEntity.ok().body(responseBody);
-    }
+    return ResponseEntity.ok(AuthenticationResponse.builder()
+            .message("Authentication successful")
+            .build());
+}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    @PostMapping("/logoutssss")
+//    public ResponseEntity<?> logout(HttpServletResponse response) {
+//        System.out.println("🔍 Logout endpoint HIT!");
+//        // Clear BOTH cookies (accessToken and token)
+//        // Clear accessToken cookie
+//        Cookie accessTokenCookie = new Cookie("accessToken", null);
+//        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setSecure(false); // Set to true in production with HTTPS
+//        accessTokenCookie.setPath("/");
+//        accessTokenCookie.setMaxAge(0);
+//        response.addCookie(accessTokenCookie);
+//
+//        // Clear token cookie (this is the main one!)
+////        Cookie tokenCookie = new Cookie("token", null);
+////        tokenCookie.setHttpOnly(true);
+////        tokenCookie.setSecure(false); // Set to true in production with HTTPS
+////        tokenCookie.setPath("/");
+////        tokenCookie.setMaxAge(0);
+////        response.addCookie(tokenCookie);
+//
+//        System.out.println("✅ User logged out - cookies cleared");
+//
+//        Map<String, Object> responseBody = Map.of(
+//                "message", "Logged out successfully",
+//                "timestamp", System.currentTimeMillis()
+//        );
+//
+//        System.out.println("📤 Sending response: " + responseBody);
+//
+//        return ResponseEntity.ok().body(responseBody);
+//    }
+
+
+// NEW
+
+@PostMapping("/logout")
+public ResponseEntity<?> logout(
+        HttpServletRequest request,
+        HttpServletResponse response
+) {
+    // Your existing logout logic...
+
+    // ✅ Clear the cookie properly
+    String cookieHeader = "accessToken=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=None";
+    response.addHeader("Set-Cookie", cookieHeader);
+
+    return ResponseEntity.ok(Map.of("message", "Logout successful"));
+}
 
 
 
@@ -378,9 +412,31 @@ public class AuthenticationController {
 //        return ResponseEntity.ok(response);
 //    }
 
+//    @GetMapping("/current-user")
+//    public UserDetails getCurrentUser(Principal principal){
+//        return this.userDetailsService.loadUserByUsername(principal.getName());
+//    }
+
+
+    //NEW
+
+
     @GetMapping("/current-user")
-    public UserDetails getCurrentUser(Principal principal){
-        return this.userDetailsService.loadUserByUsername(principal.getName());
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        // ✅ Better: Use Authentication which provides more info
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Not authenticated"));
+        }
+        // Authentication already contains UserDetails
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ResponseEntity.ok(principal);
+        }
+        // Fallback: load from database
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
+        return ResponseEntity.ok(userDetails);
     }
 
 
