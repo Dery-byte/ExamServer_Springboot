@@ -315,6 +315,8 @@ public ResponseEntity<AuthenticationResponse> authenticate(
 
     return ResponseEntity.ok(AuthenticationResponse.builder()
             .message("Authentication successful")
+            .token(authResponse.getToken())
+
             .build());
 }
 //@PostMapping("/authenticate")
