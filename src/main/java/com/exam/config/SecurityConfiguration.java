@@ -265,88 +265,34 @@ public class SecurityConfiguration {
     // =========================
     // CORS CONFIGURATION
     // =========================
-
-//
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//
-//        // ❗ Must be explicit when using cookies
-//        configuration.setAllowedOrigins(List.of(
-//                "http://localhost:4200",
-//                "https://assessmentapp-e1d04.web.app"
-//        ));
-//
-//        configuration.setAllowedMethods(List.of(
-//                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
-//        ));
-//
-//        // ❗ Wildcard NOT allowed with credentials
-//        configuration.setAllowedHeaders(List.of(
-//                "Authorization",
-//                "Content-Type"
-//        ));
-//        configuration.setExposedHeaders(List.of(
-//                "Authorization"
-//        ));
-//
-//        // ✅ Required for cookies
-//        configuration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source =
-//                new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
+        // ❗ Must be explicit when using cookies
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
                 "https://assessmentapp-e1d04.web.app"
         ));
+
         configuration.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
-        // ✅ FIX: Allow all headers (including custom ones iOS might send)
-        configuration.setAllowedHeaders(List.of("*"));  // Change this!
-        configuration.setExposedHeaders(List.of(
+
+        // ❗ Wildcard NOT allowed with credentials
+        configuration.setAllowedHeaders(List.of(
                 "Authorization",
-                "Set-Cookie"  // Add this!
+                "Content-Type"
         ));
+        configuration.setExposedHeaders(List.of(
+                "Authorization"
+        ));
+
+        // ✅ Required for cookies
         configuration.setAllowCredentials(true);
-        // ✅ Add max age for preflight caching
-        configuration.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-
-
-
 }

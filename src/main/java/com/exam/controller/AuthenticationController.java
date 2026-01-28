@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -259,77 +258,29 @@ public class AuthenticationController {
 
 
 
-//    @PostMapping("/authenticate")
-//    public ResponseEntity<AuthenticationResponse> authenticate(
-//            @RequestBody AuthenticationRequest request,
-//            HttpServletResponse response  // Add this parameter
-//    ) throws UserNotFoundException {
-//        AuthenticationResponse authResponse = service.authenticate(request);
-//
-//        // Set token as HttpOnly cookie
-//        Cookie cookie = new Cookie("accessToken", authResponse.getToken());
-//        cookie.setHttpOnly(true);        // Prevents JavaScript access
-//        cookie.setSecure(true);          // HTTPS only (set to false in development if using HTTP)
-//        cookie.setPath("/");             // Available to all paths
-//        cookie.setMaxAge(3600);          // 1 hour (adjust based on your token expiration)
-//        cookie.setAttribute("SameSite", "None"); // CSRF protection
-//        response.addCookie(cookie);
-//
-//        // Return response without token (or with user details only)
-//        return ResponseEntity.ok(AuthenticationResponse.builder()
-//                .message("Authentication successful")
-////                        .token(authResponse.getToken())
-//                .build());
-//    }
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(
+            @RequestBody AuthenticationRequest request,
+            HttpServletResponse response  // Add this parameter
+    ) throws UserNotFoundException {
+        AuthenticationResponse authResponse = service.authenticate(request);
 
+        // Set token as HttpOnly cookie
+        Cookie cookie = new Cookie("accessToken", authResponse.getToken());
+        cookie.setHttpOnly(true);        // Prevents JavaScript access
+        cookie.setSecure(true);          // HTTPS only (set to false in development if using HTTP)
+        cookie.setPath("/");             // Available to all paths
+        cookie.setMaxAge(3600);          // 1 hour (adjust based on your token expiration)
+        cookie.setAttribute("SameSite", "None"); // CSRF protection
+        response.addCookie(cookie);
 
+        // Return response without token (or with user details only)
+        return ResponseEntity.ok(AuthenticationResponse.builder()
+                .message("Authentication successful")
+//                        .token(authResponse.getToken())
+                .build());
+    }
 
-
-
-//@PostMapping("/authenticate")
-//public ResponseEntity<AuthenticationResponse> authenticate(
-//        @RequestBody AuthenticationRequest request,
-//        HttpServletResponse response
-//) throws UserNotFoundException {
-//    AuthenticationResponse authResponse = service.authenticate(request);
-//
-//    // Use ResponseCookie for better control (Spring 5+)
-//    String cookieValue = ResponseCookie.from("accessToken", authResponse.getToken())
-//            .httpOnly(true)
-//            .secure(true)          // MUST be true for SameSite=None
-//            .path("/")
-//            .maxAge(3600)
-//            .sameSite("None")      // Required for cross-domain
-//            .build()
-//            .toString();
-//
-//    response.addHeader("Set-Cookie", cookieValue);
-//
-//    return ResponseEntity.ok(AuthenticationResponse.builder()
-//            .message("Authentication successful")
-//            .build());
-//}
-
-
-
-// In your AuthenticationController or wherever you set the JWT cookie
-@PostMapping("/authenticate")
-public ResponseEntity<?> authenticate(
-        @RequestBody AuthenticationRequest request,
-        HttpServletResponse response) throws UserNotFoundException {
-    AuthenticationResponse authResponse = service.authenticate(request);
-    // ✅ Create cookie with proper attributes for iOS
-    ResponseCookie cookie = ResponseCookie.from("jwt", authResponse.getToken())
-            .httpOnly(true)
-            .secure(true)  // MUST be true for SameSite=None
-            .sameSite("None")  // Required for iOS cross-site cookies
-            .path("/")
-            .maxAge(24 * 60 * 60)  // 24 hours
-            .domain(".onrender.com")  // Match your domain
-            .build();
-    response.addHeader("Set-Cookie", cookie.toString());
-    return ResponseEntity.ok(authResponse);
-}
 
 
 
