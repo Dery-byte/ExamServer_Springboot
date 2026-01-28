@@ -8,6 +8,7 @@ import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
 import com.exam.repository.QuestionsRepository;
 import com.exam.repository.ReportRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -166,9 +167,25 @@ public Page<Questions> getLimitedRecords(int page, int size) {
     }
 
 
-    public  Questions get (Long questionId){
-        return this.questionsRepository.getOne(questionId);
+//    public  Questions get (Long questionId){
+//        return this.questionsRepository.getOne(questionId);
+//    }
+
+//    public  Questions get (Long questionId){
+//        return this.questionsRepository.getReferenceById(questionId);
+//    }
+
+    public Questions get(Long questionId) {
+        if (questionId == null) {
+            throw new IllegalArgumentException("questionId must not be null");
+        }
+
+        return questionsRepository.findById(questionId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Question not found with id " + questionId)
+                );
     }
+
 
 
 

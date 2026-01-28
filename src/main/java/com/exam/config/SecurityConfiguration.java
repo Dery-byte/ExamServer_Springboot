@@ -265,11 +265,46 @@ public class SecurityConfiguration {
     // =========================
     // CORS CONFIGURATION
     // =========================
+
+//
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        // ❗ Must be explicit when using cookies
+//        configuration.setAllowedOrigins(List.of(
+//                "http://localhost:4200",
+//                "https://assessmentapp-e1d04.web.app"
+//        ));
+//
+//        configuration.setAllowedMethods(List.of(
+//                "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
+//        ));
+//
+//        // ❗ Wildcard NOT allowed with credentials
+//        configuration.setAllowedHeaders(List.of(
+//                "Authorization",
+//                "Content-Type"
+//        ));
+//        configuration.setExposedHeaders(List.of(
+//                "Authorization"
+//        ));
+//
+//        // ✅ Required for cookies
+//        configuration.setAllowCredentials(true);
+//        UrlBasedCorsConfigurationSource source =
+//                new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // ❗ Must be explicit when using cookies
+        // ⚠️ CRITICAL: Must be explicit origins (no wildcards with credentials)
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:4200",
                 "https://assessmentapp-e1d04.web.app"
@@ -279,19 +314,21 @@ public class SecurityConfiguration {
                 "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
 
-        // ❗ Wildcard NOT allowed with credentials
-        configuration.setAllowedHeaders(List.of(
-                "Authorization",
-                "Content-Type"
-        ));
+        // ⚠️ CRITICAL: Use wildcard "*" for headers (this is allowed)
+        configuration.setAllowedHeaders(List.of("*"));
+
         configuration.setExposedHeaders(List.of(
-                "Authorization"
+                "Authorization",
+                "Set-Cookie"  // Add this
         ));
 
-        // ✅ Required for cookies
+        // ⚠️ CRITICAL: Must be true for cookies
         configuration.setAllowCredentials(true);
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+
+        // Increase preflight cache
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
