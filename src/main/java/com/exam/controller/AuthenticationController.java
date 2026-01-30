@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +41,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
@@ -289,56 +290,67 @@ public class AuthenticationController {
 @PostMapping("/authenticate")
 public ResponseEntity<AuthenticationResponse> authenticate(
         @RequestBody AuthenticationRequest request,
-        HttpServletRequest httpRequest,
-        HttpServletResponse response
+        HttpServletRequest httpRequest
 ) throws UserNotFoundException {
 
-    // ✅ Debug logging
-    System.out.println("=== Authentication Request ===");
-    System.out.println("Origin: " + httpRequest.getHeader("Origin"));
-    System.out.println("Method: " + httpRequest.getMethod());
-    System.out.println("Path: " + httpRequest.getRequestURI());
-    System.out.println("Content-Type: " + httpRequest.getHeader("Content-Type"));
+    // ✅ Debug logging (optional - remove in production)
+//    log.debug("=== Authentication Request ===");
+//    log.debug("Origin: {}", httpRequest.getHeader("Origin"));
+//    log.debug("Method: {}", httpRequest.getMethod());
+//    log.debug("Path: {}", httpRequest.getRequestURI());
+//    log.debug("Content-Type: {}", httpRequest.getHeader("Content-Type"));
 
+    // Authenticate user and generate token
     AuthenticationResponse authResponse = service.authenticate(request);
 
-    // Set cookie with iOS-compatible format
-    String cookieHeader = String.format(
-            "accessToken=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
-            authResponse.getToken(),
-            7 * 24 * 60 * 60
-    );
+//    log.info("✅ User authenticated successfully: {}", request.getEmail());
 
-    response.addHeader("Set-Cookie", cookieHeader);
-
-    System.out.println("✅ Cookie set: " + cookieHeader.substring(0, 50) + "...");
-
+    // Return token in response body (NOT in cookie)
     return ResponseEntity.ok(AuthenticationResponse.builder()
+            .token(authResponse.getToken())  // or .accessToken() depending on your DTO
+//            .tokenType("Bearer")
             .message("Authentication successful")
-            .token(authResponse.getToken())
-
+//            .email(authResponse.getEmail())  // Optional: return user info
+//            .role(authResponse.getRole())    // Optional: return user role
             .build());
 }
+
+//
+//
 //@PostMapping("/authenticate")
 //public ResponseEntity<AuthenticationResponse> authenticate(
 //        @RequestBody AuthenticationRequest request,
+//        HttpServletRequest httpRequest,
 //        HttpServletResponse response
 //) throws UserNotFoundException {
+//
+//    // ✅ Debug logging
+//    System.out.println("=== Authentication Request ===");
+//    System.out.println("Origin: " + httpRequest.getHeader("Origin"));
+//    System.out.println("Method: " + httpRequest.getMethod());
+//    System.out.println("Path: " + httpRequest.getRequestURI());
+//    System.out.println("Content-Type: " + httpRequest.getHeader("Content-Type"));
+//
 //    AuthenticationResponse authResponse = service.authenticate(request);
 //
-//    // ✅ CORRECT WAY: Set cookie via response header (not Cookie object)
+//    // Set cookie with iOS-compatible format
 //    String cookieHeader = String.format(
 //            "accessToken=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
 //            authResponse.getToken(),
-//            7 * 24 * 60 * 60  // 7 days (or match your JWT expiration)
+//            7 * 24 * 60 * 60
 //    );
 //
 //    response.addHeader("Set-Cookie", cookieHeader);
 //
+//    System.out.println("✅ Cookie set: " + cookieHeader.substring(0, 50) + "...");
+//
 //    return ResponseEntity.ok(AuthenticationResponse.builder()
 //            .message("Authentication successful")
+//            .token(authResponse.getToken())
+//
 //            .build());
 //}
+
 
 
 
@@ -419,8 +431,40 @@ public ResponseEntity<?> logout(
 //        }
 //        return userDetailsService.loadUserByUsername(principal.getName());
 //    }
+
 //
-//
+
+
+
+
+    @GetMapping("/current-user")
+    public ResponseEntity<UserResponse> getCurrentUser(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
+        // Get authorities from Spring Security
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        // Format as comma-separated string
+        String authorities = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(", "));
+        UserResponse response = new UserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstname(),
+                user.getLastname(),
+                user.getRole().name(),
+                authorities  // Now it's a clean string like "ROLE_ADMIN, PERMISSION_WRITE"
+        );
+        return ResponseEntity.ok(response);
+    }
+
+
+
+
+
 //    @GetMapping("/current-user")
 //    public ResponseEntity<UserResponse> getCurrentUser(Principal principal) {
 //        if (principal == null) {
@@ -457,30 +501,26 @@ public ResponseEntity<?> logout(
     //NEW
 
 
-    @GetMapping("/current-user")
-    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
-        // ✅ Better: Use Authentication which provides more info
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Not authenticated"));
-        }
-        // Authentication already contains UserDetails
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            return ResponseEntity.ok(principal);
-        }
-        // Fallback: load from database
-        UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
-        return ResponseEntity.ok(userDetails);
-    }
-
-
 //    @GetMapping("/current-user")
-//    public UserDetails getCurrentUser(
-//            @AuthenticationPrincipal(expression = "username") String username) {
-//        return this.userDetailsService.loadUserByUsername(username);
+//    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+//        // ✅ Better: Use Authentication which provides more info
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                    .body(Map.of("error", "Not authenticated"));
+//        }
+//        // Authentication already contains UserDetails
+//        Object principal = authentication.getPrincipal();
+//
+//        if (principal instanceof UserDetails) {
+//            return ResponseEntity.ok(principal);
+//        }
+//        // Fallback: load from database
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
+//        return ResponseEntity.ok(userDetails);
 //    }
+
+
+
 
 
 //    @GetMapping("/current-user")
@@ -500,15 +540,6 @@ public ResponseEntity<?> logout(
 //        return (UserDetails) auth.getPrincipal();
 //    }
 
-
-
-
-//
-//    @GetMapping("/current-user")
-//    public User getCurrentUser(Principal principal){
-//        return userRepository.findByEmail(principal.getName())
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//    }
 
 
 
@@ -589,35 +620,58 @@ return "Password changed " + user.getPassword();
 
 
 
+//    @GetMapping("/token-info")
+//    public TokenInfo getTokenInfo(HttpServletRequest request) {
+//        Cookie[] cookies = request.getCookies();
+//
+//        // Debug: Check if cookies exist
+//        if (cookies == null) {
+//            System.out.println("❌ No cookies found in request");
+//            return new TokenInfo(0);
+//        }
+//
+//        // Debug: Log all cookies
+//        System.out.println("🍪 Cookies found: " + cookies.length);
+//        for (Cookie cookie : cookies) {
+//            System.out.println("  - " + cookie.getName() + " = " + cookie.getValue().substring(0, Math.min(20, cookie.getValue().length())) + "...");
+//        }
+//
+//        String accessToken = null;
+//        for (Cookie cookie : cookies) {
+//            if ("accessToken".equals(cookie.getName())) {
+//                accessToken = cookie.getValue();
+//                System.out.println("✅ Token cookie found");
+//                break;
+//            }
+//        }
+//
+//        if (accessToken == null) {
+//            System.out.println("❌ No 'token' cookie found");
+//            return new TokenInfo(0);
+//        }
+//
+//        try {
+//            Claims claims = jwtService.extractAllClaims(accessToken);
+//            long exp = claims.getExpiration().getTime() / 1000;
+//            System.out.println("✅ Token expiration: " + exp + " (" + new Date(exp * 1000) + ")");
+//            return new TokenInfo(exp);
+//        } catch (Exception e) {
+//            System.out.println("❌ Error extracting claims: " + e.getMessage());
+//            e.printStackTrace();
+//            return new TokenInfo(0);
+//        }
+//    }
+
     @GetMapping("/token-info")
     public TokenInfo getTokenInfo(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-
-        // Debug: Check if cookies exist
-        if (cookies == null) {
-            System.out.println("❌ No cookies found in request");
-            return new TokenInfo(0);
-        }
-
-        // Debug: Log all cookies
-        System.out.println("🍪 Cookies found: " + cookies.length);
-        for (Cookie cookie : cookies) {
-            System.out.println("  - " + cookie.getName() + " = " + cookie.getValue().substring(0, Math.min(20, cookie.getValue().length())) + "...");
-        }
-
-        String accessToken = null;
-        for (Cookie cookie : cookies) {
-            if ("accessToken".equals(cookie.getName())) {
-                accessToken = cookie.getValue();
-                System.out.println("✅ Token cookie found");
-                break;
-            }
-        }
+        String accessToken = extractTokenFromHeader(request);
 
         if (accessToken == null) {
-            System.out.println("❌ No 'token' cookie found");
+            System.out.println("❌ No valid Authorization header found");
             return new TokenInfo(0);
         }
+
+        System.out.println("✅ JWT token extracted");
 
         try {
             Claims claims = jwtService.extractAllClaims(accessToken);
@@ -626,15 +680,20 @@ return "Password changed " + user.getPassword();
             return new TokenInfo(exp);
         } catch (Exception e) {
             System.out.println("❌ Error extracting claims: " + e.getMessage());
-            e.printStackTrace();
             return new TokenInfo(0);
         }
     }
 
 
+    private String extractTokenFromHeader(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
 
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
 
-
+        return null;
+    }
 
 
 

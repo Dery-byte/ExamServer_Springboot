@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/auth")
 public class CategoryController {
-
     //add category
     @Autowired
     private CategoryService categoryService;
