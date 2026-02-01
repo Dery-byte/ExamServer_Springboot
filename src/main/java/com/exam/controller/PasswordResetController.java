@@ -561,7 +561,7 @@ public class PasswordResetController {
 
 
 
-    @Value("${app.frontend.url:http://localhost:4200}")
+    @Value("${application.mailing.frontend.baseUrl:http://localhost:4200}")
     private String frontendUrl;
 
     // In-memory storage (replaces Redis)

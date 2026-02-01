@@ -166,10 +166,10 @@ public class MNotifyV2SmsService {
             // Backend creates the SMS message with clickable link
             // RECOMMENDED FORMAT - Most compatible
             String message = String.format(
-                    "Hi %s\n\n" +
-                            "Reset your password:\n\n" +
-                            "%s\n\n" +
-                            "Link expires in 30 minutes.\n\n" +
+                    "Hi %s\n" +
+                            "Reset your password: Click the the link\n" +
+                            "%s\n" +
+                            "it expires in 30 minutes.\n" +
                             "Ignore this if you didn't request it.",
                     username,
                     resetUrl
