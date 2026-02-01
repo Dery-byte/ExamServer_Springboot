@@ -21,6 +21,7 @@ import com.exam.model.Role;
 import com.exam.model.User;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,6 +45,9 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailServices;
+
+    @Autowired
+    private MNotifyV2SmsService mNotifyV2SmsService;
 
 
 
@@ -224,15 +228,12 @@ public class AuthenticationService {
     public void resetPassword(ResetPasswordRequest request) {
         Token token = tokenRepository.findByToken(request.getToken())
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
-
         if (LocalDateTime.now().isAfter(token.getExpiresAt())) {
             throw new ResetPasswordTokenExpiredException("Token has expired. Please request a new one.");
         }
-
         if (token.getValidatedAt() != null) {
             throw new ResetPasswordTokenAlreadyUsedException("This token has already been used.");
         }
-
         User user = token.getUser();
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
@@ -286,6 +287,49 @@ public class AuthenticationService {
 //                "Password Reset"
 //        );
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    private void sendResetPasswordPhone(User user) throws MessagingException, UnsupportedEncodingException {
+        var newToken = generateAndSaveResetPasswordToken(user);
+//        String resetUrl = resetURL.replace("resetpassword", "reset-password") + "?token=" + newToken;
+        String resetUrl = frontendBaseUrl + "/reset-password?token=" + newToken;
+
+        System.out.println(resetUrl);
+        System.out.println(newToken);
+
+        Map<String, Object> vars = new HashMap<>();
+        vars.put("username", user.getFullName());
+        vars.put("resetUrl", resetUrl);
+        vars.put("newToken", newToken);
+        vars.put("baseUrl", "http://localhost:4200/");
+
+        emailServices.sendEmail(
+                user.getEmail(),
+                EmailTemplateName.RESET_PASSWORD,
+                vars,
+                "Password Reset"
+        );
+
+        mNotifyV2SmsService.sendSms(user.getPhone(), vars);
+
+
+    }
+
+
+
+
+
+
 
 
 
