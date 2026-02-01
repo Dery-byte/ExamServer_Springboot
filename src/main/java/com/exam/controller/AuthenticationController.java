@@ -316,92 +316,9 @@ public ResponseEntity<AuthenticationResponse> authenticate(
 }
 
 //
-//
-//@PostMapping("/authenticate")
-//public ResponseEntity<AuthenticationResponse> authenticate(
-//        @RequestBody AuthenticationRequest request,
-//        HttpServletRequest httpRequest,
-//        HttpServletResponse response
-//) throws UserNotFoundException {
-//
-//    // ✅ Debug logging
-//    System.out.println("=== Authentication Request ===");
-//    System.out.println("Origin: " + httpRequest.getHeader("Origin"));
-//    System.out.println("Method: " + httpRequest.getMethod());
-//    System.out.println("Path: " + httpRequest.getRequestURI());
-//    System.out.println("Content-Type: " + httpRequest.getHeader("Content-Type"));
-//
-//    AuthenticationResponse authResponse = service.authenticate(request);
-//
-//    // Set cookie with iOS-compatible format
-//    String cookieHeader = String.format(
-//            "accessToken=%s; Path=/; Max-Age=%d; HttpOnly; Secure; SameSite=None",
-//            authResponse.getToken(),
-//            7 * 24 * 60 * 60
-//    );
-//
-//    response.addHeader("Set-Cookie", cookieHeader);
-//
-//    System.out.println("✅ Cookie set: " + cookieHeader.substring(0, 50) + "...");
-//
-//    return ResponseEntity.ok(AuthenticationResponse.builder()
-//            .message("Authentication successful")
-//            .token(authResponse.getToken())
-//
-//            .build());
-//}
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @PostMapping("/logoutssss")
-//    public ResponseEntity<?> logout(HttpServletResponse response) {
-//        System.out.println("🔍 Logout endpoint HIT!");
-//        // Clear BOTH cookies (accessToken and token)
-//        // Clear accessToken cookie
-//        Cookie accessTokenCookie = new Cookie("accessToken", null);
-//        accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setSecure(false); // Set to true in production with HTTPS
-//        accessTokenCookie.setPath("/");
-//        accessTokenCookie.setMaxAge(0);
-//        response.addCookie(accessTokenCookie);
-//
-//        // Clear token cookie (this is the main one!)
-////        Cookie tokenCookie = new Cookie("token", null);
-////        tokenCookie.setHttpOnly(true);
-////        tokenCookie.setSecure(false); // Set to true in production with HTTPS
-////        tokenCookie.setPath("/");
-////        tokenCookie.setMaxAge(0);
-////        response.addCookie(tokenCookie);
-//
-//        System.out.println("✅ User logged out - cookies cleared");
-//
-//        Map<String, Object> responseBody = Map.of(
-//                "message", "Logged out successfully",
-//                "timestamp", System.currentTimeMillis()
-//        );
-//
-//        System.out.println("📤 Sending response: " + responseBody);
-//
-//        return ResponseEntity.ok().body(responseBody);
-//    }
 
 
 // NEW
@@ -419,20 +336,6 @@ public ResponseEntity<?> logout(
 
     return ResponseEntity.ok(Map.of("message", "Logout successful"));
 }
-
-
-
-
-//    @GetMapping("/current-user")
-//    public UserDetails getCurrentUser(Principal principal) {
-//        if (principal == null) {
-//            // No authentication (cookie missing/invalid)
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User is not authenticated");
-//        }
-//        return userDetailsService.loadUserByUsername(principal.getName());
-//    }
-
-//
 
 
 
@@ -456,7 +359,12 @@ public ResponseEntity<?> logout(
                 user.getFirstname(),
                 user.getLastname(),
                 user.getRole().name(),
-                authorities  // Now it's a clean string like "ROLE_ADMIN, PERMISSION_WRITE"
+                authorities,  // Now it's a clean string like "ROLE_ADMIN, PERMISSION_WRITE"
+                user.isEnabled(),
+                user.getPhone(),
+                user.isAccountNonExpired(),
+                user.isCredentialsNonExpired(),
+                user.isAccountNonLocked()
         );
         return ResponseEntity.ok(response);
     }
@@ -618,49 +526,6 @@ return "Password changed " + user.getPassword();
 
 
 
-
-
-//    @GetMapping("/token-info")
-//    public TokenInfo getTokenInfo(HttpServletRequest request) {
-//        Cookie[] cookies = request.getCookies();
-//
-//        // Debug: Check if cookies exist
-//        if (cookies == null) {
-//            System.out.println("❌ No cookies found in request");
-//            return new TokenInfo(0);
-//        }
-//
-//        // Debug: Log all cookies
-//        System.out.println("🍪 Cookies found: " + cookies.length);
-//        for (Cookie cookie : cookies) {
-//            System.out.println("  - " + cookie.getName() + " = " + cookie.getValue().substring(0, Math.min(20, cookie.getValue().length())) + "...");
-//        }
-//
-//        String accessToken = null;
-//        for (Cookie cookie : cookies) {
-//            if ("accessToken".equals(cookie.getName())) {
-//                accessToken = cookie.getValue();
-//                System.out.println("✅ Token cookie found");
-//                break;
-//            }
-//        }
-//
-//        if (accessToken == null) {
-//            System.out.println("❌ No 'token' cookie found");
-//            return new TokenInfo(0);
-//        }
-//
-//        try {
-//            Claims claims = jwtService.extractAllClaims(accessToken);
-//            long exp = claims.getExpiration().getTime() / 1000;
-//            System.out.println("✅ Token expiration: " + exp + " (" + new Date(exp * 1000) + ")");
-//            return new TokenInfo(exp);
-//        } catch (Exception e) {
-//            System.out.println("❌ Error extracting claims: " + e.getMessage());
-//            e.printStackTrace();
-//            return new TokenInfo(0);
-//        }
-//    }
 
     @GetMapping("/token-info")
     public TokenInfo getTokenInfo(HttpServletRequest request) {

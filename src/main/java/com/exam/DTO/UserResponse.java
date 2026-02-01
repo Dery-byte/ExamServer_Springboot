@@ -13,5 +13,10 @@ public class UserResponse {
     private String lastName;
     private  String role;
     private String authorities;
+    private  boolean enabled;
+    private String phone;
+    private boolean accountNonExpired;
+    private boolean credentialsNonExpired;
+    private boolean accountNonLocked;
     // Only include fields you want to expose
 }

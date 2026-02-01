@@ -71,6 +71,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .phone(request.getPhone())
                 .username(request.getUsername())
+                .enabled(true)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.NORMAL)
                 .build();
@@ -99,6 +100,7 @@ public class AuthenticationService {
                     .email(request.getEmail())
                     .phone(request.getPhone())
                     .username(request.getUsername())
+                    .enabled(true)
                     .password(passwordEncoder.encode(request.getPassword()))
                     .role(Role.LECTURER)
                     .build();
@@ -127,6 +129,7 @@ public class AuthenticationService {
                     .email(request.getEmail())
                     .phone(request.getPhone())
                     .username(request.getUsername())
+                    .enabled(true)
                     .password(passwordEncoder.encode(request.getPassword()))
                     .role(Role.ADMIN)
                     .build();
