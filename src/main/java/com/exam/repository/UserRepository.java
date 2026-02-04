@@ -15,11 +15,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
 
-    List<User> findByRole(Role role);         // Fetch all lecturers
+//    List<User> findByRole(Role role);         // Fetch all lecturers
 
     Optional<User> findByIdAndRole(Long id, Role role);
 
     User findByPhone(String phone);
+
+    List<User> findByRole(Role role);
+
+    long countByRole(Role role);
+
+    // Or for multiple roles at once
+    List<User> findByRoleIn(List<String> roles);
+
+    long countByRoleIn(List<String> roles);
 
 //    List<User> findByUser(User user);
 }

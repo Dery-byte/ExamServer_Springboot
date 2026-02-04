@@ -1,9 +1,6 @@
 package com.exam.service;
 
-import com.exam.DTO.ForgottenPasswordRequest;
-import com.exam.DTO.LecturerDTO;
-import com.exam.DTO.LecturerUpdateDTO;
-import com.exam.DTO.ResetPasswordRequest;
+import com.exam.DTO.*;
 import com.exam.auth.AuthenticationRequest;
 import com.exam.auth.AuthenticationResponse;
 import com.exam.auth.RegisterRequest;
@@ -573,4 +570,35 @@ public class AuthenticationService {
         Optional<User> student = userRepository.findByIdAndRole(id, Role.NORMAL);
         student.ifPresent(userRepository::delete);
     }
+
+
+
+
+//    CONTROLLER FOR GETTING LECTURER, ADMIN,STUDENT
+
+    public StudentResponse getStudents() {
+        List<User> students = userRepository.findByRole(Role.NORMAL);
+        return new StudentResponse(students);
+    }
+
+    public LecturerResponse getLecturers() {
+        List<User> lecturers = userRepository.findByRole(Role.LECTURER);
+        return new LecturerResponse(lecturers);
+    }
+
+    public AdminResponse getAdmins() {
+        List<User> admins = userRepository.findByRole(Role.ADMIN);
+        return new AdminResponse(admins);
+    }
+
+
+
+
+
+
+
+
+
+
+
 }

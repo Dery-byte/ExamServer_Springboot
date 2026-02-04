@@ -329,18 +329,14 @@ public ResponseEntity<?> logout(
         HttpServletResponse response
 ) {
     // Your existing logout logic...
-
     // ✅ Clear the cookie properly
     String cookieHeader = "accessToken=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=None";
     response.addHeader("Set-Cookie", cookieHeader);
-
     return ResponseEntity.ok(Map.of("message", "Logout successful"));
 }
 
 
-
-
-    @GetMapping("/current-user")
+ @GetMapping("/current-user")
     public ResponseEntity<UserResponse> getCurrentUser(Principal principal) {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -378,15 +374,12 @@ public ResponseEntity<?> logout(
 //        if (principal == null) {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 //        }
-//
 //        User user = (User) userDetailsService.loadUserByUsername(principal.getName());
-//
 //        // Get authorities from Spring Security
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        List<Map<String, String>> authorities = auth.getAuthorities().stream()
 //                .map(authority -> Map.of("authority", authority.getAuthority()))
 //                .collect(Collectors.toList());
-//
 //        UserResponse response = new UserResponse(
 //                user.getId(),
 //                user.getUsername(),
@@ -396,9 +389,9 @@ public ResponseEntity<?> logout(
 //                user.getRole().name(),
 //                authorities.toString()  // Add authorities
 //        );
-//
 //        return ResponseEntity.ok(response);
 //    }
+
 
 //    @GetMapping("/current-user")
 //    public UserDetails getCurrentUser(Principal principal){
@@ -668,10 +661,22 @@ return "Password changed " + user.getPassword();
 
 
 
+//CONTROLLER FOR GETTING LECTURER, ADMIN,STUDENT
 
+    @GetMapping("/students/counts")
+    public StudentResponse getStudents() {
+        return service.getStudents();
+    }
 
+    @GetMapping("/lecturers/counts")
+    public LecturerResponse getLecturers() {
+        return service.getLecturers();
+    }
 
-
+    @GetMapping("/admins/counts")
+    public AdminResponse getAdmins() {
+        return service.getAdmins();
+    }
 
 
 
