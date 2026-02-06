@@ -32,11 +32,59 @@ public class Quiz {
     private String maxMarks;
     @Column(length =  50, nullable = false)
     private String quizTime;
-
     @Column(length =  50, nullable = false)
     private String numberOfQuestions;
     private  boolean active = false;
     private boolean attempted=false;
+
+
+// ================= PROCTORING POLICY =================
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "violation_action")
+    private ViolationAction violationAction = ViolationAction.NONE;
+
+    @Column(name = "auto_submit_countdown_seconds")
+    private Integer autoSubmitCountdownSeconds = 10;
+
+    @Column(name = "proctoring_enabled")
+    private Boolean proctoringEnabled = false;
+
+    @Column(name = "max_violations")
+    private Integer maxViolations = 3;
+
+    @Column(name = "delay_seconds")
+    private Integer delaySeconds = 30;
+
+    @Column(name = "delay_increment_on_repeat")
+    private Boolean delayIncrementOnRepeat = true;
+
+    @Column(name = "delay_multiplier")
+    private Double delayMultiplier = 1.5;
+
+    @Column(name = "max_delay_seconds")
+    private Integer maxDelaySeconds = 120;
+
+
+    @Column(name = "enable_watermark")
+    private Boolean enableWatermark = true;
+
+    @Column(name = "enable_fullscreen_lock")
+    private Boolean enableFullscreenLock = true;
+
+    @Column(name = "enable_screenshot_blocking")
+    private Boolean enableScreenshotBlocking = true;
+
+    @Column(name = "enable_dev_tools_blocking")
+    private Boolean enableDevToolsBlocking = true;
+
+// =====================================================
+
+
+
+
+
+
     @Column(length =  50, nullable = false)
     private String quizpassword;
     //add ...
@@ -132,6 +180,14 @@ public class Quiz {
         this.quizDate = quizDate;
     }
 
+    public Integer getAutoSubmitCountdownSeconds() {
+        return autoSubmitCountdownSeconds;
+    }
+
+    public void setAutoSubmitCountdownSeconds(Integer autoSubmitCountdownSeconds) {
+        this.autoSubmitCountdownSeconds = autoSubmitCountdownSeconds;
+    }
+
     public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions, QuizType quizType, LocalDate quizDate, LocalTime startTime) {
         this.qId = qId;
         this.title = title;
@@ -153,24 +209,18 @@ public class Quiz {
     }
 
 
-
-
     public boolean isAttempted() {
         return attempted;
     }
-
     public void setAttempted(boolean attempted) {
         this.attempted = attempted;
     }
-
     public Long getqId() {
         return qId;
     }
-
     public void setqId(Long qId) {
         this.qId = qId;
     }
-
     public String getTitle() {
         return title;
     }
@@ -244,8 +294,93 @@ public class Quiz {
     }
 
 
+    public ViolationAction getViolationAction() {
+        return violationAction;
+    }
 
+    public void setViolationAction(ViolationAction violationAction) {
+        this.violationAction = violationAction;
+    }
 
+    public Integer getMaxViolations() {
+        return maxViolations;
+    }
+
+    public void setMaxViolations(Integer maxViolations) {
+        this.maxViolations = maxViolations;
+    }
+
+    public Integer getDelaySeconds() {
+        return delaySeconds;
+    }
+
+    public void setDelaySeconds(Integer delaySeconds) {
+        this.delaySeconds = delaySeconds;
+    }
+
+    public Boolean getDelayIncrementOnRepeat() {
+        return delayIncrementOnRepeat;
+    }
+
+    public void setDelayIncrementOnRepeat(Boolean delayIncrementOnRepeat) {
+        this.delayIncrementOnRepeat = delayIncrementOnRepeat;
+    }
+
+    public Double getDelayMultiplier() {
+        return delayMultiplier;
+    }
+
+    public void setDelayMultiplier(Double delayMultiplier) {
+        this.delayMultiplier = delayMultiplier;
+    }
+
+    public Integer getMaxDelaySeconds() {
+        return maxDelaySeconds;
+    }
+
+    public void setMaxDelaySeconds(Integer maxDelaySeconds) {
+        this.maxDelaySeconds = maxDelaySeconds;
+    }
+
+    public Boolean getEnableWatermark() {
+        return enableWatermark;
+    }
+
+    public void setEnableWatermark(Boolean enableWatermark) {
+        this.enableWatermark = enableWatermark;
+    }
+
+    public Boolean getEnableFullscreenLock() {
+        return enableFullscreenLock;
+    }
+
+    public void setEnableFullscreenLock(Boolean enableFullscreenLock) {
+        this.enableFullscreenLock = enableFullscreenLock;
+    }
+
+    public Boolean getEnableScreenshotBlocking() {
+        return enableScreenshotBlocking;
+    }
+
+    public void setEnableScreenshotBlocking(Boolean enableScreenshotBlocking) {
+        this.enableScreenshotBlocking = enableScreenshotBlocking;
+    }
+
+    public Boolean getEnableDevToolsBlocking() {
+        return enableDevToolsBlocking;
+    }
+
+    public void setEnableDevToolsBlocking(Boolean enableDevToolsBlocking) {
+        this.enableDevToolsBlocking = enableDevToolsBlocking;
+    }
+
+    public Boolean getProctoringEnabled() {
+        return proctoringEnabled;
+    }
+
+    public void setProctoringEnabled(Boolean proctoringEnabled) {
+        this.proctoringEnabled = proctoringEnabled;
+    }
 
     public void setStartTimeFromAMPM(String ampmTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");

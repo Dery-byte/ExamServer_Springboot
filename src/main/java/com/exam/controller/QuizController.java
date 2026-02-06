@@ -53,11 +53,6 @@ public class QuizController {
         return ResponseEntity.ok(this.quizService.getQuizzes());
     }
 
-
-
-
-
-
     @PostMapping("/addQuiz")
     public ResponseEntity<Quiz> add(@RequestBody Quiz quiz ){
         return ResponseEntity.ok(this.quizService.addQuiz(quiz));
@@ -72,39 +67,11 @@ public class QuizController {
 
 
 
-
-    //update quiz
-//    @PutMapping("/update")
-//    public  ResponseEntity<Quiz> update(@RequestBody Quiz quiz){
-//        return ResponseEntity.ok(this.quizService.updateQuiz(quiz));
-//    }
-
-
     @PutMapping("/update")
     public ResponseEntity<QuizDTO> updateQuiz(@RequestBody QuizUpdateRequest request) {
         QuizDTO updated = quizService.updateQuiz(request);
         return ResponseEntity.ok(updated);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //get Single quiz
     @GetMapping("singleQuiz/{qid}")
@@ -119,11 +86,6 @@ public class QuizController {
         Set<Questions> questions = quiz.getQuestions();
         List<Questions> list = new ArrayList<>(questions);
 
-//        Quiz quiz = new Quiz();
-//        quiz.setqId(qid);
-//        Set<Questions> questionsOfQuiz =this.questionsService.getQuestionsOfQuiz(quiz);
-
-
         if(list.size()>Integer.parseInt(quiz.getNumberOfQuestions())){
             list = list.subList(0, Integer.parseInt(quiz.getNumberOfQuestions()+1));
         }
@@ -136,11 +98,6 @@ public class QuizController {
 
         return ResponseEntity.ok(list);
     }
-
-
-
-
-
 
     //get specific question
     @GetMapping("/quiz/category/{cid}")
@@ -157,34 +114,6 @@ public class QuizController {
         return this.quizService.getActiveQuizzes();
     }
 
-
-
-
-
-    ///
-    ///
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /// Active quizzes of category
 
     @GetMapping("/category/active/{cid}")
@@ -194,9 +123,6 @@ public class QuizController {
         return this.quizService.getActiveQuizzesofCategory(category);
     }
 
-
-
-
 //    QUIZZES TAKEN BY STUDENTS
     @GetMapping("/category/taken/{cid}")
     public List<Quiz> quizzesTakenByStudents(@PathVariable("cid")  Long cid) {
@@ -204,8 +130,6 @@ public class QuizController {
         category.setCid(cid);
         return quizService.getTakenQuizzesOfCategory(category);
     }
-
-
 
 //    QUIZZES TAKEN BY SPECIFIC STUDENTS
 
@@ -231,7 +155,6 @@ public class QuizController {
         return quizService.getTakenQuizzesOfCategoryByUser(uid, category);
     }
 
-
     @PostMapping("/user/addQuiz")
     public Quiz addQuizForUser(@RequestBody Quiz quiz, Principal principal) {
         return quizService.addQuizForLoggedInUser(quiz, principal);
@@ -242,25 +165,6 @@ public class QuizController {
     public List<Quiz> getQuizzesForLoggedInUser(Principal principal) {
         return quizService.getQuizzesForLoggedInUser(principal);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @PutMapping("/quiz/status/{quizId}")
     public ResponseEntity<Map<String, String>> updateQuizStatus(
@@ -318,68 +222,6 @@ public class QuizController {
 
 
 
-
-
-
-
-
-
-
-    ///UNCOMMENT
-
-//    //add quiz service
-////    @PostMapping("/addQuiz")
-////    public ResponseEntity<Quiz> add(@RequestBody Quiz quiz ){
-////        return ResponseEntity.ok(this.quizService.addQuiz(quiz));
-////    }
-//
-//    //update quiz
-//    @PutMapping("/update")
-//    public  ResponseEntity<Quiz> update(@RequestBody Quiz quiz){
-//        return ResponseEntity.ok(this.quizService.updateQuiz(quiz));
-//    }
-//
-//    //get quiz
-//    @GetMapping("/")
-//    public ResponseEntity<?> quizzes(){
-//        return ResponseEntity.ok(this.quizService.getQuizzes());
-//    }
-//
-//    //get Single quiz
-//    @GetMapping("/{qid}")
-//    public Quiz quiz (@PathVariable("qid") Long qid){
-//        return this.quizService.getQuiz(qid);
-//    }
-//
-//
-//    //Delete quiz
-//    @DeleteMapping("/{qid}")
-//    public  void delete(@PathVariable("qid") Long qid){
-//        this.quizService.deleteQuiz(qid);
-//    }
-//
-//
-//
-//    //get specific question
-//    @GetMapping("/category/{cid}")
-//    public List<Quiz> getQuizzesOfCategory(@PathVariable("cid")  Long cid){
-//        Category category = new Category();
-//        category.setCid(cid);
-//        return (List<Quiz>) this.quizService.getQuizzesOfCategory(category);
-//    }
-//
-//    //get Active quizzes
-//    @GetMapping("/active/quizzes")
-//        public List<Quiz> activeQuizzes(){
-//            return this.quizService.getActiveQuizzes();
-//        }
-//     /// Active quizzes of category
-//     @GetMapping("/category/active/{cid}")
-//     public List<Quiz> activeQuizzesOfCategory(@PathVariable("cid") Long cid){
-//        Category category =new Category();
-//        category.setCid(cid);
-//         return this.quizService.getQuizzesOfCategory(category);
-//     }
 
 
 }

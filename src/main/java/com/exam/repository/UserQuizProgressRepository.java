@@ -24,4 +24,11 @@ public interface UserQuizProgressRepository extends JpaRepository<UserQuizAnswer
     @Modifying
     @Query("DELETE FROM UserQuizAnswer ua WHERE ua.userId = :userId AND ua.quizId = :quizId")
     void deleteByUserIdAndQuizId(@Param("userId") Long userId, @Param("quizId") Long quizId);
+
+
+
+
+    Optional<UserQuizAnswer> findFirstByQuizIdAndUserId(Long quizId, Long userId);
+
+
 }

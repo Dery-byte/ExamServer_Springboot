@@ -41,6 +41,22 @@ public class UserQuizAnswer {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+
+    @Column(name = "violation_count")
+    private Integer violationCount = 0;
+
+    @Column(name = "locked_until")
+    private LocalDateTime lockedUntil;
+
+    @Column(name = "auto_submitted")
+    private Boolean autoSubmitted = false;
+
+    @Column(name = "completed")
+    private Boolean completed = false;
+
+
+
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

@@ -58,7 +58,6 @@ public class QuizService {
 
         Quiz quiz = quizRepository.findById(request.getqId())
                 .orElseThrow(() -> new RuntimeException("Quiz not found with id: " + request.getqId()));
-
         // Update fields
         if (request.getTitle() != null) {
             quiz.setTitle(request.getTitle());
@@ -90,6 +89,48 @@ public class QuizService {
         if (request.getQuizDate() != null) {
             quiz.setQuizDate(request.getQuizDate());
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if (request.getDelayMultiplier() != null) {
+            quiz.setDelayMultiplier(request.getDelayMultiplier());
+        }
+        if (request.getAutoSubmitCountdownSeconds() != null) {
+            quiz.setAutoSubmitCountdownSeconds(request.getAutoSubmitCountdownSeconds());
+        }
+
+        if (request.getDelayIncrementOnRepeat() != null) {
+            quiz.setDelayIncrementOnRepeat(request.getDelayIncrementOnRepeat());
+        }
+        if (request.getEnableWatermark() != null) {
+            quiz.setEnableWatermark(request.getEnableWatermark());
+        }
+        if (request.getEnableDevToolsBlocking() != null) {
+            quiz.setEnableDevToolsBlocking(request.getEnableDevToolsBlocking());
+        }
+        if (request.getMaxViolations() != null) {
+            quiz.setMaxViolations(request.getMaxViolations());
+        }
+        if (request.getViolationAction() != null) {
+            quiz.setViolationAction(request.getViolationAction());
+        }
+        if (request.getDelaySeconds() != null) {
+            quiz.setDelaySeconds(request.getDelaySeconds());
+        }
+
+
+
+
 
         quiz.setActive(request.isActive());
 
