@@ -3,6 +3,7 @@ package com.exam.DTO;
 import com.exam.model.QuizStatus;
 import com.exam.model.QuizType;
 import com.exam.model.exam.Quiz;
+import com.exam.model.exam.ViolationAction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -23,6 +24,23 @@ public class QuizDTO {
     private LocalDate quizDate;
     private CategoryDTO category;
 
+
+
+    // ADD THESE NEW FIELDS
+    private ViolationAction violationAction = ViolationAction.NONE;
+    private Integer autoSubmitCountdownSeconds;
+    private Boolean proctoringEnabled;
+    private Integer maxViolations;
+    private Integer delaySeconds;
+    private Boolean delayIncrementOnRepeat=true;
+    private Double delayMultiplier;
+    private Integer maxDelaySeconds;
+    private Boolean enableWatermark;
+    private Boolean enableFullscreenLock;
+    private Boolean enableScreenshotBlocking;
+    private Boolean enableDevToolsBlocking;
+
+
     // Constructors
     public QuizDTO() {
     }
@@ -40,6 +58,19 @@ public class QuizDTO {
         this.quizType = quiz.getQuizType();
         this.startTime = quiz.getStartTime();
         this.quizDate = quiz.getQuizDate();
+
+        this.violationAction = quiz.getViolationAction();
+        this.autoSubmitCountdownSeconds = quiz.getAutoSubmitCountdownSeconds();
+        this.proctoringEnabled = quiz.getProctoringEnabled();
+        this.maxViolations = quiz.getMaxViolations();
+        this.delaySeconds = quiz.getDelaySeconds();
+        this.delayIncrementOnRepeat = quiz.getDelayIncrementOnRepeat();
+        this.delayMultiplier = quiz.getDelayMultiplier();
+        this.maxDelaySeconds = quiz.getMaxDelaySeconds();
+        this.enableWatermark = quiz.getEnableWatermark();
+        this.enableFullscreenLock = quiz.getEnableFullscreenLock();
+        this.enableScreenshotBlocking = quiz.getEnableScreenshotBlocking();
+        this.enableDevToolsBlocking = quiz.getEnableDevToolsBlocking();
 
         // Convert category to DTO (avoid sending user info)
         if (quiz.getCategory() != null) {
@@ -150,5 +181,102 @@ public class QuizDTO {
 
     public void setCategory(CategoryDTO category) {
         this.category = category;
+    }
+
+
+    public ViolationAction getViolationAction() {
+        return violationAction;
+    }
+
+    public void setViolationAction(ViolationAction violationAction) {
+        this.violationAction = violationAction;
+    }
+
+    public Integer getAutoSubmitCountdownSeconds() {
+        return autoSubmitCountdownSeconds;
+    }
+
+    public void setAutoSubmitCountdownSeconds(Integer autoSubmitCountdownSeconds) {
+        this.autoSubmitCountdownSeconds = autoSubmitCountdownSeconds;
+    }
+
+    public Boolean getProctoringEnabled() {
+        return proctoringEnabled;
+    }
+
+    public void setProctoringEnabled(Boolean proctoringEnabled) {
+        this.proctoringEnabled = proctoringEnabled;
+    }
+
+    public Integer getMaxViolations() {
+        return maxViolations;
+    }
+
+    public void setMaxViolations(Integer maxViolations) {
+        this.maxViolations = maxViolations;
+    }
+
+    public Integer getDelaySeconds() {
+        return delaySeconds;
+    }
+
+    public void setDelaySeconds(Integer delaySeconds) {
+        this.delaySeconds = delaySeconds;
+    }
+
+    public Boolean getDelayIncrementOnRepeat() {
+        return delayIncrementOnRepeat;
+    }
+
+    public void setDelayIncrementOnRepeat(Boolean delayIncrementOnRepeat) {
+        this.delayIncrementOnRepeat = delayIncrementOnRepeat;
+    }
+
+    public Double getDelayMultiplier() {
+        return delayMultiplier;
+    }
+
+    public void setDelayMultiplier(Double delayMultiplier) {
+        this.delayMultiplier = delayMultiplier;
+    }
+
+    public Integer getMaxDelaySeconds() {
+        return maxDelaySeconds;
+    }
+
+    public void setMaxDelaySeconds(Integer maxDelaySeconds) {
+        this.maxDelaySeconds = maxDelaySeconds;
+    }
+
+    public Boolean getEnableWatermark() {
+        return enableWatermark;
+    }
+
+    public void setEnableWatermark(Boolean enableWatermark) {
+        this.enableWatermark = enableWatermark;
+    }
+
+    public Boolean getEnableFullscreenLock() {
+        return enableFullscreenLock;
+    }
+
+    public void setEnableFullscreenLock(Boolean enableFullscreenLock) {
+        this.enableFullscreenLock = enableFullscreenLock;
+    }
+
+    public Boolean getEnableScreenshotBlocking() {
+        return enableScreenshotBlocking;
+    }
+
+    public void setEnableScreenshotBlocking(Boolean enableScreenshotBlocking) {
+        this.enableScreenshotBlocking = enableScreenshotBlocking;
+    }
+
+    public Boolean getEnableDevToolsBlocking() {
+        return enableDevToolsBlocking;
+    }
+
+    public void setEnableDevToolsBlocking(Boolean enableDevToolsBlocking) {
+        this.enableDevToolsBlocking = enableDevToolsBlocking;
     }
 }

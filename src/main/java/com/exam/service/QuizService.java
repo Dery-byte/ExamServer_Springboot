@@ -89,19 +89,6 @@ public class QuizService {
         if (request.getQuizDate() != null) {
             quiz.setQuizDate(request.getQuizDate());
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
         if (request.getDelayMultiplier() != null) {
             quiz.setDelayMultiplier(request.getDelayMultiplier());
         }
@@ -126,6 +113,18 @@ public class QuizService {
         }
         if (request.getDelaySeconds() != null) {
             quiz.setDelaySeconds(request.getDelaySeconds());
+        }
+
+        if (request.getEnableFullscreenLock() != null) {
+            quiz.setEnableFullscreenLock(request.getEnableFullscreenLock());
+        }
+
+        if (request.getEnableScreenshotBlocking() != null) {
+            quiz.setEnableScreenshotBlocking(request.getEnableScreenshotBlocking());
+        }
+
+        if (request.getDelaySeconds() != null) {
+            quiz.setDelayIncrementOnRepeat(request.setDelayIncrementOnRepeat(true));
         }
 
 

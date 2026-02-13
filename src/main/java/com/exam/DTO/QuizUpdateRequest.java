@@ -2,7 +2,6 @@ package com.exam.DTO;
 import com.exam.model.QuizStatus;
 import com.exam.model.QuizType;
 import com.exam.model.exam.ViolationAction;
-import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
@@ -10,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class QuizUpdateRequest {
-
     private Long qId;
     private String title;
     private String description;
@@ -206,8 +204,9 @@ public class QuizUpdateRequest {
         return delayIncrementOnRepeat;
     }
 
-    public void setDelayIncrementOnRepeat(Boolean delayIncrementOnRepeat) {
+    public boolean setDelayIncrementOnRepeat(Boolean delayIncrementOnRepeat) {
         this.delayIncrementOnRepeat = delayIncrementOnRepeat;
+        return false;
     }
 
     public Double getDelayMultiplier() {
