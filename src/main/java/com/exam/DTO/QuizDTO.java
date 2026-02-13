@@ -32,7 +32,7 @@ public class QuizDTO {
     private Boolean proctoringEnabled;
     private Integer maxViolations;
     private Integer delaySeconds;
-    private Boolean delayIncrementOnRepeat=true;
+    private Boolean delayIncrementOnRepeat;
     private Double delayMultiplier;
     private Integer maxDelaySeconds;
     private Boolean enableWatermark;

@@ -206,7 +206,7 @@ public class QuizUpdateRequest {
 
     public boolean setDelayIncrementOnRepeat(Boolean delayIncrementOnRepeat) {
         this.delayIncrementOnRepeat = delayIncrementOnRepeat;
-        return false;
+        return true;
     }
 
     public Double getDelayMultiplier() {
