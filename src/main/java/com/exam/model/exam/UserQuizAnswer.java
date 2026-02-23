@@ -48,6 +48,9 @@ public class UserQuizAnswer {
     @Column(name = "locked_until")
     private LocalDateTime lockedUntil;
 
+    @Column(name = "violation_delay_time")
+    private Integer violationDelayTime;
+
     @Column(name = "auto_submitted")
     private Boolean autoSubmitted = false;
 

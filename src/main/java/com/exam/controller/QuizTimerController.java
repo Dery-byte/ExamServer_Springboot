@@ -2,6 +2,8 @@ package com.exam.controller;
 
 import com.exam.DTO.QuizTimerRequestDTO;
 import com.exam.DTO.QuizTimerResponseDTO;
+import com.exam.DTO.ViolationTimerResponseDTO;
+import com.exam.DTO.VoilationTimerRequestDTO;
 import com.exam.model.User;
 import com.exam.service.QuizTimerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,6 @@ public class QuizTimerController {
             @PathVariable Long quizId,
             @RequestBody QuizTimerRequestDTO request,
             Principal principal) {
-
         User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
         QuizTimerResponseDTO timer = quizTimerService.saveQuizTimer(user.getId(), quizId, request);
 
@@ -63,4 +64,24 @@ public class QuizTimerController {
 
 
 
+
+
+    @GetMapping("/getViolation-delay/{quizId}")
+    public ResponseEntity<ViolationTimerResponseDTO> getViolationDelayTime(
+            @PathVariable Long quizId,
+            Principal principal) {
+        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+        ViolationTimerResponseDTO response = quizTimerService.getViolationDelayTime(quizId, user.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/saveViolation-delay/{quizId}")
+    public ResponseEntity<ViolationTimerResponseDTO> saveViolationDelayTime(
+            @PathVariable Long quizId,
+            @RequestBody VoilationTimerRequestDTO request,
+            Principal principal) {
+        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+        ViolationTimerResponseDTO response = quizTimerService.saveViolationDelayTime(quizId, user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
 }

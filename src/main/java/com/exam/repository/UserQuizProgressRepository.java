@@ -31,4 +31,6 @@ public interface UserQuizProgressRepository extends JpaRepository<UserQuizAnswer
     Optional<UserQuizAnswer> findFirstByQuizIdAndUserId(Long quizId, Long userId);
 
 
+    @Query("SELECT ua.violationDelayTime FROM UserQuizAnswer ua WHERE ua.quizId = :quizId AND ua.userId = :userId")
+    Optional<Integer> findViolationDelayTimeByQuizIdAndUserId(@Param("quizId") Long quizId, @Param("userId") Long userId);
 }

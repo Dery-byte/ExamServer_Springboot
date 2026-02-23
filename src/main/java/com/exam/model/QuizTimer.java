@@ -25,8 +25,20 @@ public class QuizTimer {
     @Column(name = "remaining_time", nullable = false)
     private Integer remainingTime; // in seconds
 
+    @Column(name = "violation_delay_time")
+    private Integer violationDelayTime;
+
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+
+    public Integer getViolationDelayTime() {
+        return violationDelayTime;
+    }
+
+    public void setViolationDelayTime(Integer violationDelayTime) {
+        this.violationDelayTime = violationDelayTime;
+    }
 
     public Long getId() {
         return id;

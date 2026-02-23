@@ -1,8 +1,7 @@
 package com.exam.service;
 
-import com.exam.DTO.QuizProgressRequest;
-import com.exam.DTO.QuizProgressResponse;
-import com.exam.DTO.UserQuizProgressResponse;
+import com.exam.DTO.*;
+import com.exam.helper.ResourceNotFoundException;
 import com.exam.model.exam.UserQuizAnswer;
 import com.exam.repository.UserQuizProgressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,19 +77,31 @@ public class QuizProgressService {
                         UserQuizAnswer::getQuestionId,
                         UserQuizAnswer::getSelectedOptions
                 ));
-
         return new UserQuizProgressResponse(answerMap);
     }
 
 
 
-
-
-
-
-
-
-
+//
+//
+//    public ViolationTimerResponseDTO saveViolationDelayTime(Long quizId, Long userId, VoilationTimerRequestDTO requestDTO) {
+//        UserQuizAnswer progress = repository
+//                .findFirstByQuizIdAndUserId(quizId, userId)
+//                .orElse(new UserQuizAnswer());
+//        // If it's a new entity, set the required fields
+//        if (progress.getId() == null) {
+//            progress.setQuizId(quizId);
+//            progress.setUserId(userId);
+//        }
+//        progress.setViolationDelayTime(requestDTO.getRemainingTime());
+//        ViolationTimerResponseDTO reponse= repository.save(progress);
+//    }
+//
+//
+//    public Integer getViolationDelayTime(Long quizId, Long userId) {
+//        return repository.findViolationDelayTimeByQuizIdAndUserId(quizId, userId)
+//                .orElse(null);
+//    }
 
     public void clearAnswers(Long userId, Long quizId) {
         repository.deleteByUserIdAndQuizId(userId, quizId);
