@@ -13,4 +13,6 @@ import java.time.LocalDateTime;
 public class ViolationTimerResponseDTO {
     private Integer violationDelayTime;
     private LocalDateTime updatedAt;
+    private Integer totalViolationCount;
+
 }

@@ -13,4 +13,6 @@ import java.time.LocalDateTime;
 public class QuizTimerResponseDTO {
     private Integer remainingTime;
     private LocalDateTime updatedAt;
+    private Integer totalViolationCount;
+// getter + setter
 }

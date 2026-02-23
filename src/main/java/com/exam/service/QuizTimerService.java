@@ -119,4 +119,29 @@ public class QuizTimerService {
 
 
 
+    public ViolationTimerResponseDTO saveViolationCount(Long quizId, Long userId, VoilationTimerRequestDTO request) {
+        QuizTimer timer = quizTimerRepository.findByUserIdAndQuiz_qId(userId, quizId)
+                .orElseGet(() -> {
+                    QuizTimer t = new QuizTimer();
+                    t.setUser(userRepository.findById(userId).orElseThrow());
+                    t.setQuiz(quizRepository.findById(quizId).orElseThrow());
+                    t.setRemainingTime(0);
+                    return t;
+                });
+        timer.setTotalViolationCount(request.getTotalViolationCount());
+        timer.setUpdatedAt(LocalDateTime.now());
+        quizTimerRepository.save(timer);
+        ViolationTimerResponseDTO response = new ViolationTimerResponseDTO();
+        response.setTotalViolationCount(timer.getTotalViolationCount());
+        return response;
+    }
+
+    public ViolationTimerResponseDTO getViolationCount(Long quizId, Long userId) {
+        QuizTimer timer = quizTimerRepository.findByUserIdAndQuiz_qId(userId, quizId)
+                .orElse(null);
+        ViolationTimerResponseDTO response = new ViolationTimerResponseDTO();
+        response.setTotalViolationCount(timer != null ? timer.getTotalViolationCount() : 0);
+        return response;
+    }
+
 }

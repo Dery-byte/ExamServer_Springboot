@@ -10,5 +10,7 @@ import lombok.Setter;
 @Getter
 public class VoilationTimerRequestDTO {
     private Integer violationDelayTime;
+    private Integer totalViolationCount;
+
 
 }

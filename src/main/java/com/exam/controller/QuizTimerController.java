@@ -84,4 +84,29 @@ public class QuizTimerController {
         ViolationTimerResponseDTO response = quizTimerService.saveViolationDelayTime(quizId, user.getId(), request);
         return ResponseEntity.ok(response);
     }
+
+
+
+
+
+
+
+    @GetMapping("/getViolationCount/{quizId}")
+    public ResponseEntity<ViolationTimerResponseDTO> getViolationCount(
+            @PathVariable Long quizId,
+            Principal principal) {
+        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+        ViolationTimerResponseDTO response = quizTimerService.getViolationCount(quizId, user.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/saveViolationCount/{quizId}")
+    public ResponseEntity<ViolationTimerResponseDTO> saveViolationCount(
+            @PathVariable Long quizId,
+            @RequestBody VoilationTimerRequestDTO request,
+            Principal principal) {
+        User user = (User) this.userDetailsService.loadUserByUsername(principal.getName());
+        ViolationTimerResponseDTO response = quizTimerService.saveViolationCount(quizId, user.getId(), request);
+        return ResponseEntity.ok(response);
+    }
 }

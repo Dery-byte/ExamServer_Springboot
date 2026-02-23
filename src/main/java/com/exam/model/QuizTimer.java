@@ -31,6 +31,17 @@ public class QuizTimer {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "total_violation_count")
+    private Integer totalViolationCount;
+
+
+    public Integer getTotalViolationCount() {
+        return totalViolationCount;
+    }
+
+    public void setTotalViolationCount(Integer totalViolationCount) {
+        this.totalViolationCount = totalViolationCount;
+    }
 
     public Integer getViolationDelayTime() {
         return violationDelayTime;
