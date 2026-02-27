@@ -33,43 +33,12 @@ public class QuestionsService {
     public Questions addQuestions(Questions questions){
         return this.questionsRepository.save(questions);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //    public Questions updateQuestions(Questions questions){
 //        return this.questionsRepository.save(questions);
 //    }
 
     @Transactional
     public QuestionDTO updateQuestion(UpdateQuestionDTO dto) {
-
         Questions question = questionsRepository.findById(dto.getQuesId())
                 .orElseThrow(() -> new RuntimeException("Question not found"));
         question.setContent(dto.getContent());
@@ -80,19 +49,16 @@ public class QuestionsService {
         question.setOption4(dto.getOption4());
         question.setcorrect_answer(dto.getCorrect_answer());
         Questions updated = questionsRepository.save(question);
-
         return toDTO(updated); // RETURN DTO
     }
 
 
 
     private QuestionDTO toDTO(Questions question) {
-
         QuestionDTO dto = new QuestionDTO();
         dto.setQuesId(question.getQuesId());
         dto.setContent(question.getContent());
         dto.setImage(question.getImage());
-
         dto.setOption1(question.getOption1());
         dto.setOption2(question.getOption2());
         dto.setOption3(question.getOption3());

@@ -70,18 +70,20 @@ public class QuestionsController {
 
 
     // get questions of any quiz (Student)
-//    @GetMapping("question/quiz/all/{qid}")
-//    public  ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid){
-//        Quiz quiz = new Quiz();
-//        quiz.setqId(qid);
-//        Set<Questions> questionsOfQuiz =this.questionsService.getQuestionsOfQuiz(quiz);
-//        List<Questions> list = new ArrayList<>(questionsOfQuiz);
-//Collections.shuffle(list);
-//        return ResponseEntity.ok(list);
-//    }
+    @GetMapping("questionSSS/quiz/all/{qid}")
+    public  ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid){
+        Quiz quiz = new Quiz();
+        quiz.setqId(qid);
+        Set<Questions> questionsOfQuiz =this.questionsService.getQuestionsOfQuiz(quiz);
+        List<Questions> list = new ArrayList<>(questionsOfQuiz);
+Collections.shuffle(list);
+        return ResponseEntity.ok(list);
+    }
 
 
 
+
+//    THIS CODE BELOW RETURNS DTOs FOR THE STUDENT TO ANSWER THE QUESSTIONS
     @GetMapping("/question/quiz/all/{qid}")
     public ResponseEntity<List<QuestionResponseDTO>> getQuestionsForStudent(
             @PathVariable("qid") Long qid) {
