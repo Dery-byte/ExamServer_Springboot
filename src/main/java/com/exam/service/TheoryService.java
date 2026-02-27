@@ -2,6 +2,7 @@ package com.exam.service;
 
 
 import com.exam.DTO.TheoryQuestionDTO;
+import com.exam.DTO.TheoryQuestionResponseDTO;
 import com.exam.DTO.TheoryUpdateRequest;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TheoryService {
@@ -71,7 +73,7 @@ public class TheoryService {
         dto.setTqId(tq.getTqId());
         dto.setQuesNo(tq.getQuesNo());
         dto.setQuestion(tq.getQuestion());
-        dto.setMarks(tq.getMarks());
+        dto.setMarks(String.valueOf(tq.getMarks()));
         if (tq.getQuiz() != null) {
             dto.setQuizId(tq.getQuiz().getqId());
         }
@@ -104,6 +106,61 @@ public class TheoryService {
     public Set<TheoryQuestions> getQuestionsForSpecificQuiz(Quiz quiz){
         return this.theoryQuestionsRepository.findByQuiz(quiz);
     }
+
+
+
+
+
+    /**
+     * Returns raw entity set — used internally (e.g. grading, admin views).
+     */
+//    public Set<TheoryQuestions> getQuestionsForSpecificQuiz(Quiz quiz) {
+//        return this.theoryQuestionsRepository.findByQuiz(quiz);
+//    }
+
+    /**
+     * Returns student-safe DTOs for a given quiz ID.
+     *
+     * Benefits over returning the raw entity:
+     *  - Strips any internal fields (model answers, grading notes, etc.)
+     *  - Sends only what the frontend template actually needs
+     *  - Keeps the API contract stable if the entity changes internally
+     */
+    public List<TheoryQuestionResponseDTO> getTheoryQuestionsForStudent(Long qid) {
+        Quiz quiz = new Quiz();
+        quiz.setqId(qid);
+
+        return this.theoryQuestionsRepository.findByQuiz(quiz)
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Maps a TheoryQuestions entity to a student-safe DTO.
+     * Adjust field names below to match your actual entity getters.
+     */
+    private TheoryQuestionResponseDTO toResponseDTO(TheoryQuestions q) {
+        TheoryQuestionResponseDTO dto = new TheoryQuestionResponseDTO();
+        dto.setQuesId(q.getTqId());
+        dto.setQuesNo(q.getQuesNo());
+        dto.setQuestion(q.getQuestion());
+        dto.setMarks((q.getMarks()));
+        dto.setPrefix(q.getQuesNo());
+        dto.setCompulsory(q.getIsCompulsory());
+
+        // givenAnswer starts null for unanswered questions —
+        // the textarea placeholder handles the empty state in the UI
+        dto.setGivenAnswer(q.getAnswer());
+
+        // ✗ model answers / marking schemes intentionally not mapped
+
+        return dto;
+    }
+
+
+
+
     public void deleteQuestion(Long TqId){
         TheoryQuestions theoryQuestions = new TheoryQuestions();
         theoryQuestions.setTqId(TqId);

@@ -1,6 +1,7 @@
 package com.exam.controller;
 
 import com.exam.DTO.TheoryQuestionDTO;
+import com.exam.DTO.TheoryQuestionResponseDTO;
 import com.exam.DTO.TheoryUpdateRequest;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
@@ -76,16 +77,54 @@ public class TheoryController {
         return this.theoryService.updateQuestions(request);
     }
 
-    @GetMapping("theoryquestion/quiz/all/{qid}")
-    public ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid) {
+//    @GetMapping("theoryquestion/quiz/all/{qid}")
+//    public ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid) {
+//        Quiz quiz = new Quiz();
+//        quiz.setqId(qid);
+//        Set<TheoryQuestions> questionsOfQuiz = this.theoryService.getQuestionsForSpecificQuiz(quiz);
+//        List<TheoryQuestions> list = new ArrayList<>(questionsOfQuiz);
+//        return ResponseEntity.ok(list);
+//    }
+
+
+
+
+    /**
+     * STUDENT endpoint — used by the quiz-taking UI (Section B).
+     *
+     * Returns DTO list with:
+     *  ✓ Only fields the frontend template needs
+     *  ✓ Model answers / internal fields excluded
+     *  ✓ givenAnswer null initially (textarea handles placeholder state)
+     *
+     * GET /api/theoryquestion/quiz/{qid}
+     */
+    @GetMapping("/theoryquestion/quiz/all/{qid}")
+    public ResponseEntity<List<TheoryQuestionResponseDTO>> getTheoryQuestionsForStudent(
+            @PathVariable("qid") Long qid) {
+
+        List<TheoryQuestionResponseDTO> questions = theoryService.getTheoryQuestionsForStudent(qid);
+        return ResponseEntity.ok(questions);
+    }
+
+    /**
+     * ADMIN endpoint — returns full entity including any internal fields.
+     * Should be secured with admin/teacher role.
+     *
+     * GET /api/theoryquestion/quiz/all/{qid}
+     */
+    @GetMapping("/theoryquestions/quiz/all/{qid}")
+    // @PreAuthorize("hasRole('ADMIN')") // ← uncomment when Spring Security roles are configured
+    public ResponseEntity<List<TheoryQuestions>> getQuestionsOfQuizAdmin(
+            @PathVariable("qid") Long qid) {
+
         Quiz quiz = new Quiz();
         quiz.setqId(qid);
-        Set<TheoryQuestions> questionsOfQuiz = this.theoryService.getQuestionsForSpecificQuiz(quiz);
-        List<TheoryQuestions> list = new ArrayList<>(questionsOfQuiz);
-//        Collections.shuffle(list);
-//        return ResponseEntity.ok(questionsOfQuiz);
+
+        List<TheoryQuestions> list = new ArrayList<>(theoryService.getQuestionsForSpecificQuiz(quiz));
         return ResponseEntity.ok(list);
     }
+
 
 
     @PostMapping("/theoryupload/{quizId}")

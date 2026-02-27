@@ -1,9 +1,6 @@
 package com.exam.controller;
 
-import com.exam.DTO.QuestionDTO;
-import com.exam.DTO.QuestionEvalRequest;
-import com.exam.DTO.QuizEvaluationResult;
-import com.exam.DTO.UpdateQuestionDTO;
+import com.exam.DTO.*;
 import com.exam.model.User;
 import com.exam.model.exam.Questions;
 import com.exam.model.exam.Quiz;
@@ -72,17 +69,26 @@ public class QuestionsController {
 
 
 
-    // get questions of any quiz
-    @GetMapping("question/quiz/all/{qid}")
-    public  ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid){
-        Quiz quiz = new Quiz();
-        quiz.setqId(qid);
-        Set<Questions> questionsOfQuiz =this.questionsService.getQuestionsOfQuiz(quiz);
-        List<Questions> list = new ArrayList<>(questionsOfQuiz);
-Collections.shuffle(list);
-        return ResponseEntity.ok(list);
-    }
+    // get questions of any quiz (Student)
+//    @GetMapping("question/quiz/all/{qid}")
+//    public  ResponseEntity<?> getQuestionsOfQuizAdmin(@PathVariable("qid") Long qid){
+//        Quiz quiz = new Quiz();
+//        quiz.setqId(qid);
+//        Set<Questions> questionsOfQuiz =this.questionsService.getQuestionsOfQuiz(quiz);
+//        List<Questions> list = new ArrayList<>(questionsOfQuiz);
+//Collections.shuffle(list);
+//        return ResponseEntity.ok(list);
+//    }
 
+
+
+    @GetMapping("/question/quiz/all/{qid}")
+    public ResponseEntity<List<QuestionResponseDTO>> getQuestionsForStudent(
+            @PathVariable("qid") Long qid) {
+
+        List<QuestionResponseDTO> questions = questionsService.getShuffledQuestionsForStudent(qid);
+        return ResponseEntity.ok(questions);
+    }
 
     // FETCH QUESTIONS FOR A LECTURER
     @GetMapping("/questions/quiz/all/{quizId}")

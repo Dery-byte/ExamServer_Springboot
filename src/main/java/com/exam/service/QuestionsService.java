@@ -1,6 +1,7 @@
 package com.exam.service;
 
 import com.exam.DTO.QuestionDTO;
+import com.exam.DTO.QuestionResponseDTO;
 import com.exam.DTO.UpdateQuestionDTO;
 import com.exam.model.Role;
 import com.exam.model.User;
@@ -136,12 +137,44 @@ public class QuestionsService {
 //
 //    }
 
-    public Set<Questions> getQuestionsOfQuiz(Quiz quiz){
+
+    public Set<Questions> getQuestionsOfQuiz(Quiz quiz) {
         return this.questionsRepository.findByQuiz(quiz);
     }
 
+    public List<QuestionResponseDTO> getShuffledQuestionsForStudent(Long qid) {
+        Quiz quiz = new Quiz();
+        quiz.setqId(qid);
+        // 1. Fetch
+        List<Questions> list = new ArrayList<>(this.questionsRepository.findByQuiz(quiz));
+        // 2. Shuffle
+        Collections.shuffle(list);
+        // 3 & 4. Assign count and map to DTO
+        List<QuestionResponseDTO> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            result.add(toResponseDTO(list.get(i), i + 1));
+        }
+        return result;
+    }
 
 
+    private QuestionResponseDTO toResponseDTO(Questions question, int count) {
+        QuestionResponseDTO dto = new QuestionResponseDTO();
+        dto.setQuesId(question.getQuesId());
+        dto.setCount(count);
+        dto.setContent(question.getContent());
+        dto.setImage(question.getImage());
+        dto.setOption1(question.getOption1());
+        dto.setOption2(question.getOption2());
+        dto.setOption3(question.getOption3());
+        dto.setOption4(question.getOption4());
+
+        // Safely handle null — unanswered questions have no givenAnswer yet
+        String[] given = question.getGivenAnswer();
+        dto.setGivenAnswer(given != null ? Arrays.asList(given) : new ArrayList<>());
+
+        return dto;
+    }
 
     public List<Questions> getQuestionsForMyQuiz(Long quizId, Principal principal) {
         String username = principal.getName();
