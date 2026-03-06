@@ -48,8 +48,8 @@ public class QuizEvaluationServiceImpl implements QuizEvaluationService {
         double marksGot = 0.0;
         int correctAnswers = 0;
         int attempted = 0;
-        double maxMarks = Double.parseDouble(
-                questions.get(0).getQuiz().getMaxMarks()
+        double maxMarks =
+                questions.get(0).getQuiz().getMaxMarks(
         );
         for (Questions q : questions) {
             if (q == null) continue;

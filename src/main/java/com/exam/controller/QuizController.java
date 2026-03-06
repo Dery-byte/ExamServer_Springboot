@@ -79,9 +79,8 @@ public class QuizController {
         Quiz quiz = this.quizService.getQuiz(qid);
         Set<Questions> questions = quiz.getQuestions();
         List<Questions> list = new ArrayList<>(questions);
-        if(list.size()>Integer.parseInt(quiz.getNumberOfQuestions())){
-            list = list.subList(0, Integer.parseInt(quiz.getNumberOfQuestions()+1));
-        }
+        if(list.size()>quiz.getNumberOfQuestions()){
+            list = list.subList(0, quiz.getNumberOfQuestions()+1);        }
         list.forEach((q)->{
 //            q.setAnswer(new String[0]);
             q.setcorrect_answer(new String[0]);

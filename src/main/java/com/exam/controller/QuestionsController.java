@@ -211,7 +211,7 @@ public ResponseEntity<?> evalQuiz2(@RequestBody List<QuestionEvalRequest> questi
     double marksGot = 0.0;
     int correctAnswers = 0;
     int attempted = 0;
-    double maxMarks = Double.parseDouble(quiz.getMaxMarks());
+    double maxMarks = quiz.getMaxMarks();
     List<Map<String, Object>> resultList = new ArrayList<>();
     for (QuestionEvalRequest q : questions) {
         if (q == null) continue;
@@ -314,7 +314,7 @@ public ResponseEntity<String> uploadQuestions(
     Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
     if (optionalQuiz.isPresent()) {
         Quiz quiz = optionalQuiz.get();
-        int numberOfQuestions = Integer.parseInt(quiz.getNumberOfQuestions());
+        int numberOfQuestions = quiz.getNumberOfQuestions();
         // Set the quiz for each question
         questions.forEach(question -> question.setQuiz(quiz));
         if(questions.size()<= numberOfQuestions)

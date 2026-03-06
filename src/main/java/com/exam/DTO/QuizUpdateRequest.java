@@ -12,9 +12,9 @@ public class QuizUpdateRequest {
     private Long qId;
     private String title;
     private String description;
-    private String maxMarks;
+    private Double maxMarks;
     private String quizTime;
-    private String numberOfQuestions;
+    private Integer numberOfQuestions;
     private boolean active;
     private String quizpassword;
     private QuizStatus status;
@@ -79,11 +79,11 @@ public class QuizUpdateRequest {
         this.description = description;
     }
 
-    public String getMaxMarks() {
+    public Double getMaxMarks() {
         return maxMarks;
     }
 
-    public void setMaxMarks(String maxMarks) {
+    public void setMaxMarks(Double maxMarks) {
         this.maxMarks = maxMarks;
     }
 
@@ -95,11 +95,11 @@ public class QuizUpdateRequest {
         this.quizTime = quizTime;
     }
 
-    public String getNumberOfQuestions() {
+    public Integer getNumberOfQuestions() {
         return numberOfQuestions;
     }
 
-    public void setNumberOfQuestions(String numberOfQuestions) {
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
         this.numberOfQuestions = numberOfQuestions;
     }
 

@@ -303,7 +303,7 @@ public class ReportService {
         double marksGot = 0.0;
         int correctAnswers = 0;
         int attempted = 0;
-        double maxMarks = Double.parseDouble(quiz.getMaxMarks());
+        double maxMarks = quiz.getMaxMarks();
         List<Map<String, Object>> resultList = new ArrayList<>();
         for (Questions question : questions) {
             StudentAnswer studentAnswer = answerMap.get(question.getQuesId());

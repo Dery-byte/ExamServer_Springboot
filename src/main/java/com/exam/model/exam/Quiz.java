@@ -29,11 +29,11 @@ public class Quiz {
     private String title;
     @Column(length =  100)
     private String description;
-    private String maxMarks;
+    private Double maxMarks;
     @Column(length =  50, nullable = false)
     private String quizTime;
     @Column(length =  50, nullable = false)
-    private String numberOfQuestions;
+    private Integer numberOfQuestions;
     private  boolean active = false;
     private boolean attempted=false;
 
@@ -188,7 +188,7 @@ public class Quiz {
         this.autoSubmitCountdownSeconds = autoSubmitCountdownSeconds;
     }
 
-    public Quiz(Long qId, String title, String description, String maxMarks, String numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions, QuizType quizType, LocalDate quizDate, LocalTime startTime) {
+    public Quiz(Long qId, String title, String description, Double maxMarks, Integer numberOfQuestions, boolean active, boolean attempted, String quizpassword, Set<Report> reports, Category category, Set<Questions> questions, QuizType quizType, LocalDate quizDate, LocalTime startTime) {
         this.qId = qId;
         this.title = title;
         this.description = description;
@@ -237,11 +237,12 @@ public class Quiz {
         this.description = description;
     }
 
-    public String getMaxMarks() {
+
+    public Double getMaxMarks() {
         return maxMarks;
     }
 
-    public void setMaxMarks(String maxMarks) {
+    public void setMaxMarks(Double maxMarks) {
         this.maxMarks = maxMarks;
     }
 
@@ -253,11 +254,11 @@ public class Quiz {
         this.quizpassword = quizpassword;
     }
 
-    public String getNumberOfQuestions() {
+    public Integer getNumberOfQuestions() {
         return numberOfQuestions;
     }
 
-    public void setNumberOfQuestions(String numberOfQuestions) {
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
         this.numberOfQuestions = numberOfQuestions;
     }
 

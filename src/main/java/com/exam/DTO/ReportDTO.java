@@ -26,9 +26,9 @@ public class ReportDTO {
         private Long qId;
         private String title;
         private String description;
-        private String maxMarks;
+        private Double maxMarks;
         private String quizTime;
-        private String numberOfQuestions;
+        private Integer numberOfQuestions;
         private boolean active;
         private String status;
         private String quizType;
@@ -58,14 +58,24 @@ public class ReportDTO {
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
 
-        public String getMaxMarks() { return maxMarks; }
-        public void setMaxMarks(String maxMarks) { this.maxMarks = maxMarks; }
+        public Double getMaxMarks() {
+            return maxMarks;
+        }
+
+        public void setMaxMarks(Double maxMarks) {
+            this.maxMarks = maxMarks;
+        }
 
         public String getQuizTime() { return quizTime; }
         public void setQuizTime(String quizTime) { this.quizTime = quizTime; }
 
-        public String getNumberOfQuestions() { return numberOfQuestions; }
-        public void setNumberOfQuestions(String numberOfQuestions) { this.numberOfQuestions = numberOfQuestions; }
+        public Integer getNumberOfQuestions() {
+            return numberOfQuestions;
+        }
+
+        public void setNumberOfQuestions(Integer numberOfQuestions) {
+            this.numberOfQuestions = numberOfQuestions;
+        }
 
         public boolean isActive() { return active; }
         public void setActive(boolean active) { this.active = active; }
