@@ -69,6 +69,12 @@ public class QuizGPTService {
         logger.info("============================");
     }
 
+
+
+
+
+
+
     @Transactional
     public QuizEvaluationResponse evaluateQuiz(GeminiRequest request, User user) {
         List<QuestionSubmission> submissions = parseSubmissions(request);
@@ -78,6 +84,21 @@ public class QuizGPTService {
         List<QuestionEvaluationResult> results = submissions.stream()
                 .map(this::evaluateSingleQuestion)
                 .collect(Collectors.toList());
+
+
+// ADD THESE LOGS
+        logger.info("=== EVALUATION RESULTS ===");
+        for (QuestionEvaluationResult result : results) {
+            logger.info("Question: {} | Score: {} | Feedback: {}",
+                    result.getQuestionNumber(),
+                    result.getScore(),
+                    result.getFeedback()); // This will show the actual error message
+        }
+        logger.info("==========================");
+
+
+
+
         // Step 2: Calculate totals
         double totalScore = 0;
         double totalMaxMarks = 0;
@@ -129,10 +150,15 @@ public class QuizGPTService {
                 successfulResults.add(result);
                 continue;
             }
+
             try {
                 Long tqid = Long.valueOf(result.getTqid());
+                logger.info("🔍 STEP 1 - Processing tqid: {}", tqid);
+
                 TheoryQuestions theoryQuestions = theoryQuestionsRepository.findById(tqid)
                         .orElseThrow(() -> new RuntimeException("Question not found: " + tqid));
+                logger.info("🔍 STEP 2 - TheoryQuestion found: {}", theoryQuestions.getTqId());
+
                 Answer answer = new Answer();
                 answer.setQuesNo(result.getQuestionNumber());
                 answer.setStudentAnswer(result.getStudentAnswer());
@@ -140,16 +166,21 @@ public class QuizGPTService {
                 answer.setMaxMarks(result.getMaxMarks());
                 answer.setFeedback(result.getFeedback());
                 answer.setKeyMissed(result.getKeyMissed());
-                answer.setUser(user);
+                answer.setUser(managedUser);          // ← managedUser not user
                 answer.setQuiz(quiz);
                 answer.setTheoryQuestion(theoryQuestions);
                 answer.setReport(savedReport);
-                answerRepository.saveAndFlush(answer);
+                logger.info("🔍 STEP 3 - Answer built. user={}, quiz={}, tq={}, report={}",
+                        managedUser.getId(),
+                        quiz.getqId(),
+                        theoryQuestions.getTqId(),
+                        savedReport.getId());
+                Answer saved = answerRepository.saveAndFlush(answer);
+                logger.info("✅ STEP 4 - Answer saved with ID: {}", saved.getAnswerId());
                 savedAnswersCount++;
                 successfulResults.add(result);
-
             } catch (Exception e) {
-                logger.error("❌ Failed to save answer for tqid {}: {}", result.getTqid(), e.getMessage());
+                logger.error("❌ Failed at tqid {}", result.getTqid(), e); // full stack trace
                 result.setFeedback(result.getFeedback() + " [Note: Failed to save to database]");
                 successfulResults.add(result);
             }
@@ -253,36 +284,27 @@ public class QuizGPTService {
 
             } catch (HttpClientErrorException e) {
                 attempts++;
-                logger.warn("Attempt {} failed for question {}: {} {}",
-                        attempts, submission.getQuestionNumber(),
-                        e.getStatusCode(), e.getMessage());
-
-                if (e.getStatusCode().value() == 401) {
-                    logger.error("❌ AUTHENTICATION FAILED - Check your OpenAI API key!");
-                }
-
-                if (attempts >= MAX_RETRIES) {
-                    return createFailedEvaluation(submission, e);
-                }
-
-                try {
-                    TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return createFailedEvaluation(submission, ie);
-                }
-
+                logger.error("=== HTTP ERROR on attempt {} ===", attempts);
+                logger.error("Status: {}", e.getStatusCode());
+                logger.error("Response body: {}", e.getResponseBodyAsString()); // ← THIS IS KEY
+                // ...
             } catch (Exception e) {
                 attempts++;
+                logger.error("=== GENERAL ERROR on attempt {} ===", attempts);
+                logger.error("Exception type: {}", e.getClass().getName());
+                logger.error("Message: {}", e.getMessage(), e); // full stack trace
+
                 if (attempts >= MAX_RETRIES) {
                     return createFailedEvaluation(submission, e);
                 }
+
                 try {
                     TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     return createFailedEvaluation(submission, ie);
                 }
+
             }
         }
         return createFailedEvaluation(submission, new Exception("Max retries exceeded"));

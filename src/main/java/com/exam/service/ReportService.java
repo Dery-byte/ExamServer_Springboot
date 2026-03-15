@@ -290,82 +290,241 @@ public class ReportService {
     /**
      * Fetches a student's quiz results with marks, correctness, and selected answers.
      */
+//    public Map<String, Object> getStudentQuizResult(Long quizId, Long studentId) {
+//        Quiz quiz = quizService.getQuiz(quizId);
+//        if (quiz == null) throw new RuntimeException("Quiz not found");
+//
+//        // Fetch all questions of the quiz
+//        List<Questions> questions = questionsService.getQuestionsByQuizId(quizId);
+//        // Fetch all student answers for this quiz
+//        List<StudentAnswer> answers = studentAnswerRepository.findByStudentAndQuiz(studentId, quizId);
+//        Map<Long, StudentAnswer> answerMap = answers.stream()
+//                .collect(Collectors.toMap(a -> a.getQuestion().getQuesId(), a -> a));
+//        double marksGot = 0.0;
+//        int correctAnswers = 0;
+//        int attempted = 0;
+//        double maxMarks = quiz.getMaxMarks();
+//        List<Map<String, Object>> resultList = new ArrayList<>();
+//        for (Questions question : questions) {
+//            StudentAnswer studentAnswer = answerMap.get(question.getQuesId());
+//            String[] selected = studentAnswer != null ? studentAnswer.getSelectedOptions() : null;
+//            List<String> correctList = question.getcorrect_answer() != null
+//                    ? Arrays.asList(question.getcorrect_answer())
+//                    : new ArrayList<>();
+//            List<String> selectedList = selected != null ? Arrays.asList(selected) : new ArrayList<>();
+//
+//            // -------------------------------
+//            // Compute AnswerStatus
+//            // -------------------------------
+//            AnswerStatus status;
+//            if (selectedList.isEmpty()) {
+//                status = AnswerStatus.SKIPPED;
+//            } else {
+//                attempted++;
+//                Set<String> correctSet = new HashSet<>(correctList);
+//                Set<String> selectedSet = new HashSet<>(selectedList);
+//                boolean hasAnyCorrect = selectedSet.stream().anyMatch(correctSet::contains);
+//                boolean hasWrong = selectedSet.stream().anyMatch(a -> !correctSet.contains(a));
+//                if (!hasAnyCorrect) {
+//                    status = AnswerStatus.WRONG;
+//                } else if (!hasWrong && selectedSet.size() == correctSet.size()) {
+//                    status = AnswerStatus.CORRECT;
+//                    correctAnswers++;
+//                    marksGot += maxMarks / questions.size();
+//                } else {
+//                    status = AnswerStatus.PARTIAL;
+//                }
+//            }
+//
+//            // -------------------------------
+//            // Prepare response map
+//            // -------------------------------
+//            Map<String, Object> questionMap = new HashMap<>();
+//            questionMap.put("quesId", question.getQuesId());
+//            questionMap.put("content", question.getContent());
+//            questionMap.put("image", question.getImage());
+//            questionMap.put("option1", question.getOption1());
+//            questionMap.put("option2", question.getOption2());
+//            questionMap.put("option3", question.getOption3());
+//            questionMap.put("option4", question.getOption4());
+//            questionMap.put("correct_answer", question.getcorrect_answer());
+//            questionMap.put("selectedAnswers", selected);
+//            questionMap.put("status", status.name()); // CORRECT / PARTIAL / WRONG / SKIPPED
+//            resultList.add(questionMap);
+//        }
+//
+//        // -------------------------------
+//        // Build final response
+//        // -------------------------------
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("studentId", studentId);
+//        response.put("quizId", quizId);
+//        response.put("marksGot", marksGot);
+//        response.put("correctAnswers", correctAnswers);
+//        response.put("attempted", attempted);
+//        response.put("maxMarks", maxMarks);
+//        response.put("results", resultList);
+//        return response;
+//    }
+
+
     public Map<String, Object> getStudentQuizResult(Long quizId, Long studentId) {
+
         Quiz quiz = quizService.getQuiz(quizId);
         if (quiz == null) throw new RuntimeException("Quiz not found");
 
-        // Fetch all questions of the quiz
-        List<Questions> questions = questionsService.getQuestionsByQuizId(quizId);
-        // Fetch all student answers for this quiz
-        List<StudentAnswer> answers = studentAnswerRepository.findByStudentAndQuiz(studentId, quizId);
+        List<Questions>     questions = questionsService.getQuestionsByQuizId(quizId);
+        List<StudentAnswer> answers   = studentAnswerRepository.findByStudentAndQuiz(studentId, quizId);
+
+        // Map questionId → StudentAnswer for O(1) lookup
         Map<Long, StudentAnswer> answerMap = answers.stream()
                 .collect(Collectors.toMap(a -> a.getQuestion().getQuesId(), a -> a));
-        double marksGot = 0.0;
-        int correctAnswers = 0;
-        int attempted = 0;
-        double maxMarks = quiz.getMaxMarks();
-        List<Map<String, Object>> resultList = new ArrayList<>();
-        for (Questions question : questions) {
-            StudentAnswer studentAnswer = answerMap.get(question.getQuesId());
-            String[] selected = studentAnswer != null ? studentAnswer.getSelectedOptions() : null;
-            List<String> correctList = question.getcorrect_answer() != null
-                    ? Arrays.asList(question.getcorrect_answer())
-                    : new ArrayList<>();
-            List<String> selectedList = selected != null ? Arrays.asList(selected) : new ArrayList<>();
 
-            // -------------------------------
-            // Compute AnswerStatus
-            // -------------------------------
-            AnswerStatus status;
-            if (selectedList.isEmpty()) {
-                status = AnswerStatus.SKIPPED;
-            } else {
-                attempted++;
-                Set<String> correctSet = new HashSet<>(correctList);
-                Set<String> selectedSet = new HashSet<>(selectedList);
-                boolean hasAnyCorrect = selectedSet.stream().anyMatch(correctSet::contains);
-                boolean hasWrong = selectedSet.stream().anyMatch(a -> !correctSet.contains(a));
-                if (!hasAnyCorrect) {
-                    status = AnswerStatus.WRONG;
-                } else if (!hasWrong && selectedSet.size() == correctSet.size()) {
-                    status = AnswerStatus.CORRECT;
-                    correctAnswers++;
-                    marksGot += maxMarks / questions.size();
+        double maxMarks        = quiz.getMaxMarks();
+        int    totalQs         = questions.size();
+        double markPerQuestion = totalQs > 0 ? maxMarks / totalQs : 0;
+
+        double marksGot       = 0.0;
+        int    correctAnswers = 0;   // fully-correct question count
+        int    attempted      = 0;
+
+        List<Map<String, Object>> resultList = new ArrayList<>();
+
+        for (Questions question : questions) {
+
+            StudentAnswer studentAnswer = answerMap.get(question.getQuesId());
+            String[]      selected      = studentAnswer != null ? studentAnswer.getSelectedOptions() : null;
+            List<String>  selectedList  = selected != null ? Arrays.asList(selected) : new ArrayList<>();
+
+            QuestionType type = question.getQuestionType() != null
+                    ? question.getQuestionType()
+                    : QuestionType.MCQ;                          // legacy fallback
+
+            Map<String, Object> questionMap = new LinkedHashMap<>();
+            questionMap.put("quesId",      question.getQuesId());
+            questionMap.put("content",     question.getContent());
+            questionMap.put("image",       question.getImage());
+            questionMap.put("questionType", type);
+
+            // ── MATCHING ─────────────────────────────────────────────────────────
+            if (type == QuestionType.MATCHING) {
+
+                List<MatchingPair> pairs      = question.getMatchingPairs();
+                int                pairsTotal = pairs != null ? pairs.size() : 0;
+                int                pairsCorrect = 0;
+
+                AnswerStatus status;
+
+                if (selectedList.isEmpty() || pairsTotal == 0) {
+                    status = AnswerStatus.SKIPPED;
                 } else {
-                    status = AnswerStatus.PARTIAL;
+                    attempted++;
+                    String[] given = selected; // index-aligned with pairOrder
+
+                    for (int i = 0; i < pairsTotal; i++) {
+                        String expected = pairs.get(i).getAnswer();
+                        String student  = (given != null && i < given.length) ? given[i] : null;
+                        if (expected != null && expected.equals(student)) pairsCorrect++;
+                    }
+
+                    double earnedMark = ((double) pairsCorrect / pairsTotal) * markPerQuestion;
+                    marksGot += earnedMark;
+
+                    if (pairsCorrect == pairsTotal) {
+                        status = AnswerStatus.CORRECT;
+                        correctAnswers++;
+                    } else if (pairsCorrect > 0) {
+                        status = AnswerStatus.PARTIAL;
+                    } else {
+                        status = AnswerStatus.WRONG;
+                    }
+
+                    questionMap.put("pairsCorrect", pairsCorrect);
+                    questionMap.put("pairsTotal",   pairsTotal);
+                    questionMap.put("earnedMark",   earnedMark);
                 }
+
+                // Include pairs with per-pair correctness for frontend rendering
+                if (pairs != null) {
+                    List<Map<String, Object>> pairResults = new ArrayList<>();
+                    for (int i = 0; i < pairsTotal; i++) {
+                        MatchingPair pair    = pairs.get(i);
+                        String       student = (selected != null && i < selected.length) ? selected[i] : null;
+                        boolean      correct = pair.getAnswer().equals(student);
+
+                        Map<String, Object> pairMap = new LinkedHashMap<>();
+                        pairMap.put("pairOrder",      pair.getPairOrder());
+                        pairMap.put("prompt",         pair.getPrompt());
+                        pairMap.put("correctAnswer",  pair.getAnswer());
+                        pairMap.put("studentAnswer",  student);
+                        pairMap.put("correct",        correct);
+                        pairResults.add(pairMap);
+                    }
+                    questionMap.put("matchingPairs", pairResults);
+                }
+
+                questionMap.put("selectedAnswers", selected);
+                questionMap.put("status",          status.name());
+
+                // ── MCQ / TRUE_FALSE ─────────────────────────────────────────────────
+            } else {
+
+                List<String> correctList = question.getcorrect_answer() != null
+                        ? Arrays.asList(question.getcorrect_answer())
+                        : new ArrayList<>();
+
+                AnswerStatus status;
+
+                if (selectedList.isEmpty()) {
+                    status = AnswerStatus.SKIPPED;
+                } else {
+                    attempted++;
+                    Set<String> correctSet  = new HashSet<>(correctList);
+                    Set<String> selectedSet = new HashSet<>(selectedList);
+
+                    boolean hasAnyCorrect = selectedSet.stream().anyMatch(correctSet::contains);
+                    boolean hasWrong      = selectedSet.stream().anyMatch(a -> !correctSet.contains(a));
+
+                    if (!hasAnyCorrect) {
+                        status = AnswerStatus.WRONG;
+                    } else if (!hasWrong && selectedSet.size() == correctSet.size()) {
+                        status = AnswerStatus.CORRECT;
+                        correctAnswers++;
+                        marksGot += markPerQuestion;
+                    } else {
+                        status = AnswerStatus.PARTIAL;
+                    }
+                }
+
+                questionMap.put("option1",         question.getOption1());
+                questionMap.put("option2",         question.getOption2());
+                questionMap.put("option3",         question.getOption3());
+                questionMap.put("option4",         question.getOption4());
+                questionMap.put("correct_answer",  question.getcorrect_answer());
+                questionMap.put("selectedAnswers", selected);
+                questionMap.put("status",          status.name());
             }
 
-            // -------------------------------
-            // Prepare response map
-            // -------------------------------
-            Map<String, Object> questionMap = new HashMap<>();
-            questionMap.put("quesId", question.getQuesId());
-            questionMap.put("content", question.getContent());
-            questionMap.put("image", question.getImage());
-            questionMap.put("option1", question.getOption1());
-            questionMap.put("option2", question.getOption2());
-            questionMap.put("option3", question.getOption3());
-            questionMap.put("option4", question.getOption4());
-            questionMap.put("correct_answer", question.getcorrect_answer());
-            questionMap.put("selectedAnswers", selected);
-            questionMap.put("status", status.name()); // CORRECT / PARTIAL / WRONG / SKIPPED
             resultList.add(questionMap);
         }
 
-        // -------------------------------
-        // Build final response
-        // -------------------------------
-        Map<String, Object> response = new HashMap<>();
-        response.put("studentId", studentId);
-        response.put("quizId", quizId);
-        response.put("marksGot", marksGot);
+        // ── Summary response ──────────────────────────────────────────────────────
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("studentId",      studentId);
+        response.put("quizId",         quizId);
+        response.put("marksGot",       marksGot);
+        response.put("maxMarks",       maxMarks);
         response.put("correctAnswers", correctAnswers);
-        response.put("attempted", attempted);
-        response.put("maxMarks", maxMarks);
-        response.put("results", resultList);
+        response.put("attempted",      attempted);
+        response.put("totalQuestions", totalQs);
+        response.put("results",        resultList);
         return response;
     }
+
+
+
+
+
 
 
 

@@ -16,17 +16,14 @@ import java.util.Optional;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long> {
-
 //    Optional<Report> findById(Long id);
-
     // ✅ Find by User ID
     List<Report> findByUser_Id(Long userId);
-
     // ✅ Find by User and Quiz
     List<Report> findByUser_IdAndQuiz_qId(Long userId, Long quizId);
-
     // ✅ Find by Quiz (entity)
     List<Report> findByQuiz(Quiz quiz);
+    void deleteByQuiz(Quiz quiz);
 
 
 

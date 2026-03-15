@@ -32,7 +32,7 @@ public class Quiz {
     private Double maxMarks;
     @Column(length =  50, nullable = false)
     private String quizTime;
-    @Column(length =  50, nullable = false)
+    @Column(length =  50)
     private Integer numberOfQuestions;
     private  boolean active = false;
     private boolean attempted=false;

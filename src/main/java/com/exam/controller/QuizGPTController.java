@@ -41,6 +41,45 @@ public class QuizGPTController {
 
 
 
+//
+//    @PostMapping("/evaluate")
+//    public ResponseEntity<?> evaluateQuiz(
+//            @Valid @RequestBody GeminiRequest request,
+//            @AuthenticationPrincipal User currentUser) {
+//
+//        try {
+//            logger.info("User {} is evaluating quiz with GPT", currentUser.getUsername());
+//
+//            // Validate request
+//            if (request.getContents() == null || request.getContents().isEmpty()) {
+//                return ResponseEntity.badRequest()
+//                        .body(createErrorResponse("Request contents cannot be empty"));
+//            }
+//
+//            // Evaluate quiz and get the response DTO
+//            QuizEvaluationResponse response = quizGPTService.evaluateQuiz(request, currentUser);
+//
+//            // Log the results
+//            logger.info("Quiz evaluation completed for user {}. Score: {}/{} ({}%)",
+//                    currentUser.getUsername(), response.getSummary().getTotalScore(),
+//                    response.getSummary().getTotalMaxMarks(), response.getSummary().getPercentage());
+//
+//            // Return the response
+//            return ResponseEntity.ok(response);
+//
+//        } catch (IllegalArgumentException e) {
+//            logger.error("Invalid request for user {}: {}", currentUser.getUsername(), e.getMessage());
+//            return ResponseEntity.badRequest()
+//                    .body(createErrorResponse("Invalid request: " + e.getMessage()));
+//
+//        } catch (Exception e) {
+//            logger.error("Error evaluating quiz for user {}: {}", currentUser.getUsername(), e.getMessage(), e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(createErrorResponse("Failed to evaluate quiz: " + e.getMessage()));
+//        }
+//    }
+//
+
 
     @PostMapping("/evaluate")
     public ResponseEntity<?> evaluateQuiz(
@@ -48,40 +87,39 @@ public class QuizGPTController {
             @AuthenticationPrincipal User currentUser) {
 
         try {
-            logger.info("User {} is evaluating quiz with GPT", currentUser.getUsername());
+//            logger.info("=== CONTROLLER HIT ===");
+//            logger.info("User: {}", currentUser != null ? currentUser.getUsername() : "NULL USER");
+//            logger.info("Request contents null? {}", request.getContents() == null);
+//            logger.info("Request contents size: {}", request.getContents() != null ? request.getContents().size() : "N/A");
 
-            // Validate request
             if (request.getContents() == null || request.getContents().isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(createErrorResponse("Request contents cannot be empty"));
             }
 
-            // Evaluate quiz and get the response DTO
+//            logger.info("=== CALLING SERVICE ===");
             QuizEvaluationResponse response = quizGPTService.evaluateQuiz(request, currentUser);
-
-            // Log the results
-            logger.info("Quiz evaluation completed for user {}. Score: {}/{} ({}%)",
-                    currentUser.getUsername(), response.getSummary().getTotalScore(),
-                    response.getSummary().getTotalMaxMarks(), response.getSummary().getPercentage());
-
-            // Return the response
+//            logger.info("=== SERVICE RETURNED ===");
+//            logger.info("Report ID: {}", response.getReportId());
+//            logger.info("Answers saved: {}", response.getSummary().getAnswersSaved());
+//            logger.info("Total score: {}/{}", response.getSummary().getTotalScore(), response.getSummary().getTotalMaxMarks());
             return ResponseEntity.ok(response);
-
         } catch (IllegalArgumentException e) {
-            logger.error("Invalid request for user {}: {}", currentUser.getUsername(), e.getMessage());
+//            logger.error("=== ILLEGAL ARGUMENT EXCEPTION ===");
+//            logger.error("User: {}", currentUser.getUsername());
+//            logger.error("Message: {}", e.getMessage(), e); // full stack trace
             return ResponseEntity.badRequest()
                     .body(createErrorResponse("Invalid request: " + e.getMessage()));
-
         } catch (Exception e) {
-            logger.error("Error evaluating quiz for user {}: {}", currentUser.getUsername(), e.getMessage(), e);
+//            logger.error("=== GENERAL EXCEPTION ===");
+//            logger.error("Exception type: {}", e.getClass().getName());
+//            logger.error("User: {}", currentUser.getUsername());
+//            logger.error("Message: {}", e.getMessage(), e); // full stack trace
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(createErrorResponse("Failed to evaluate quiz: " + e.getMessage()));
         }
     }
-
-
-
-
 
     /**
      * Evaluate a single question using GPT
@@ -116,8 +154,8 @@ public class QuizGPTController {
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("Error evaluating single question for user {}: {}",
-                    currentUser.getUsername(), e.getMessage(), e);
+//            logger.error("Error evaluating single question for user {}: {}",
+//                    currentUser.getUsername(), e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(createErrorResponse("Failed to evaluate question: " + e.getMessage()));
         }

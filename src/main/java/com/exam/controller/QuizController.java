@@ -48,6 +48,9 @@ public class QuizController {
     public ResponseEntity<?> quizzes(){
         return ResponseEntity.ok(this.quizService.getQuizzes());
     }
+
+
+
     @PostMapping("/addQuiz")
     public ResponseEntity<Quiz> add(@RequestBody Quiz quiz ){
         return ResponseEntity.ok(this.quizService.addQuiz(quiz));
@@ -164,7 +167,6 @@ public class QuizController {
             @RequestBody UpdateQuizStatusRequest request) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with ID: " + quizId));
-
         // Validate and convert the status string
         QuizStatus newStatus;
         try {
@@ -174,7 +176,6 @@ public class QuizController {
         }
         quiz.setStatus(newStatus);
         quizRepository.save(quiz);
-
         return ResponseEntity.ok(Map.of("status", quiz.getStatus().name()));
     }
 
